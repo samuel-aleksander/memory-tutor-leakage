@@ -1,0 +1,4 @@
+# Tutor / rater clients (only the one for your provider is needed)
+openai           # Google Cloud open models (OpenAI-compatible endpoint)
+google-auth      # Google Cloud credentials
+anthropic        # Claude through the Anthropic API

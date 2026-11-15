@@ -1,0 +1,23 @@
+# Allow-list: everything is ignored unless listed below, so personal notes, drafts,
+# papers and large data can't be committed by accident.
+/*
+!/.gitignore
+!/README.md
+!/requirements.txt
+!/stage2/
+
+# Data: only the processed task tables and the two small benchmark files.
+!/data/
+/data/*
+!/data/processed/
+!/data/raw/
+/data/raw/*
+!/data/raw/humaneval/
+!/data/raw/humanevalplus/
+
+# Never tracked anywhere
+__pycache__/
+*.pyc
+.DS_Store
+~$*
+.env
