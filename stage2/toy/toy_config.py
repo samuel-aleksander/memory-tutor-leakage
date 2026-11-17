@@ -21,8 +21,10 @@ Write everything here BEFORE looking at results. Each run folder keeps a copy of
 # Tutor model (see llm.py for what each provider needs)
 # ---------------------------------------------------------------------------
 PROVIDER = "vertex_maas"               # "vertex_maas" (Google Cloud open models) or "anthropic"
-MODEL = "deepseek-v4.1-flash-maas"     # Google Cloud's managed DeepSeek; only served in "global"
-GCP_PROJECT = ""                       # your Google Cloud project ID (required for vertex_maas)
+MODEL = "deepseek-ai/deepseek-v4.1-flash-maas"  # Google Cloud's managed DeepSeek ("global" only);
+                                                # the endpoint needs the "<publisher>/" prefix
+GCP_PROJECT = ""                       # leave empty to use the project from your gcloud login
+                                       # (or $GOOGLE_CLOUD_PROJECT); keeps the ID out of the repo
 GCP_LOCATION = "global"
 MAX_TOKENS = 8000
 TEMPERATURE = None       # None = the provider's default. Recorded either way; keep it fixed

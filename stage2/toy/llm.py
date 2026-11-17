@@ -18,9 +18,11 @@ Usage:
 
 import re
 import threading
+import time
 from dataclasses import dataclass, field
 
 THINK_RE = re.compile(r"<think>.*?</think>", re.S)
+EMPTY_REPLY_RETRIES = 3
 
 
 class TransientError(Exception):
@@ -47,9 +49,24 @@ class Reply:
 # ---------------------------------------------------------------------------
 class VertexMaaS:
     def __init__(self, cfg):
-        project = getattr(cfg, "GCP_PROJECT", "")
+        import os
+        try:
+            import google.auth
+            import openai  # noqa: F401
+        except ImportError as e:
+            raise ConfigError(f"Missing package ({e.name}). Run: pip install openai google-auth")
+        try:
+            self._creds, adc_project = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        except Exception as e:  # google.auth.exceptions.DefaultCredentialsError
+            raise ConfigError(f"No Google credentials ({e}). Run: gcloud auth application-default login")
+        # Project: the config, else $GOOGLE_CLOUD_PROJECT, else the one your gcloud login set.
+        # Leaving it out of the config keeps your project ID out of the repo.
+        project = (getattr(cfg, "GCP_PROJECT", "") or os.environ.get("GOOGLE_CLOUD_PROJECT")
+                   or adc_project or getattr(self._creds, "quota_project_id", None))
         if not project:
-            raise ConfigError("Set GCP_PROJECT in toy_config.py to your Google Cloud project ID.")
+            raise ConfigError("No Google Cloud project found. Set GCP_PROJECT in toy_config.py "
+                              "or export GOOGLE_CLOUD_PROJECT=<your project ID>.")
+        self.project = project
         location = getattr(cfg, "GCP_LOCATION", "global")
         host = "aiplatform.googleapis.com" if location == "global" else f"{location}-aiplatform.googleapis.com"
         self.base_url = f"https://{host}/v1/projects/{project}/locations/{location}/endpoints/openapi"
@@ -60,15 +77,6 @@ class VertexMaaS:
         self._lock = threading.Lock()
         self._client = None
         self._token = None
-        try:
-            import google.auth
-            import openai  # noqa: F401
-        except ImportError as e:
-            raise ConfigError(f"Missing package ({e.name}). Run: pip install openai google-auth")
-        try:
-            self._creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-        except Exception as e:  # google.auth.exceptions.DefaultCredentialsError
-            raise ConfigError(f"No Google credentials ({e}). Run: gcloud auth application-default login")
 
     def _openai_client(self):
         """An OpenAI client with a fresh Google access token (tokens last about an hour)."""
@@ -91,13 +99,24 @@ class VertexMaaS:
             kwargs["extra_body"] = self.extra_body
         if response_format:
             kwargs["response_format"] = response_format
-        try:
-            resp = self._openai_client().chat.completions.create(**kwargs)
-        except (openai.BadRequestError, openai.NotFoundError, openai.PermissionDeniedError,
-                openai.AuthenticationError) as e:
-            raise ConfigError(repr(e)) from e
-        except (openai.APIStatusError, openai.APIConnectionError) as e:
-            raise TransientError(repr(e)) from e
+        for attempt in range(1, EMPTY_REPLY_RETRIES + 1):
+            try:
+                resp = self._openai_client().chat.completions.create(**kwargs)
+            except (openai.BadRequestError, openai.NotFoundError, openai.PermissionDeniedError,
+                    openai.AuthenticationError) as e:
+                # Google puts the useful explanation in the body (e.g. "API not enabled").
+                raise ConfigError(f"{type(e).__name__} {e.status_code}: {e.body or e.message}") from e
+            except openai.APIStatusError as e:
+                raise TransientError(f"{type(e).__name__} {e.status_code}: {e.body or e.message}") from e
+            except openai.APIConnectionError as e:
+                raise TransientError(repr(e)) from e
+            if resp.choices:
+                break
+            # Seen in practice: a 200 response with no choices. Retry, then give up on this turn.
+            if attempt == EMPTY_REPLY_RETRIES:
+                body = getattr(resp, "model_extra", None) or {}
+                raise TransientError(f"no choices in reply after {attempt} attempts: {str(body)[:300]}")
+            time.sleep(2 * attempt)
         choice = resp.choices[0]
         content = choice.message.content or ""
         extra = getattr(choice.message, "model_extra", None) or {}
