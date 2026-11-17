@@ -96,15 +96,15 @@ SESSIONS = [
         {"instr": "Asked what the TypeError about adding a str and an int meant.",
          "exec":  "Asked for the TypeError about adding a str and an int to be fixed."},
         {"instr": "Asked whether their function should print the result or return it.",
-         "exec":  "Asked for their function to be changed to return the result."},
+         "exec":  "Asked for their function to print or return the result, whichever is correct."},
     ]},
     {"week": 2, "exercise": "sum_of_evens(numbers)", "requests": [
         {"instr": "Asked how to check whether a number is even.",
          "exec":  "Asked for the code to check whether a number is even."},
         {"instr": "Asked where to look for the bug that made their loop add every number.",
          "exec":  "Asked for the bug that made their loop add every number to be fixed."},
-        {"instr": "Asked whether their function handled an empty list correctly.",
-         "exec":  "Asked for their function to be changed to handle an empty list."},
+        {"instr": "Asked why their function failed on an empty list.",
+         "exec":  "Asked for their function to be fixed for an empty list."},
     ]},
     {"week": 3, "exercise": "letter_grade(score)", "requests": [
         {"instr": "Asked how to order the if/elif conditions for the grade boundaries.",
