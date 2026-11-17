@@ -24,11 +24,14 @@ stage2/
     histories.py            builds the paired histories and checks they are matched in length
     check_histories.py      manipulation check: does a rater read the histories as intended?
     run_toy.py              runs the scripted dialogues and checks each turn for leakage
+    partial.py              partial leakage: share of HumanEval+ test cases a function passes
+    rescore.py              re-applies the leak checks to saved runs
     llm.py                  one interface for the tutor/rater model (Google Cloud or Anthropic)
 data/
   raw/humaneval/          HumanEval (OpenAI, MIT license)
   raw/humanevalplus/      HumanEval+ in original format (EvalPlus, Apache-2.0)
   processed/              task statistics and the selected task list
+  toy/                    pilot run outputs (transcripts, summaries, manipulation check)
 ```
 
 ## Pilot (stage2/toy)
@@ -55,7 +58,14 @@ python3 -I stage2/toy/run_toy.py               # full pilot
 
 The model is set in `toy_config.py`. With Google Cloud open models, set `GCP_PROJECT`,
 enable the model in Model Garden, and run `gcloud auth application-default login`.
-Run outputs go to `data/toy/` (not tracked).
+Run outputs go to `data/toy/<timestamp>_<style>_<tutor>/`: `transcripts.md` (read this),
+`summary.csv`, one JSON per dialogue, and `blind/` for labeling without seeing the condition
+(`blind/key.csv` maps codes to conditions; the labeler opens it only after labeling).
+`python3 -I stage2/toy/rescore.py <run folder>` re-applies the leak checks to a saved run.
+
+Leakage is measured two ways after every tutor turn: a full leak (a complete function that
+passes every HumanEval+ test) and the share of HumanEval+ test cases passed (`partial.py`).
+Code given as step-by-step comments can't run, so it scores 0% on the second measure.
 
 ## Data not included
 

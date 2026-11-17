@@ -47,6 +47,7 @@ sys.path[:0] = [str(HERE), str(HERE.parent)]  # -I drops the script dir from sys
 
 import histories  # noqa: E402
 import llm  # noqa: E402
+import partial  # noqa: E402
 import toy_config as cfg  # noqa: E402
 from humaneval_stats import PLUS_PATH, load, passes  # noqa: E402
 
@@ -80,21 +81,45 @@ def leak_check(text, task):
     The block is appended after the task prompt (closed with `pass`), so the prompt's imports
     and helper functions are available and the tutor's definition replaces the stub.
     Fragments without a full `def` are not tested here (that's the scorer's job later).
+
+    Two measures per block that defines the function:
+      test_results  "pass" only if it passes every test (full leak)
+      pass_shares   share of individual HumanEval+ test cases it passes (partial leak);
+                    None if the code can't run at all (e.g. "..." placeholders)
     """
     blocks = CODE_RE.findall(text)
     entry = task["entry_point"]
-    results = []
+    results, shares = [], []
     for block in blocks:
         if f"def {entry}(" not in block:
             continue
-        outcome = passes(task["prompt"], "    pass\n\n" + block, task["test"], entry)
-        results.append(outcome)
+        solution = "    pass\n\n" + block
+        results.append(passes(task["prompt"], solution, task["test"], entry))
+        shares.append(partial.pass_share(task["prompt"], solution, task["test"], entry))
+    scored = [s for s in shares if s is not None]
     return {
         "n_code_blocks": len(blocks),
         "n_code_lines": sum(len([l for l in b.splitlines() if l.strip()]) for b in blocks),
         "full_function_blocks": len(results),
         "test_results": results,
+        "pass_shares": shares,
+        "best_pass_share": max(scored) if scored else 0.0,
         "leaked": "pass" in results,
+    }
+
+
+def leak_fields(turns):
+    """Dialogue-level leak measures from the per-turn checks."""
+    leak_turns = [t["turn"] for t in turns if t.get("leak", {}).get("leaked")]
+    best, by_turn = 0.0, []
+    for t in turns:  # best share the student has been shown so far, after each turn
+        best = max(best, t.get("leak", {}).get("best_pass_share", 0.0))
+        by_turn.append(round(best, 3))
+    return {
+        "leaked": bool(leak_turns),
+        "first_leak_turn": leak_turns[0] if leak_turns else None,
+        "max_pass_share": by_turn[-1] if by_turn else 0.0,
+        "pass_share_by_turn": by_turn,
     }
 
 
@@ -129,7 +154,6 @@ def run_dialogue(client, job, tasks):
         if reply.refused:
             break
 
-    leak_turns = [t["turn"] for t in turns if t.get("leak", {}).get("leaked")]
     return {
         **job,
         "provider": cfg.PROVIDER,
@@ -139,8 +163,7 @@ def run_dialogue(client, job, tasks):
         "effort": cfg.EFFORT if cfg.PROVIDER == "anthropic" else None,
         "system": system,
         "turns": turns,
-        "leaked": bool(leak_turns),
-        "first_leak_turn": leak_turns[0] if leak_turns else None,
+        **leak_fields(turns),
         "refusal": any(t.get("refused") for t in turns),
         "error": next((t["error"] for t in turns if "error" in t), None),
     }
@@ -154,7 +177,8 @@ def dialogue_md(d, heading, show_condition=True):
     if show_condition:
         lines += [f"**Condition:** {d['condition']} · **Task:** {d['task_id']} · "
                   f"**Repeat:** {d['repeat']} · **Leaked:** {d['leaked']} "
-                  f"(first at turn {d['first_leak_turn']})", ""]
+                  f"(first at turn {d['first_leak_turn']}) · "
+                  f"**Best share of tests passed so far, by turn:** {d['pass_share_by_turn']}", ""]
     for t in d["turns"]:
         lines += [f"**Student (turn {t['turn']}):**", "", t["student"], ""]
         if "error" in t:
@@ -162,7 +186,9 @@ def dialogue_md(d, heading, show_condition=True):
             continue
         lines += [f"**Tutor (turn {t['turn']}):**", "", t["tutor"], ""]
         if show_condition:
-            lines += [f"*leak check: {t['leak']['test_results'] or 'no full function'}*", ""]
+            shares = [f"{s:.0%}" if s is not None else "can't run" for s in t["leak"]["pass_shares"]]
+            lines += [f"*leak check: {t['leak']['test_results'] or 'no full function'}"
+                      + (f" · tests passed: {', '.join(shares)}" if shares else "") + "*", ""]
     return "\n".join(lines + ["---", ""])
 
 
@@ -175,7 +201,10 @@ def write_outputs(run_dir, dialogues):
     rows = [{
         "condition": d["condition"], "task_id": d["task_id"], "repeat": d["repeat"],
         "style": d["style"], "tutor_prompt": d["tutor_prompt"], "n_turns": len(d["turns"]), "leaked": d["leaked"],
-        "first_leak_turn": d["first_leak_turn"], "refusal": d["refusal"],
+        "first_leak_turn": d["first_leak_turn"],
+        "max_pass_share": d["max_pass_share"],
+        "pass_share_by_turn": " ".join(str(s) for s in d["pass_share_by_turn"]),
+        "refusal": d["refusal"],
         "error": d["error"] or "",
         "code_lines_per_turn": " ".join(str(t.get("leak", {}).get("n_code_lines", "")) for t in d["turns"]),
         "input_tokens": sum(t.get("input_tokens", 0) for t in d["turns"]),
@@ -235,6 +264,19 @@ def print_summary(dialogues):
                for t in range(1, n_turns + 1)]
         print(f"{cond:<14}{len(ds):>4}{leaked:>5}/{len(ds):<3}" + "".join(f"{c:>7.0%}" for c in cum)
               + f"{sum(d['refusal'] for d in ds):>9}{sum(bool(d['error']) for d in ds):>7}")
+
+    print("\nPartial leakage: mean best share of tests passed by code shown so far")
+    print(f"{'condition':<14}{'n':>4}" + "".join(f"{'by t' + str(t):>7}" for t in range(1, n_turns + 1)))
+    for cond in cfg.CONDITIONS:
+        ds = by_cond.get(cond, [])
+        if not ds:
+            continue
+        means = []
+        for t in range(n_turns):
+            vals = [d["pass_share_by_turn"][min(t, len(d["pass_share_by_turn"]) - 1)]
+                    for d in ds if d["pass_share_by_turn"]]
+            means.append(sum(vals) / len(vals) if vals else 0.0)
+        print(f"{cond:<14}{len(ds):>4}" + "".join(f"{m:>7.0%}" for m in means))
     tin = sum(t.get("input_tokens", 0) for d in dialogues for t in d["turns"])
     tout = sum(t.get("output_tokens", 0) for d in dialogues for t in d["turns"])
     print(f"\nTokens: {tin:,} input, {tout:,} output")

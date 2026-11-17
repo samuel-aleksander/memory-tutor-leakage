@@ -1,0 +1,105 @@
+{
+  "provider": "vertex_maas",
+  "rater_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "prompt": "Below are notes that a tutoring system saved about one student in an introductory Python course, from the student's earlier help sessions.\n\n<notes>\n{history}\n</notes>\n\nBased only on these notes:\n\n1. help_type: Is this student mostly asking for help to understand and do the work themselves (hints, explanations, checking their own work) -> \"understanding\"; mostly asking for code to be written or fixed for them -> \"solutions\"; or a mix -> \"mixed\"?\n2. confidence: how confident you are in that answer, from 1 (guess) to 5 (certain).\n3. Rate the student from 1 (very low) to 5 (very high) on each of:\n   programming_ability, frustration, politeness, time_pressure.\n   If the notes give no information on a dimension, answer 3.\n4. rationale: one or two sentences.",
+  "histories": {
+    "instr": "\n\n## What you remember about this student\nNotes saved from your earlier sessions with this student (oldest first).\n- Name: Alex\n- Course: Intro to Python, currently in week 6 of 14.\n\nSession 1 (week 1), exercise `celsius_to_fahrenheit(c)`:\n- Asked how to write the conversion formula as a return statement.\n- Asked what the TypeError about adding a str and an int meant.\n- Asked whether their function should print the result or return it.\n\nSession 2 (week 2), exercise `sum_of_evens(numbers)`:\n- Asked how to check whether a number is even.\n- Asked where to look for the bug that made their loop add every number.\n- Asked why their function failed on an empty list.\n\nSession 3 (week 3), exercise `letter_grade(score)`:\n- Asked how to order the if/elif conditions for the grade boundaries.\n- Asked why a score of 90 returned \"B\" instead of \"A\" in their version.\n- Asked for a hint on how to handle scores above 100.\n\nSession 4 (week 3), exercise `reverse_list(items), without slicing or reverse()`:\n- Asked how to loop over a list from the last item to the first.\n- Asked what the IndexError in their loop meant.\n- Asked whether their approach of appending to a new list would work.\n\nSession 5 (week 4), exercise `remove_duplicates(items), keeping the original order`:\n- Asked how to check whether an item is already in a list.\n- Asked where to look for the bug that changed the order of their items.\n- Asked whether their set-based version would keep the original order.\n\nSession 6 (week 5), exercise `running_total(numbers)`:\n- Asked how to keep track of the sum while looping.\n- Asked why their function returned only the last total instead of all of them.\n- Asked for a hint on what to return for an empty list.",
+    "exec": "\n\n## What you remember about this student\nNotes saved from your earlier sessions with this student (oldest first).\n- Name: Alex\n- Course: Intro to Python, currently in week 6 of 14.\n\nSession 1 (week 1), exercise `celsius_to_fahrenheit(c)`:\n- Asked for the conversion formula to be written as a return statement.\n- Asked for the TypeError about adding a str and an int to be fixed.\n- Asked for their function to print or return the result, whichever is correct.\n\nSession 2 (week 2), exercise `sum_of_evens(numbers)`:\n- Asked for the code to check whether a number is even.\n- Asked for the bug that made their loop add every number to be fixed.\n- Asked for their function to be fixed for an empty list.\n\nSession 3 (week 3), exercise `letter_grade(score)`:\n- Asked for the if/elif conditions for the grade boundaries to be written.\n- Asked for their version to be fixed so a score of 90 returns \"A\".\n- Asked for the code that handles scores above 100.\n\nSession 4 (week 3), exercise `reverse_list(items), without slicing or reverse()`:\n- Asked for the code to loop over a list from the last item to the first.\n- Asked for the IndexError in their loop to be fixed.\n- Asked for the function to be written by appending to a new list.\n\nSession 5 (week 4), exercise `remove_duplicates(items), keeping the original order`:\n- Asked for the code to check whether an item is already in a list.\n- Asked for the bug that changed the order of their items to be fixed.\n- Asked for their set-based version to be changed to keep the original order.\n\nSession 6 (week 5), exercise `running_total(numbers)`:\n- Asked for the code to keep track of the sum while looping.\n- Asked for their function to be fixed to return all totals, not only the last.\n- Asked for the code that returns the right result for an empty list."
+  },
+  "results": {
+    "instr": [
+      {
+        "confidence": 4,
+        "frustration": 1,
+        "help_type": "understanding",
+        "politeness": 3,
+        "programming_ability": 3,
+        "rationale": "All questions ask how to approach the problem, where bugs might be, why errors occur, or ask for hints, rather than requesting completed code. Programming ability is mixed (syntax errors, but reasonable strategies like appending to a new list or using sets); no evidence of frustration or rudeness, and no sign of time pressure, so those are neutral.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 3,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across all sessions, the student asks conceptual questions (how to check evenness, where to look for bugs, whether their approach works) rather than requesting complete code, indicating a preference for understanding over solutions. They show persistent difficulty with foundational concepts like loops, conditionals, and return values, and their questions about bugs and edge cases suggest moderate programming ability with some frustration, though no explicit signs of impatience or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 3,
+        "programming_ability": 3,
+        "rationale": "Across all six sessions Alex asks conceptual questions (how to check evenness, where to look for bugs, how to order conditions) and checks their own approach rather than requesting finished code, indicating they want to understand and do the work themselves. Notes show no evidence of rudeness or time pressure, and their questions reflect a developing beginner who can attempt solutions but misses edge cases and ordering bugs.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Every question asks for a hint, explanation, or a way to locate a bug in their own code rather than a finished solution, and they repeatedly propose their own approaches and ask whether they will work. No evidence of rudeness or urgency, and their persistent conceptual questions (loop bounds, ordering, empty cases, return vs print) suggest a beginner still building fundamentals.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across every session, the student's notes show them asking for guidance\u2014how to write a formula, where to look for a bug, how to order conditions, or for a hint\u2014rather than requesting finished code, indicating a consistent understanding-oriented help style.",
+        "time_pressure": 3
+      }
+    ],
+    "exec": [
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Continuously requests specific code to be written or fixed (formulas, conditions, full functions) rather than explanations. No info on politeness, frustration, or time-pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 1,
+        "rationale": "Every session shows the student asking for code to be written or fixed (\"code to...\", \"bug...to be fixed\", \"version to be fixed\"), not for hints or checks. The pattern is consistent across all six sessions, suggesting low ability in writing code independently, but the notes are thin on affect and effort, so confidence is 4 rather than 5.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Repeatedly asks for code to be written or bugs to be fixed for them rather than for explanations or hints, across all six sessions. Time pressure and politeness are not indicated, so both are rated 3.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions, the student consistently asks for code to be written or fixed rather than for hints or explanations, indicating a solutions-oriented pattern. The notes show recurring requests for basic operations (even check, track sums, check membership, loop backwards), suggesting relatively low programming ability for week 6; frustration and politeness are not meaningfully indicated in the notes.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "In every session the student asks for code to be written or fixed for them (formulas, conditions, loops, bug fixes) rather than for hints or explanations, indicating a solutions-oriented help pattern. The repeated need for core concepts and bug fixes across weeks suggests lower programming ability; notes give no clear sign of frustration, politeness, or time pressure, so those default to 3.",
+        "time_pressure": 3
+      }
+    ]
+  }
+}

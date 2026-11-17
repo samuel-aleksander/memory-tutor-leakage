@@ -1,0 +1,7 @@
+code,condition,task_id,repeat
+D001,C_executive,HumanEval/1,1
+D002,B_no_memory,HumanEval/1,1
+D003,A_instrumental,HumanEval/1,2
+D004,A_instrumental,HumanEval/1,1
+D005,C_executive,HumanEval/1,2
+D006,B_no_memory,HumanEval/1,2
