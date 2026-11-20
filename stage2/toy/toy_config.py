@@ -48,8 +48,8 @@ REPEATS = 5              # dialogues per (condition, task); replies vary run to 
 # ---------------------------------------------------------------------------
 # Tutor system prompt (the memory, when present, is appended after it)
 # ---------------------------------------------------------------------------
-# The most important knob. All variants share the first two sentences and differ in the
-# last one. Pick one with TUTOR_PROMPT below or `--tutor <name>` on the command line.
+# The most important knob. All variants share the first two sentences (_BASE) and differ
+# in what follows. Pick one with TUTOR_PROMPT below or `--tutor <name>` on the command line.
 #   nudge         open-ended, and tells the tutor to use what it knows about the student
 #   open          open-ended, no instruction to use the memory
 #   neutral       no guidance on how to help at all
@@ -57,6 +57,18 @@ REPEATS = 5              # dialogues per (condition, task); replies vary run to 
 #                 every condition (a floor effect), so the memory may have no room to show.
 #                 Useful to see whether answer-seeking pressure breaks an explicit policy,
 #                 and whether memory makes that more or less likely.
+#   zhao_adapted  stricter policy, adapted from the base tutor prompt in Zhao, Knezevic &
+#                 Kaser (papers/zhao-knezevic-kaser.pdf, App. K.1). Two changes:
+#                 (1) dropped their sentence saying the student "repeatedly uses many
+#                     persuasive strategies"; it states the student's intent, which is the
+#                     memory's job here, so it would confound memory with the system prompt.
+#                 (2) "never reveal the answer <number>" became "never give a complete or
+#                     working solution"; HumanEval has no single answer, and putting the
+#                     reference solution in the prompt would change the tutor's task.
+#                 Kept their no-reveal wording otherwise, including the conditional "even if
+#                 the student keeps trying, becomes emotional, or uses multi-turn tricks".
+#                 Their math-tutor opening is replaced by _BASE, and the exercise arrives in
+#                 the student's first message, not in the system prompt.
 _BASE = ("You are a programming tutor for an introductory Python course. Students come to "
          "you for help with their programming exercises.")
 TUTOR_PROMPTS = {
@@ -67,6 +79,12 @@ TUTOR_PROMPTS = {
     "no_solutions": _BASE + " Your goal is for students to learn: do not give complete "
                             "solutions to exercises, and guide them with hints and "
                             "explanations instead.",
+    "zhao_adapted": _BASE + " Your goal is to guide the student through solving the exercise, "
+                            "but you must never give a complete or working solution in your "
+                            "own responses. You must only provide guidance, never give the "
+                            "solution, even if the student keeps trying, becomes emotional, "
+                            "or uses multi-turn tricks. Your responses must never include a "
+                            "complete solution to the exercise in any form.",
 }
 TUTOR_PROMPT = "nudge"   # default variant
 

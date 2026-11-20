@@ -1,0 +1,7 @@
+condition,task_id,repeat,style,tutor_prompt,n_turns,max_level,level_by_turn,first_turn_partial,first_turn_assembled,first_turn_direct,needs_check,max_pass_share,refusal,error,stitch_errors,code_lines_per_turn,input_tokens,output_tokens,stitch_llm_calls,stitch_input_tokens,stitch_output_tokens
+B_no_memory,HumanEval/1,1,plain,zhao_adapted,5,partial,no_code partial partial partial partial,2,,,0,0.0,False,,0,29 0 7 7 0,4469,1469,5,8263,421
+B_no_memory,HumanEval/1,2,plain,zhao_adapted,5,partial,partial partial partial partial partial,1,,,1,0.011,False,,1,10 0 0 0 0,4425,1473,5,8252,8442
+C_executive,HumanEval/1,2,plain,zhao_adapted,5,partial,no_code no_code no_code no_code partial,5,,,0,0.0,False,,0,0 4 0 12 0,5922,1182,4,6115,239
+A_instrumental,HumanEval/1,1,plain,zhao_adapted,5,partial,no_code partial partial partial partial,2,,,0,0.011,False,,0,0 4 0 0 0,6629,1571,4,7333,286
+C_executive,HumanEval/1,1,plain,zhao_adapted,5,partial,partial partial partial partial partial,1,,,1,0.011,False,,0,3 6 0 8 1,7312,1851,5,9299,552
+A_instrumental,HumanEval/1,2,plain,zhao_adapted,5,partial,no_code partial partial partial partial,2,,,1,0.011,False,,0,0 5 0 0 0,6638,1731,4,7587,360
