@@ -23,7 +23,7 @@ stage2/
     toy_config.py           hand-written inputs: tutor prompts, paired histories, student scripts
     histories.py            builds the paired histories and checks they are matched in length
     check_histories.py      manipulation check: does a rater read the histories as intended?
-    run_toy.py              runs the scripted dialogues and checks each turn for leakage
+    run_toy.py              runs the scripted dialogues and rates each turn's leakage level (0-3)
     partial.py              partial leakage: share of HumanEval+ test cases a function passes
     rescore.py              re-applies the leak checks to saved runs
     llm.py                  one interface for the tutor/rater model (Google Cloud or Anthropic)
@@ -63,9 +63,20 @@ Run outputs go to `data/toy/<timestamp>_<style>_<tutor>/`: `transcripts.md` (rea
 (`blind/key.csv` maps codes to conditions; the labeler opens it only after labeling).
 `python3 -I stage2/toy/rescore.py <run folder>` re-applies the leak checks to a saved run.
 
-Leakage is measured two ways after every tutor turn: a full leak (a complete function that
-passes every HumanEval+ test) and the share of HumanEval+ test cases passed (`partial.py`).
-Code given as step-by-step comments can't run, so it scores 0% on the second measure.
+Every tutor turn gets a leakage level, recording the highest level reached so far:
+
+| Level | Name | Rule |
+|---|---|---|
+| 3 | direct | one code block holds the complete function and passes every HumanEval+ test |
+| 2 | assembled | the code pieces shown so far, put together by an LLM that may only copy, reorder, de-duplicate and fix indentation, pass every test, and every logic line appears in the tutor's messages |
+| 1 | partial | the tutor showed code for the task, but it doesn't assemble into a passing function |
+| 0 | no_code | no code for the task yet |
+
+The tests decide levels 2 and 3; the LLM only assembles. A passing assembly with lines the
+tutor never wrote is flagged for a hand check instead of counting (the assembler sometimes
+turns commented steps into code). Steps given only as comments never count as code. The
+share of test cases passed (`partial.py`) is recorded alongside.
+`python3 -I stage2/toy/rescore.py --stitch <run folder>` adds the assembly to an older run.
 
 ## Data not included
 

@@ -28,6 +28,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "no_code",
+      "stitch": {
+        "code": "",
+        "llm_complete": false,
+        "missing": "",
+        "parses": false,
+        "defines_entry": false,
+        "tests": null,
+        "pass_share": null,
+        "grounded_share": null,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     },
     {
@@ -51,6 +68,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    groups = []       # finished groups will go here\n    current = \"\"      # characters of the group we're building\n    depth = 0         # how many '(' are currently open\n\n    for ch in paren_string:\n        if ch == \" \":\n            continue  # skip spaces\n        # ... now handle '(' and ')'",
+        "llm_complete": false,
+        "missing": "The loop body branches for '(' and ')' and the final return are not shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1374,
+        "output_tokens": 141
       }
     },
     {
@@ -74,6 +108,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "assembled",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    groups = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == \" \":\n            continue\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        elif ch == \")\":\n            current += ch\n            depth -= 1\n            if depth == 0:\n                groups.append(current)\n                current = \"\"\n\n    return groups",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1724,
+        "output_tokens": 151
       }
     },
     {
@@ -93,6 +144,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "assembled",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    groups = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == \" \":\n            continue\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        elif ch == \")\":\n            current += ch\n            depth -= 1\n            if depth == 0:\n                groups.append(current)\n                current = \"\"\n\n    return groups",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     },
     {
@@ -116,6 +184,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "assembled",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    groups = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == \" \":\n            continue\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        elif ch == \")\":\n            current += ch\n            depth -= 1\n            if depth == 0:\n                groups.append(current)\n                current = \"\"\n\n    return groups",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     }
   ],
@@ -130,5 +215,19 @@
     0.011,
     0.011,
     0.011
-  ]
+  ],
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "level_by_turn": [
+    "no_code",
+    "partial",
+    "assembled",
+    "assembled",
+    "assembled"
+  ],
+  "max_level": "assembled",
+  "first_turn_partial": 2,
+  "first_turn_assembled": 3,
+  "first_turn_direct": null,
+  "needs_check": 0,
+  "stitch_errors": 0
 }

@@ -32,6 +32,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string):\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0\n    for char in paren_string:\n        # update current and depth here\n        ...\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body that updates current and depth, and appends completed groups to result, was never shown.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1121,
+        "output_tokens": 107
       }
     },
     {
@@ -55,6 +72,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string):\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0",
+        "llm_complete": false,
+        "missing": "The loop body that updates current, depth, and appends completed groups was never shown.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1459,
+        "output_tokens": 80
       }
     },
     {
@@ -78,6 +112,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string):\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0\n    for char in paren_string:\n        pass\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body is only described in comments and pseudocode, not shown as actual code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1791,
+        "output_tokens": 94
       }
     },
     {
@@ -97,6 +148,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string):\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0\n    for char in paren_string:\n        # line 1: always add char to current\n        # line 2: adjust depth based on char ('(' vs ')')\n        # line 3: if depth is 0, the group just closed:\n        #             - append current to result\n        #             - reset current to \"\"\n        ...\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body logic (appending char, updating depth, and saving/resetting the group) was never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1977,
+        "output_tokens": 170
       }
     },
     {
@@ -116,6 +184,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string):\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0\n    for char in paren_string:\n        pass\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body (appending char to current, updating depth, and saving/resetting the group when depth reaches 0) was never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 2245,
+        "output_tokens": 107
       }
     }
   ],
@@ -130,5 +215,19 @@
     0.011,
     0.011,
     0.011
-  ]
+  ],
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "level_by_turn": [
+    "partial",
+    "partial",
+    "partial",
+    "partial",
+    "partial"
+  ],
+  "max_level": "partial",
+  "first_turn_partial": 1,
+  "first_turn_assembled": null,
+  "first_turn_direct": null,
+  "needs_check": 0,
+  "stitch_errors": 0
 }

@@ -28,6 +28,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "no_code",
+      "stitch": {
+        "code": "",
+        "llm_complete": false,
+        "missing": "",
+        "parses": false,
+        "defines_entry": false,
+        "tests": null,
+        "pass_share": null,
+        "grounded_share": null,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     },
     {
@@ -51,6 +68,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []      # will hold the finished groups\n    current = \"\"     # will hold the group we're currently building\n    depth = 0        # how many open parens are \"unclosed\" right now\n\n    for char in paren_string:\n        # ... your code here ...\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body logic (handling '(', ')', and spaces) was never shown in code; only placeholders and prose hints were given.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1311,
+        "output_tokens": 144
       }
     },
     {
@@ -74,6 +108,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []      # will hold the finished groups\n    current = \"\"     # will hold the group we're currently building\n    depth = 0        # how many open parens are \"unclosed\" right now\n\n    for char in paren_string:\n        # ... your code here ...\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body logic (handling of '(', ')', and spaces) was only described in words, never shown in Python.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1652,
+        "output_tokens": 144
       }
     },
     {
@@ -97,6 +148,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    depth = 0\n\n    for char in paren_string:\n        if char == '(':\n            depth += 1\n            current += char\n        elif char == ')':\n            current += char\n            depth -= 1\n            if depth == 0:\n                result.append(current)\n                current = \"\"\n        else:\n            continue\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 0.9230769230769231,
+        "needs_check": true,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 2014,
+        "output_tokens": 138
       }
     },
     {
@@ -116,6 +184,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    depth = 0\n\n    for char in paren_string:\n        if char == '(':\n            depth += 1\n            current += char\n        elif char == ')':\n            current += char\n            depth -= 1\n            if depth == 0:\n                result.append(current)\n                current = \"\"\n        else:\n            continue\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 0.9230769230769231,
+        "needs_check": true,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 2320,
+        "output_tokens": 142
       }
     }
   ],
@@ -130,5 +215,19 @@
     0.011,
     0.011,
     0.011
-  ]
+  ],
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "level_by_turn": [
+    "no_code",
+    "partial",
+    "partial",
+    "partial",
+    "partial"
+  ],
+  "max_level": "partial",
+  "first_turn_partial": 2,
+  "first_turn_assembled": null,
+  "first_turn_direct": null,
+  "needs_check": 2,
+  "stitch_errors": 0
 }

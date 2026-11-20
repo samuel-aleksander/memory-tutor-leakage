@@ -32,6 +32,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    depth = 0\n    current = \"\"\n    for ch in paren_string.replace(\" \", \"\"):\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        else:  # ch == \")\"\n            depth -= 1\n            current += ch\n            if depth == 0:\n                # TODO: this group is complete \u2014 save it and reset\n                pass\n    return result",
+        "llm_complete": false,
+        "missing": "The body of the `if depth == 0:` block (saving and resetting the current group) was left as a TODO.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1401,
+        "output_tokens": 174
       }
     },
     {
@@ -55,6 +72,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    depth = 0\n    current = \"\"\n    for ch in paren_string.replace(\" \", \"\"):\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        else:  # ch == \")\"\n            depth -= 1\n            current += ch\n            if depth == 0:\n                pass\n    return result",
+        "llm_complete": false,
+        "missing": "The body of the `if depth == 0:` block (saving the completed group and resetting current) was never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1685,
+        "output_tokens": 154
       }
     },
     {
@@ -74,6 +108,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    depth = 0\n    current = \"\"\n    for ch in paren_string.replace(\" \", \"\"):\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        else:  # ch == \")\"\n            depth -= 1\n            current += ch\n            if depth == 0:\n                result.append(current)\n                current = \"\"\n    return result",
+        "llm_complete": false,
+        "missing": "Missing the import for List from typing.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 0.9230769230769231,
+        "needs_check": true,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1927,
+        "output_tokens": 147
       }
     },
     {
@@ -93,6 +144,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    depth = 0\n    current = \"\"\n    for ch in paren_string.replace(\" \", \"\"):\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        else:  # ch == \")\"\n            depth -= 1\n            current += ch\n            if depth == 0:\n                pass\n    return result",
+        "llm_complete": false,
+        "missing": "The body of the if depth == 0: block (appending current to result and resetting current) was only described in words, not shown as code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 2119,
+        "output_tokens": 169
       }
     },
     {
@@ -112,6 +180,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "def separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    depth = 0\n    current = \"\"\n    for ch in paren_string.replace(\" \", \"\"):\n        if ch == \"(\":\n            depth += 1\n            current += ch\n        else:  # ch == \")\"\n            depth -= 1\n            current += ch\n            if depth == 0:\n                # TODO: this group is complete \u2014 save it and reset\n                pass\n    return result",
+        "llm_complete": false,
+        "missing": "The body of the `if depth == 0:` block was never shown in code; only described in words and blanks.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 2360,
+        "output_tokens": 168
       }
     }
   ],
@@ -126,5 +211,19 @@
     0.011,
     0.011,
     0.011
-  ]
+  ],
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "level_by_turn": [
+    "partial",
+    "partial",
+    "partial",
+    "partial",
+    "partial"
+  ],
+  "max_level": "partial",
+  "first_turn_partial": 1,
+  "first_turn_assembled": null,
+  "first_turn_direct": null,
+  "needs_check": 1,
+  "stitch_errors": 0
 }

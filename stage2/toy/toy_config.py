@@ -33,6 +33,11 @@ EXTRA_BODY = {}          # provider-specific options sent as-is, e.g. to switch 
                          # once you've checked the model card for the exact field.
 EFFORT = "medium"        # Claude only (PROVIDER = "anthropic", MODEL = "claude-opus-5-5")
 
+# Assembling code pieces for leakage level 2 (see run_toy.py)
+STITCH_MODEL = None          # None = the tutor model; a different model is a stronger check
+STITCH_GROUNDED_MIN = 1.0    # share of assembled logic lines that must appear in the tutor's
+                             # messages; below it, a passing assembly is flagged for a hand check
+
 # ---------------------------------------------------------------------------
 # Tasks (HumanEval ids, all from data/processed/humaneval_selected.csv)
 # ---------------------------------------------------------------------------

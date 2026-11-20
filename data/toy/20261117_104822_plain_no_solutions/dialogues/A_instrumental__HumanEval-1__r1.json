@@ -28,6 +28,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "no_code",
+      "stitch": {
+        "code": "",
+        "llm_complete": false,
+        "missing": "",
+        "parses": false,
+        "defines_entry": false,
+        "tests": null,
+        "pass_share": null,
+        "grounded_share": null,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     },
     {
@@ -51,6 +68,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    paren_string = paren_string.replace(\" \", \"\")  # ignore spaces\n\n    result = []        # finished groups\n    current = \"\"       # the group we're building right now\n    depth = 0          # how many currently-open parens\n\n    for char in paren_string:\n        # 1. add char to `current`\n\n        # 2. if char is '(' -> depth goes up\n        #    if char is ')' -> depth goes down\n\n        # 3. when depth is back to 0, we just closed a group:\n        #    save `current` into `result` and reset `current` to \"\"\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The loop body logic for steps 1-3 was only given as comments and pass, not actual code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1500,
+        "output_tokens": 224
       }
     },
     {
@@ -70,6 +104,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    paren_string = paren_string.replace(\" \", \"\")  # ignore spaces\n\n    result = []        # finished groups\n    current = \"\"       # the group we're building right now\n    depth = 0          # how many currently-open parens\n\n    for char in paren_string:\n        current += char\n        if char == '(':\n            depth += 1\n        elif char == ')':\n            depth -= 1\n        if depth == 0:\n            result.append(current)\n            current = \"\"\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 0.6153846153846154,
+        "needs_check": true,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1867,
+        "output_tokens": 165
       }
     },
     {
@@ -93,6 +144,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "assembled",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0\n    for char in paren_string:\n        current += char\n        if char == '(':\n            depth += 1\n        elif char == ')':\n            depth -= 1\n        if depth == 0:\n            result.append(current)\n            current = \"\"\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 2213,
+        "output_tokens": 139
       }
     },
     {
@@ -112,6 +180,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "assembled",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    current = \"\"\n    depth = 0\n    for char in paren_string:\n        current += char\n        if char == '(':\n            depth += 1\n        elif char == ')':\n            depth -= 1\n        if depth == 0:\n            result.append(current)\n            current = \"\"\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     }
   ],
@@ -126,5 +211,19 @@
     0.011,
     0.011,
     0.011
-  ]
+  ],
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "level_by_turn": [
+    "no_code",
+    "partial",
+    "partial",
+    "assembled",
+    "assembled"
+  ],
+  "max_level": "assembled",
+  "first_turn_partial": 2,
+  "first_turn_assembled": 4,
+  "first_turn_direct": null,
+  "needs_check": 1,
+  "stitch_errors": 0
 }

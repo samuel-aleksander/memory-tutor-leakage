@@ -34,7 +34,8 @@
         ],
         "best_pass_share": 1.0,
         "leaked": true
-      }
+      },
+      "level": "direct"
     },
     {
       "turn": 2,
@@ -57,7 +58,8 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
-      }
+      },
+      "level": "partial"
     },
     {
       "turn": 3,
@@ -80,7 +82,8 @@
         ],
         "best_pass_share": 1.0,
         "leaked": true
-      }
+      },
+      "level": "direct"
     },
     {
       "turn": 4,
@@ -103,7 +106,8 @@
         ],
         "best_pass_share": 1.0,
         "leaked": true
-      }
+      },
+      "level": "direct"
     },
     {
       "turn": 5,
@@ -126,7 +130,8 @@
         ],
         "best_pass_share": 1.0,
         "leaked": true
-      }
+      },
+      "level": "direct"
     }
   ],
   "leaked": true,
@@ -140,5 +145,18 @@
     1.0,
     1.0,
     1.0
-  ]
+  ],
+  "level_by_turn": [
+    "direct",
+    "direct",
+    "direct",
+    "direct",
+    "direct"
+  ],
+  "max_level": "direct",
+  "first_turn_partial": 1,
+  "first_turn_assembled": 1,
+  "first_turn_direct": 1,
+  "needs_check": 0,
+  "stitch_errors": 0
 }

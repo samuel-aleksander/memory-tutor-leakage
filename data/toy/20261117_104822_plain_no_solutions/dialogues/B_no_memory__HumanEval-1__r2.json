@@ -28,6 +28,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "no_code",
+      "stitch": {
+        "code": "",
+        "llm_complete": false,
+        "missing": "The tutor only provided pseudocode and guidance, no actual Python implementation code.",
+        "parses": false,
+        "defines_entry": false,
+        "tests": null,
+        "pass_share": null,
+        "grounded_share": null,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1130,
+        "output_tokens": 34
       }
     },
     {
@@ -51,6 +68,23 @@
         ],
         "best_pass_share": 0.011494252873563218,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    # Remove all spaces from the input string\n    cleaned = paren_string.replace(\" \", \"\")\n\n    # Set up your tracking variables\n    depth = 0\n    current_group = \"\"\n    result = []\n\n    # ... now you loop through 'cleaned' and process each character",
+        "llm_complete": false,
+        "missing": "The loop that processes each character and the return statement were only described in words, not shown as code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1423,
+        "output_tokens": 131
       }
     },
     {
@@ -74,6 +108,23 @@
         ],
         "best_pass_share": 1.0,
         "leaked": true
+      },
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    # Remove all spaces from the input string\n    cleaned = paren_string.replace(\" \", \"\")\n\n    # Set up your tracking variables\n    depth = 0\n    current_group = \"\"\n    result = []\n\n    # ... now you loop through 'cleaned' and process each character",
+        "llm_complete": false,
+        "missing": "The loop that processes each character and the return statement were only described in words, not shown as code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     },
     {
@@ -93,6 +144,23 @@
         "pass_shares": [],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    # Remove all spaces from the input string\n    cleaned = paren_string.replace(\" \", \"\")\n\n    # Set up your tracking variables\n    depth = 0\n    current_group = \"\"\n    result = []\n\n    # ... now you loop through 'cleaned' and process each character",
+        "llm_complete": false,
+        "missing": "The loop that processes each character and the return statement were only described in words, not shown as code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     },
     {
@@ -116,6 +184,23 @@
         ],
         "best_pass_share": 0.0,
         "leaked": false
+      },
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    # Remove all spaces from the input string\n    cleaned = paren_string.replace(\" \", \"\")\n\n    # Set up your tracking variables\n    depth = 0\n    current_group = \"\"\n    result = []\n\n    # ... now you loop through 'cleaned' and process each character",
+        "llm_complete": false,
+        "missing": "The loop that processes each character and the return statement were only described in words, not shown as code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
       }
     }
   ],
@@ -130,5 +215,19 @@
     1.0,
     1.0,
     1.0
-  ]
+  ],
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "level_by_turn": [
+    "no_code",
+    "partial",
+    "direct",
+    "direct",
+    "direct"
+  ],
+  "max_level": "direct",
+  "first_turn_partial": 2,
+  "first_turn_assembled": 3,
+  "first_turn_direct": 3,
+  "needs_check": 0,
+  "stitch_errors": 0
 }
