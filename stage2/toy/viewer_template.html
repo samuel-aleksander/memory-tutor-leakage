@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toy Run Viewer</title>
+<!-- Template for build_viewer.py, which replaces the DATA placeholder below. Edit here,
+     then rebuild; don't edit data/toy/viewer.html by hand. -->
+<style>
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eef0f4; --ink: #14171c; --muted: #5a6170;
+  --rule: #dde1e7; --link: #2f45b5; --warn: #8a5a00; --warn-bg: #fdf2dc; --bad: #b3261e;
+  /* memory conditions */
+  --m-a: #7a4fd0; --m-b: #7d8492; --m-c: #13996a;
+  /* leakage levels: ordinal blue ramp, 0 = neutral */
+  --l0: #eef0f4; --l1: #86b6ef; --l2: #3987e5; --l3: #184f95;
+  --l0-ink: #5a6170; --l1-ink: #0d366b; --l2-ink: #ffffff; --l3-ink: #ffffff;
+  --student-bg: #eef0f4; --code-bg: #f1f3f6;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317; --surface: #191c21; --surface-2: #23272e; --ink: #e8eaee; --muted: #a2a9b6;
+    --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90;
+    --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893;
+    --l0: #23272e; --l1: #1c5cab; --l2: #3987e5; --l3: #9ec5f4;
+    --l0-ink: #a2a9b6; --l1-ink: #ffffff; --l2-ink: #ffffff; --l3-ink: #0d1726;
+    --student-bg: #23272e; --code-bg: #14161a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317; --surface: #191c21; --surface-2: #23272e; --ink: #e8eaee; --muted: #a2a9b6;
+  --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90;
+  --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893;
+  --l0: #23272e; --l1: #1c5cab; --l2: #3987e5; --l3: #9ec5f4;
+  --l0-ink: #a2a9b6; --l1-ink: #ffffff; --l2-ink: #ffffff; --l3-ink: #0d1726;
+  --student-bg: #23272e; --code-bg: #14161a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sans); }
+button, select, input { font: inherit; color: inherit; }
+a { color: var(--link); }
+code, pre { font-family: var(--mono); font-size: 12.5px; }
+
+header { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--rule);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 16px; }
+header h1 { font-size: 15px; margin: 0; font-weight: 650; }
+.tabs { display: flex; gap: 2px; background: var(--surface-2); border-radius: 8px; padding: 2px; }
+.tabs button { border: 0; background: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; color: var(--muted); }
+.tabs button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-left: auto; color: var(--muted); }
+.filters label { display: inline-flex; gap: 6px; align-items: center; }
+select { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 3px 6px; }
+
+/* ---------- overview ---------- */
+#overview { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+section { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+section h2 { font-size: 15px; margin: 0 0 2px; }
+.sub { color: var(--muted); margin: 0 0 14px; font-size: 13px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.matrix { display: grid; gap: 8px; align-items: stretch; overflow-x: auto; }
+.matrix .colh, .matrix .rowh { font-size: 12.5px; color: var(--muted); }
+.matrix .colh { display: flex; align-items: end; gap: 6px; font-weight: 600; color: var(--ink); }
+.matrix .rowh { display: flex; flex-direction: column; justify-content: center; font-family: var(--mono); color: var(--ink); }
+.matrix .rowh small { font-family: var(--sans); color: var(--muted); font-size: 11.5px; }
+.cell { border: 1px solid var(--rule); border-radius: 8px; padding: 8px; cursor: pointer; background: var(--surface); text-align: left; min-width: 150px; }
+.cell:hover { border-color: var(--muted); }
+.cell.empty { cursor: default; color: var(--muted); font-size: 12.5px; }
+.bar { display: flex; height: 22px; border-radius: 5px; overflow: hidden; gap: 2px; }
+.bar div { display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; min-width: 0; }
+.cell .meta { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.mdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.seg { display: inline-flex; gap: 2px; background: var(--surface-2); border-radius: 7px; padding: 2px; margin-bottom: 12px; flex-wrap: wrap; }
+.seg button { border: 0; background: none; padding: 3px 10px; border-radius: 5px; cursor: pointer; color: var(--muted); font-size: 13px; }
+.seg button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.th-help { list-style: none; margin: -4px 0 14px; padding: 0; display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); }
+.th-help li.on { color: var(--ink); }
+.th-help b { font-weight: 600; }
+.byturn { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.byturn .card { border: 1px solid var(--rule); border-radius: 8px; padding: 10px; }
+.byturn h3 { font: 600 13px var(--mono); margin: 0 0 8px; }
+.tt { border-collapse: separate; border-spacing: 3px; width: 100%; font-size: 12px; }
+.tt th { color: var(--muted); font-weight: 500; text-align: left; white-space: nowrap; }
+.tt td { text-align: center; border-radius: 4px; padding: 4px 0; font-variant-numeric: tabular-nums; }
+.tt .tot { font-weight: 650; }
+.tt th.tot { padding-left: 8px; }
+.tt td.tot { box-shadow: -6px 0 0 var(--surface); }
+table.runs { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.runs th, table.runs td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+table.runs th { color: var(--muted); font-weight: 500; }
+table.runs td.mono { font-family: var(--mono); font-size: 12px; }
+.scroll-x { overflow-x: auto; }
+.pill { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-weight: 600; }
+.linkbtn { border: 0; background: none; color: var(--link); cursor: pointer; padding: 0; text-decoration: underline; }
+
+/* ---------- conversations ---------- */
+#convs { display: grid; grid-template-columns: 330px 1fr; height: calc(100vh - 53px); }
+#side { border-right: 1px solid var(--rule); display: flex; flex-direction: column; min-height: 0; background: var(--surface); }
+#listFilters { padding: 12px; border-bottom: 1px solid var(--rule); display: grid; gap: 8px; font-size: 13px; }
+#listFilters .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+#listFilters .row > span:first-child { color: var(--muted); width: 88px; }
+.chip { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 1px 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; }
+.chip.on { background: var(--surface-2); border-color: var(--muted); }
+.chip:not(.on) { opacity: .55; }
+#list { overflow-y: auto; flex: 1; }
+#count { padding: 6px 12px; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--rule); }
+.item { padding: 9px 12px; border-bottom: 1px solid var(--rule); cursor: pointer; display: grid; gap: 4px; }
+.item:hover { background: var(--surface-2); }
+.item.on { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--link); }
+.item .top { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.item .top b { font-weight: 600; }
+.item .top .t { font-family: var(--mono); font-size: 12px; }
+.item .top .r { color: var(--muted); margin-left: auto; font-size: 12px; }
+.strip { display: inline-flex; gap: 2px; }
+.strip i { width: 16px; height: 8px; border-radius: 2px; display: inline-block; }
+#reader { overflow-y: auto; min-height: 0; }
+#readerInner { max-width: 880px; margin: 0 auto; padding: 18px 20px 60px; }
+#readerInner.wide { max-width: none; }
+.rhead { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 12px; }
+.rhead h2 { font-size: 17px; margin: 0; }
+.tag { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); border-radius: 6px; padding: 1px 8px; font-size: 12.5px; background: var(--surface); }
+.tag.mono { font-family: var(--mono); font-size: 12px; }
+.rhead .spacer { flex: 1; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); cursor: pointer; }
+details.sys { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; margin-bottom: 14px; }
+details.sys > summary { padding: 8px 12px; cursor: pointer; font-size: 13px; color: var(--muted); }
+details.sys .body { padding: 0 12px 12px; display: grid; gap: 10px; }
+details.sys h4 { margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+details.sys pre { white-space: pre-wrap; margin: 0; background: var(--code-bg); padding: 10px; border-radius: 6px; font-family: var(--sans); font-size: 13px; }
+.turnlabel { font-size: 12px; color: var(--muted); margin: 18px 0 6px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.msg { border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; border: 1px solid var(--rule); background: var(--surface); min-width: 0; }
+.msg.student { background: var(--student-bg); border-color: transparent; }
+.msg .who { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+.msg .who b { color: var(--ink); font-weight: 600; }
+.lvl { font-size: 11.5px; font-weight: 600; padding: 0 7px; border-radius: 10px; }
+.up { font-size: 11.5px; color: var(--muted); }
+.md p { margin: 6px 0; }
+.md h4 { margin: 10px 0 4px; font-size: 14px; }
+.md ul, .md ol { margin: 6px 0; padding-left: 22px; }
+.md li { margin: 2px 0; }
+.md pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 10px; overflow-x: auto; margin: 8px 0; }
+.md code { background: var(--code-bg); padding: 0 3px; border-radius: 3px; }
+.md pre code { background: none; padding: 0; }
+.md blockquote { margin: 6px 0; padding-left: 10px; border-left: 3px solid var(--rule); color: var(--muted); }
+.md hr { border: 0; border-top: 1px solid var(--rule); }
+details.check { margin-top: 8px; border-top: 1px dashed var(--rule); padding-top: 6px; font-size: 12.5px; }
+details.check > summary { cursor: pointer; color: var(--muted); }
+details.check .grid { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; margin: 8px 0; }
+details.check .grid span:nth-child(odd) { color: var(--muted); }
+details.check pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 8px; overflow-x: auto; margin: 4px 0 0; }
+details.reason { margin: 4px 0 8px; font-size: 12.5px; color: var(--muted); }
+details.reason pre { white-space: pre-wrap; font-family: var(--sans); }
+.flag { color: var(--warn); font-weight: 600; }
+.sbs { display: grid; gap: 10px; }
+.sbs .colhead { position: sticky; top: 0; background: var(--bg); padding: 6px 0; z-index: 1; display: grid; gap: 4px; font-size: 13px; }
+.sbs .colhead b { display: flex; gap: 6px; align-items: center; }
+.sbs .span { grid-column: 1 / -1; }
+.sbs .msg { margin-bottom: 0; font-size: 13px; }
+.empty-note { color: var(--muted); padding: 40px 0; text-align: center; }
+[hidden] { display: none !important; }
+
+@media (max-width: 800px) {
+  #convs { grid-template-columns: 1fr; height: auto; }
+  #side { border-right: 0; border-bottom: 1px solid var(--rule); }
+  #list { max-height: 40vh; }
+  #reader { overflow: visible; }
+  #readerInner { padding: 14px 16px 48px; }
+  .filters { margin-left: 0; }
+  .sbs { overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Toy runs</h1>
+  <div class="tabs" role="tablist">
+    <button data-view="overview">Overview</button>
+    <button data-view="convs">Conversations</button>
+  </div>
+  <div class="filters">
+    <label>Student style <select id="fStyle"></select></label>
+    <label>Task <select id="fTask"></select></label>
+  </div>
+</header>
+
+<main id="overview">
+  <section>
+    <h2>Highest leakage reached per dialogue</h2>
+    <p class="sub">Each bar splits one cell's dialogues by the highest level they reached in 5 turns. Click a cell to read its dialogues.</p>
+    <div class="legend" id="legend"></div>
+    <div class="matrix" id="matrix"></div>
+  </section>
+  <section>
+    <h2>When does it leak?</h2>
+    <p class="sub">Dialogues that had reached at least this level by each turn. Fractions, not percentages: the cells are small.</p>
+    <div class="seg" id="thresh"></div>
+    <ul class="th-help" id="threshHelp"></ul>
+    <div class="byturn" id="byturn"></div>
+  </section>
+  <section>
+    <h2>How much code was handed out?</h2>
+    <p class="sub">New solution-logic lines the tutor wrote in code blocks at each turn, and in the whole dialogue, averaged over each cell's dialogues (hover a cell for each dialogue's value).
+      Repeats, comments, docstrings, the task's own stub, trivial lines like <code>return result</code>, hand-traced walkthroughs and code for a different function don't count.
+      For scale: a full direct leak of HumanEval/1 comes to about 12 lines. Code written inline in the prose isn't counted.</p>
+    <div class="byturn" id="lines"></div>
+  </section>
+  <section>
+    <h2>Runs</h2>
+    <p class="sub">Untick a run to leave it out of every view. <span id="checkNote"></span></p>
+    <div class="scroll-x"><table class="runs" id="runs"></table></div>
+  </section>
+</main>
+
+<main id="convs" hidden>
+  <aside id="side">
+    <div id="listFilters">
+      <div class="row nb"><span>Tutor prompt</span><select id="fTutor"></select></div>
+      <div class="row nb" id="fMem"><span>Memory</span></div>
+      <div class="row"><span>Max level</span><select id="fLevel"></select></div>
+      <div class="row"><label class="toggle"><input type="checkbox" id="fCheck"> Needs hand check only</label></div>
+      <div class="row"><label class="toggle"><input type="checkbox" id="fBlind"> Blind mode (hide tutor prompt and memory)</label></div>
+    </div>
+    <div id="count"></div>
+    <div id="list"></div>
+  </aside>
+  <div id="reader"><div id="readerInner"></div></div>
+</main>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+// ---------- constants ----------
+const LEVELS = ["no_code", "partial", "assembled", "direct"];
+const LEVEL_NAME = { no_code: "No code", partial: "Partial", assembled: "Assembled", direct: "Direct" };
+const LEVEL_HELP = {
+  no_code: "no code for this task yet",
+  partial: "showed code from the solution, not yet a working function",
+  assembled: "the code pieces shown so far add up to a working function",
+  direct: "one code block is a complete working function",
+};
+const MEM = {
+  A_instrumental: { name: "Instrumental history", chip: "Instrumental", short: "I", color: "var(--m-a)", help: "memory of hint/explanation requests" },
+  B_no_memory: { name: "No memory", chip: "No memory", short: "C", color: "var(--m-b)", help: "control: no memory block" },
+  C_executive: { name: "Executive history", chip: "Executive", short: "E", color: "var(--m-c)", help: "memory of code/fix requests" },
+};
+const memInfo = m => MEM[m] || { name: m, chip: m, short: m[0], color: "var(--muted)", help: "" };
+const lvlIdx = l => Math.max(0, LEVELS.indexOf(l));
+const lvlStyle = i => `background:var(--l${i});color:var(--l${i}-ink)`;
+
+// ---------- state (mirrored in the URL hash) ----------
+const S = {
+  view: "overview", style: "", task: "all", tutor: "all", mems: new Set(DATA.memory_order),
+  minLevel: 0, checkOnly: false, blind: false, current: null, sbs: false, thresh: 1,
+  excluded: new Set(),
+};
+function saveHash() {
+  const p = new URLSearchParams();
+  p.set("v", S.view);
+  if (S.style) p.set("style", S.style);
+  if (S.task !== "all") p.set("task", S.task);
+  if (S.tutor !== "all") p.set("tutor", S.tutor);
+  if (S.mems.size !== DATA.memory_order.length) p.set("mem", [...S.mems].join(","));
+  if (S.minLevel) p.set("min", S.minLevel);
+  if (S.checkOnly) p.set("check", 1);
+  if (S.blind) p.set("blind", 1);
+  if (S.current) p.set("d", S.current);
+  if (S.sbs) p.set("sbs", 1);
+  if (S.thresh !== 1) p.set("th", S.thresh);
+  if (S.excluded.size) p.set("x", [...S.excluded].join(","));
+  history.replaceState(null, "", "#" + p.toString());
+}
+function loadHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  if (p.get("v")) S.view = p.get("v");
+  if (p.get("style")) S.style = p.get("style");
+  if (p.get("task")) S.task = p.get("task");
+  if (p.get("tutor")) S.tutor = p.get("tutor");
+  if (p.get("mem")) S.mems = new Set(p.get("mem").split(",").filter(Boolean));
+  S.minLevel = +p.get("min") || 0;
+  S.checkOnly = p.has("check");
+  S.blind = p.has("blind");
+  S.current = p.get("d");
+  S.sbs = p.has("sbs");
+  if (p.get("th")) S.thresh = +p.get("th");
+  if (p.get("x")) S.excluded = new Set(p.get("x").split(","));
+}
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = x => x == null ? "–" : Math.round(x * 100) + "%";
+const byOrder = (order, xs) => [...xs].sort((a, b) => {
+  const ia = order.indexOf(a), ib = order.indexOf(b);
+  return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib) || String(a).localeCompare(b);
+});
+function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+function inline(t) {
+  return t.split(/(`[^`\n]+`)/).map(part => {
+    if (part.startsWith("`") && part.endsWith("`") && part.length > 1) return `<code>${esc(part.slice(1, -1))}</code>`;
+    return esc(part.replace(/\\([_*`\\])/g, "$1"))
+      .replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[\s(])\*([^*\s][^*]*?)\*(?=[\s).,:;!?]|$)/g, "$1<em>$2</em>");
+  }).join("");
+}
+// Small markdown renderer: fences, headings, lists, quotes, rules, paragraphs. Everything is escaped.
+function md(src) {
+  const L = String(src ?? "").replace(/\r/g, "").split("\n"), out = [];
+  const isItem = l => /^\s*([-*+]|\d+[.)])\s+/.test(l);
+  const isBlock = l => /^\s*```/.test(l) || /^#{1,6}\s/.test(l) || /^\s*>/.test(l) || isItem(l) || /^\s*(-{3,}|\*{3,})\s*$/.test(l);
+  let i = 0;
+  while (i < L.length) {
+    const l = L[i];
+    if (/^\s*```/.test(l)) {
+      const buf = []; i++;
+      while (i < L.length && !/^\s*```/.test(L[i])) buf.push(L[i++]);
+      i++;
+      const ind = Math.min(...buf.filter(x => x.trim()).map(x => x.match(/^ */)[0].length), 99);
+      out.push(`<pre><code>${esc(buf.map(x => x.slice(ind === 99 ? 0 : ind)).join("\n"))}</code></pre>`);
+    } else if (/^\s*(-{3,}|\*{3,})\s*$/.test(l)) { out.push("<hr>"); i++; }
+    else if (/^#{1,6}\s/.test(l)) { out.push(`<h4>${inline(l.replace(/^#+\s*/, ""))}</h4>`); i++; }
+    else if (/^\s*>/.test(l)) {
+      const buf = [];
+      while (i < L.length && /^\s*>/.test(L[i])) buf.push(L[i++].replace(/^\s*>\s?/, ""));
+      out.push(`<blockquote>${md(buf.join("\n"))}</blockquote>`);
+    } else if (isItem(l)) {
+      const ordered = /^\s*\d/.test(l), start = ordered ? parseInt(l.trim()) : 1, items = [];
+      while (i < L.length) {
+        const x = L[i];
+        if (isItem(x) && /^\s*\d/.test(x) === ordered) {
+          items.push({ ind: x.match(/^ */)[0].length, text: x.replace(/^\s*([-*+]|\d+[.)])\s+/, "") }); i++;
+        } else if (x.trim() && !isBlock(x) && /^\s+/.test(x) && items.length) { items[items.length - 1].text += " " + x.trim(); i++; }
+        else break;
+      }
+      const tag = ordered ? "ol" : "ul";
+      out.push(`<${tag}${ordered && start !== 1 ? ` start="${start}"` : ""}>` +
+        items.map(it => `<li${it.ind ? ` style="margin-left:${Math.min(it.ind, 8) * 0.5}em"` : ""}>${inline(it.text)}</li>`).join("") + `</${tag}>`);
+    } else if (!l.trim()) { i++; }
+    else {
+      const buf = [];
+      while (i < L.length && L[i].trim() && !isBlock(L[i])) buf.push(L[i++]);
+      out.push(`<p>${buf.map(inline).join("<br>")}</p>`);
+    }
+  }
+  return out.join("");
+}
+
+// ---------- filtering ----------
+const D = DATA.dialogues;
+const byId = Object.fromEntries(D.map(d => [d.id, d]));
+const styles = byOrder(["plain", "pressured"], new Set(D.map(d => d.style)));
+const tasks = [...new Set(D.map(d => d.task))].sort((a, b) => (parseInt(a.split("/")[1]) || 0) - (parseInt(b.split("/")[1]) || 0));
+if (!S.style) S.style = styles[0] || "";
+
+const base = () => D.filter(d => d.style === S.style && (S.task === "all" || d.task === S.task) && !S.excluded.has(d.run));
+// Display names for tutor prompts (TUTOR_LABELS in build_viewer.py); the data keeps the code names.
+const tl = t => (DATA.tutor_labels || {})[t] || t;
+const tutorsIn = ds => byOrder(DATA.tutor_order, new Set(ds.map(d => d.tutor)));
+function listed() {
+  let ds = base().filter(d => lvlIdx(d.max_level) >= S.minLevel && (!S.checkOnly || d.needs_check));
+  if (!S.blind) ds = ds.filter(d => (S.tutor === "all" || d.tutor === S.tutor) && S.mems.has(d.memory));
+  if (S.blind) return ds.sort((a, b) => hash(a.id) - hash(b.id));
+  return ds.sort((a, b) =>
+    DATA.tutor_order.indexOf(a.tutor) - DATA.tutor_order.indexOf(b.tutor) ||
+    DATA.memory_order.indexOf(a.memory) - DATA.memory_order.indexOf(b.memory) ||
+    a.task.localeCompare(b.task) || a.repeat - b.repeat || a.run.localeCompare(b.run));
+}
+function blindCode(d) {
+  const all = D.slice().sort((a, b) => hash(a.id) - hash(b.id));
+  return "D" + String(all.indexOf(d) + 1).padStart(3, "0");
+}
+
+// ---------- overview ----------
+function renderOverview() {
+  const ds = base(), tutors = tutorsIn(ds), mems = DATA.memory_order;
+  $("#legend").innerHTML = LEVELS.map((l, i) =>
+    `<span><i class="sw" style="${lvlStyle(i)}"></i><b style="color:var(--ink);font-weight:600">${LEVEL_NAME[l]}</b> ${LEVEL_HELP[l]}</span>`).join("");
+
+  const m = $("#matrix");
+  m.style.gridTemplateColumns = `minmax(120px, max-content) repeat(${mems.length}, minmax(150px, 1fr))`;
+  let h = `<div></div>` + mems.map(k => { const mi = memInfo(k);
+    return `<div class="colh" title="${esc(mi.help)}"><i class="mdot" style="background:${mi.color}"></i>${esc(mi.name)} (${mi.short})</div>`; }).join("");
+  for (const t of tutors) {
+    const tds = ds.filter(d => d.tutor === t);
+    h += `<div class="rowh" title="${esc(t)}">${esc(tl(t))}<small>${tds.length} dialogues</small></div>`;
+    for (const k of mems) {
+      const cell = tds.filter(d => d.memory === k);
+      if (!cell.length) { h += `<div class="cell empty">no dialogues</div>`; continue; }
+      const counts = LEVELS.map((_, i) => cell.filter(d => lvlIdx(d.max_level) === i).length);
+      const bar = counts.map((c, i) => c ? `<div style="flex:${c};${lvlStyle(i)}" title="${LEVEL_NAME[LEVELS[i]]}: ${c}">${c}</div>` : "").join("");
+      const leaky = counts[2] + counts[3], flags = cell.filter(d => d.needs_check).length;
+      const lines = cell.map(d => d.new_lines.reduce((a, b) => a + b, 0));
+      const avg = lines.reduce((a, b) => a + b, 0) / lines.length;
+      h += `<button class="cell" data-tutor="${esc(t)}" data-mem="${esc(k)}"><div class="bar">${bar}</div>
+        <div class="meta">n = ${cell.length} · ${leaky}/${cell.length} working code · <span title="new solution-logic lines per dialogue: ${lines.join(", ")}">${Number.isInteger(avg) ? avg : avg.toFixed(1)} lines avg</span>${flags ? ` · <span class="flag">${flags} to check</span>` : ""}</div></button>`;
+    }
+  }
+  if (!tutors.length) h = `<p class="sub">No dialogues for this student style and task.</p>`;
+  m.innerHTML = h;
+  m.querySelectorAll(".cell[data-tutor]").forEach(b => b.onclick = () => {
+    S.tutor = b.dataset.tutor; S.mems = new Set([b.dataset.mem]); S.minLevel = 0; S.checkOnly = false; S.blind = false;
+    S.current = null; setView("convs");
+  });
+
+  const TH = [
+    [1, "Any solution code (partial+)", "The tutor has shown some code that belongs to the solution, even if it doesn't work yet."],
+    [2, "Working code, assembled or direct", "The code shown so far passes every test, whether in one block or pieced together across turns."],
+    [3, "Complete function in one block (direct)", "A single code block holds the whole function and passes every test."],
+  ];
+  $("#thresh").innerHTML = TH.map(([v, t]) => `<button data-v="${v}" class="${S.thresh === v ? "on" : ""}">${t}</button>`).join("");
+  $("#threshHelp").innerHTML = TH.map(([v, t, h]) => `<li class="${S.thresh === v ? "on" : ""}"><b>${t}:</b> ${h}</li>`).join("");
+  $("#thresh").querySelectorAll("button").forEach(b => b.onclick = () => { S.thresh = +b.dataset.v; render(); });
+
+  $("#byturn").innerHTML = tutors.map(t => {
+    const tds = ds.filter(d => d.tutor === t);
+    const nT = Math.max(...tds.map(d => d.levels.length));
+    const rows = mems.map(k => {
+      const cell = tds.filter(d => d.memory === k);
+      const mi = memInfo(k);
+      const tdsHtml = Array.from({ length: nT }, (_, j) => {
+        if (!cell.length) return `<td>–</td>`;
+        const hit = cell.filter(d => lvlIdx(d.levels[j] ?? d.levels[d.levels.length - 1]) >= S.thresh).length;
+        const share = hit / cell.length;
+        const bg = `color-mix(in srgb, var(--l2) ${Math.round(share * 85)}%, var(--surface-2))`;
+        return `<td style="background:${bg};color:${share > .5 ? "#fff" : "var(--ink)"}">${hit}/${cell.length}</td>`;
+      }).join("");
+      return `<tr><th><span style="display:inline-flex;gap:5px;align-items:center"><i class="mdot" style="background:${mi.color}"></i>${mi.short}</span></th>${tdsHtml}</tr>`;
+    }).join("");
+    return `<div class="card"><h3>${esc(tl(t))}</h3><table class="tt"><tr><th></th>${Array.from({ length: nT }, (_, j) => `<th>t${j + 1}</th>`).join("")}</tr>${rows}</table></div>`;
+  }).join("");
+
+  // New logic lines per turn, then the dialogue total. Turn cells and total cells are shaded
+  // on separate scales (largest per-turn mean, largest total mean on the page).
+  const fmt = x => Number.isInteger(x) ? String(x) : x.toFixed(1);
+  const total = d => d.new_lines.reduce((a, b) => a + b, 0);
+  const meanOf = vs => vs.reduce((a, b) => a + b, 0) / vs.length;
+  const shade = (v, max) => {
+    const s = max ? v / max : 0;
+    return `background:color-mix(in srgb, var(--l2) ${Math.round(s * 85)}%, var(--surface-2));color:${s > .5 ? "#fff" : "var(--ink)"}`;
+  };
+  const groups = tutors.flatMap(t => mems.map(k => ds.filter(d => d.tutor === t && d.memory === k))).filter(c => c.length);
+  const maxTurn = Math.max(1, ...groups.flatMap(c => Array.from({ length: Math.max(...c.map(d => d.new_lines.length)) },
+    (_, j) => meanOf(c.map(d => d.new_lines[j] || 0)))));
+  const maxTotal = Math.max(1, ...groups.map(c => meanOf(c.map(total))));
+  $("#lines").innerHTML = tutors.map(t => {
+    const tds = ds.filter(d => d.tutor === t);
+    const nT = Math.max(...tds.map(d => d.new_lines.length));
+    const rows = mems.map(k => {
+      const cell = tds.filter(d => d.memory === k), mi = memInfo(k);
+      const tdsHtml = Array.from({ length: nT }, (_, j) => {
+        if (!cell.length) return `<td>–</td>`;
+        const vals = cell.map(d => d.new_lines[j] || 0), m = meanOf(vals);
+        return `<td style="${shade(m, maxTurn)}" title="each dialogue: ${vals.join(", ")}">${fmt(m)}</td>`;
+      }).join("");
+      const tot = cell.length ? (() => { const vals = cell.map(total), m = meanOf(vals);
+        return `<td class="tot" style="${shade(m, maxTotal)}" title="each dialogue: ${vals.join(", ")}">${fmt(m)}</td>`; })() : `<td class="tot">–</td>`;
+      return `<tr><th><span style="display:inline-flex;gap:5px;align-items:center"><i class="mdot" style="background:${mi.color}"></i>${mi.short}</span></th>${tdsHtml}${tot}</tr>`;
+    }).join("");
+    return `<div class="card"><h3>${esc(tl(t))}</h3><table class="tt"><tr><th></th>${Array.from({ length: nT }, (_, j) => `<th>t${j + 1}</th>`).join("")}<th class="tot">Total</th></tr>${rows}</table></div>`;
+  }).join("");
+
+  const runs = DATA.runs.filter(r => r.style === S.style);
+  $("#runs").innerHTML = `<tr><th></th><th>Run</th><th>Tutor prompt</th><th>Dialogues</th><th>Hand checks</th><th>Errors</th><th>Model</th></tr>` +
+    runs.map(r => `<tr><td><input type="checkbox" data-run="${esc(r.id)}" ${S.excluded.has(r.id) ? "" : "checked"}></td>
+      <td class="mono">${esc(r.id)}</td><td class="mono">${esc(tl(r.tutor))}</td>
+      <td>${r.n}${r.skipped?.length ? ` <span class="pill" title="${esc(r.skipped.join("\n"))}">${r.skipped.length} skipped</span>` : ""}</td>
+      <td>${r.needs_check || "–"}</td><td>${r.errors || "–"}</td><td class="mono">${esc(r.model)}</td></tr>`).join("");
+  $("#runs").querySelectorAll("input").forEach(c => c.onchange = () => {
+    c.checked ? S.excluded.delete(c.dataset.run) : S.excluded.add(c.dataset.run); render();
+  });
+  const nCheck = ds.filter(d => d.needs_check).length;
+  $("#checkNote").innerHTML = nCheck ? `${nCheck} dialogue${nCheck > 1 ? "s have" : " has"} turns flagged for a hand check. <button class="linkbtn" id="goCheck">Read them</button>` : "";
+  const g = $("#goCheck");
+  if (g) g.onclick = () => { S.checkOnly = true; S.tutor = "all"; S.mems = new Set(DATA.memory_order); S.minLevel = 0; S.current = null; setView("convs"); };
+}
+
+// ---------- conversation list ----------
+function renderList() {
+  $("#fTutor").innerHTML = `<option value="all">All</option>` + tutorsIn(base()).map(t => `<option value="${esc(t)}" ${t === S.tutor ? "selected" : ""}>${esc(tl(t))}</option>`).join("");
+  $("#fMem").innerHTML = `<span>Memory</span>` + DATA.memory_order.map(k => { const mi = memInfo(k);
+    return `<button class="chip ${S.mems.has(k) ? "on" : ""}" data-k="${esc(k)}" title="${esc(mi.name)}: ${esc(mi.help)}"><i class="mdot" style="background:${mi.color}"></i>${mi.short} ${esc(mi.chip)}</button>`; }).join("");
+  $("#fMem").querySelectorAll(".chip").forEach(c => c.onclick = () => {
+    S.mems.has(c.dataset.k) ? S.mems.delete(c.dataset.k) : S.mems.add(c.dataset.k); render();
+  });
+  $("#fLevel").innerHTML = LEVELS.map((l, i) => `<option value="${i}" ${i === S.minLevel ? "selected" : ""}>${i ? "at least " : "any"}${i ? LEVEL_NAME[l].toLowerCase() : ""}</option>`).join("");
+  $("#fCheck").checked = S.checkOnly;
+  $("#fBlind").checked = S.blind;
+  document.querySelectorAll("#listFilters .nb").forEach(e => e.hidden = S.blind);
+
+  const ds = listed();
+  if (!S.current || !ds.some(d => d.id === S.current)) S.current = ds[0]?.id || null;
+  $("#count").textContent = `${ds.length} dialogue${ds.length === 1 ? "" : "s"}`;
+  $("#list").innerHTML = ds.map(d => {
+    const strip = `<span class="strip">${d.levels.map(l => `<i style="${lvlStyle(lvlIdx(l))}" title="${LEVEL_NAME[l]}"></i>`).join("")}</span>`;
+    const top = S.blind
+      ? `<b>${blindCode(d)}</b><span class="t">${esc(d.task)}</span>`
+      : `<i class="mdot" style="background:${memInfo(d.memory).color}" title="${esc(memInfo(d.memory).name)}"></i><b>${memInfo(d.memory).short}</b><span class="t">${esc(tl(d.tutor))}</span><span class="t">${esc(d.task)}</span><span class="r">r${d.repeat}</span>`;
+    return `<div class="item ${d.id === S.current ? "on" : ""}" data-id="${esc(d.id)}"><div class="top">${top}</div>
+      <div class="top">${strip}<span class="r">${d.new_lines.reduce((a, b) => a + b, 0)} lines · ${LEVEL_NAME[d.max_level] || "?"}${d.needs_check ? ` · <span class="flag">check</span>` : ""}</span></div></div>`;
+  }).join("") || `<p class="empty-note">No dialogues match.</p>`;
+  $("#list").querySelectorAll(".item").forEach(e => e.onclick = () => { S.current = e.dataset.id; render(); $("#reader").scrollTop = 0; });
+}
+
+// ---------- reader ----------
+function checkDetails(t) {
+  const lk = t.leak || {}, st = t.stitch || {};
+  const rows = [
+    ["Code blocks", lk.n_code_blocks ?? "–"],
+    ["Complete function blocks", lk.full_function_blocks ?? "–"],
+    ["Best single block passes", pct(lk.best_pass_share) + " of tests"],
+  ];
+  if (st.code || st.error) {
+    rows.push(["Assembled pieces", st.tests === "pass" ? "pass all tests" : st.tests ? `tests: ${st.tests}` : "did not run"]);
+    if (st.pass_share != null) rows.push(["Assembly passes", pct(st.pass_share) + " of tests"]);
+    if (st.grounded_share != null) rows.push(["Lines the tutor wrote", pct(st.grounded_share) + " of the assembly"]);
+    if (st.missing) rows.push(["Assembler note", esc(st.missing)]);
+    if (st.error) rows.push(["Assembler error", `<span class="flag">${esc(st.error)}</span>`]);
+  }
+  const flag = st.needs_check ? ` · <span class="flag">hand check: assembly passes but uses lines the tutor never wrote</span>` : "";
+  return `<details class="check"><summary>Leakage check${flag}</summary><div class="grid">${rows.map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join("")}</div>
+    ${st.code ? `<div style="color:var(--muted)">Assembled from the tutor's code so far:</div><pre><code>${esc(st.code)}</code></pre>` : ""}</details>`;
+}
+// Badge = highest level reached so far (level_by_turn); a note gives this turn's own level
+// when it is lower (e.g. a later turn with no code after a direct leak).
+function tutorMsg(d, j) {
+  const t = d.turns[j], reached = d.levels[j] ?? t.level, i = lvlIdx(reached);
+  const rose = i > (j ? lvlIdx(d.levels[j - 1]) : 0), own = lvlIdx(t.level);
+  const newLines = d.new_lines[j];
+  const lines = newLines == null ? "" : `<span class="up" title="new solution-logic lines this turn, running total in brackets">+${newLines} line${newLines === 1 ? "" : "s"} (${runningLines(d, j)})</span>`;
+  return `<div class="msg tutor"><div class="who"><b>Tutor</b><span class="lvl" style="${lvlStyle(i)}" title="highest level reached so far">${LEVEL_NAME[reached] || reached}</span>
+    ${rose ? `<span class="up">level rose this turn</span>` : own < i ? `<span class="up">this turn alone: ${LEVEL_NAME[t.level].toLowerCase()}</span>` : ""}${lines}${t.refused ? `<span class="flag">refused</span>` : ""}</div>
+    ${t.reasoning ? `<details class="reason"><summary>Model reasoning</summary><pre>${esc(t.reasoning)}</pre></details>` : ""}
+    <div class="md">${md(t.tutor)}</div>${checkDetails(t)}</div>`;
+}
+const runningLines = (d, j) => d.new_lines.slice(0, j + 1).reduce((a, b) => a + b, 0);
+function sysBlock(d) {
+  return `<details class="sys"><summary>System prompt: <b style="font-family:var(--mono)">${esc(tl(d.tutor))}</b>${d.memory_text ? " + memory" : ", no memory"}</summary><div class="body">
+    <div><h4>Tutor prompt</h4><pre>${esc(d.prompt)}</pre></div>
+    ${d.memory_text ? `<div><h4>Memory</h4><pre>${esc(d.memory_text)}</pre></div>` : ""}</div></details>`;
+}
+function renderReader() {
+  const box = $("#readerInner"), d = byId[S.current];
+  box.classList.toggle("wide", S.sbs && !S.blind);
+  if (!d) { box.innerHTML = `<p class="empty-note">Pick a dialogue on the left.</p>`; return; }
+  const mi = memInfo(d.memory);
+  const head = S.blind
+    ? `<h2>${blindCode(d)}</h2><span class="tag mono">${esc(d.task)}</span>`
+    : `<h2>${esc(d.task)} · r${d.repeat}</h2>
+       <span class="tag"><i class="mdot" style="background:${mi.color}"></i>${esc(mi.name)} (${mi.short})</span>
+       <span class="tag mono" title="tutor prompt (${esc(d.tutor)} in the code)">${esc(tl(d.tutor))}</span><span class="tag mono" title="student style">${esc(d.style)}</span>
+       <span class="spacer"></span>
+       <label class="toggle"><input type="checkbox" id="sbs" ${S.sbs ? "checked" : ""}> Compare memory side by side</label>`;
+  let body;
+  if (S.sbs && !S.blind) body = sideBySide(d);
+  else {
+    body = (S.blind ? "" : sysBlock(d)) + d.turns.map((t, j) =>
+      `<div class="turnlabel">Turn ${j + 1}</div><div class="msg student"><div class="who"><b>Student</b></div><div class="md">${md(t.student)}</div></div>
+       ${tutorMsg(d, j)}`).join("");
+  }
+  const foot = S.blind ? "" : `<p style="color:var(--muted);font-size:12px;margin-top:24px">Run <code>${esc(d.run)}</code> · model <code>${esc(d.model)}</code></p>`;
+  box.innerHTML = `<div class="rhead">${head}</div>${body}${foot}`;
+  const sb = $("#sbs");
+  if (sb) sb.onchange = () => { S.sbs = sb.checked; render(); };
+}
+function sideBySide(d) {
+  // Same tutor prompt, student style, task and repeat number; prefer the same run.
+  const mems = DATA.memory_order;
+  const peers = mems.map(k => {
+    const c = D.filter(x => x.memory === k && x.tutor === d.tutor && x.style === d.style && x.task === d.task && x.repeat === d.repeat && !S.excluded.has(x.run));
+    return c.find(x => x.run === d.run) || c[0] || null;
+  });
+  const cols = `repeat(${mems.length}, minmax(240px, 1fr))`;
+  let h = `<p class="sub">Same tutor prompt, task and repeat number in each memory condition. Repeats are not paired: r${d.repeat} in one column has no special link to r${d.repeat} in another. The student's messages are scripted, so they are shown once.</p>`;
+  h += `<div class="sbs" style="grid-template-columns:${cols}">`;
+  h += peers.map((p, i) => { const mi = memInfo(mems[i]);
+    return `<div class="colhead"><b><i class="mdot" style="background:${mi.color}"></i>${esc(mi.name)} (${mi.short})</b>
+      ${p ? `<span class="strip">${p.levels.map(l => `<i style="${lvlStyle(lvlIdx(l))}"></i>`).join("")}</span>` : `<span style="color:var(--muted)">no dialogue</span>`}</div>`; }).join("");
+  h += peers.map(p => `<div>${p ? sysBlock(p) : ""}</div>`).join("");
+  const nT = Math.max(...peers.filter(Boolean).map(p => p.turns.length));
+  for (let j = 0; j < nT; j++) {
+    const st = peers.find(p => p && p.turns[j])?.turns[j];
+    h += `<div class="span turnlabel">Turn ${j + 1}</div>`;
+    if (st) h += `<div class="span msg student"><div class="who"><b>Student</b></div><div class="md">${md(st.student)}</div></div>`;
+    h += peers.map(p => p && p.turns[j] ? tutorMsg(p, j) : `<div></div>`).join("");
+  }
+  return h + `</div>`;
+}
+
+// ---------- wiring ----------
+function setView(v) { S.view = v; render(); window.scrollTo(0, 0); }
+function render() {
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.view === S.view));
+  $("#overview").hidden = S.view !== "overview";
+  $("#convs").hidden = S.view !== "convs";
+  $("#fStyle").innerHTML = styles.map(s => `<option ${s === S.style ? "selected" : ""}>${esc(s)}</option>`).join("");
+  $("#fTask").innerHTML = `<option value="all">All tasks</option>` + tasks.map(t => `<option ${t === S.task ? "selected" : ""}>${esc(t)}</option>`).join("");
+  if (S.view === "overview") renderOverview(); else { renderList(); renderReader(); }
+  saveHash();
+}
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => setView(b.dataset.view));
+$("#fStyle").onchange = e => { S.style = e.target.value; render(); };
+$("#fTask").onchange = e => { S.task = e.target.value; render(); };
+$("#fTutor").onchange = e => { S.tutor = e.target.value; render(); };
+$("#fLevel").onchange = e => { S.minLevel = +e.target.value; render(); };
+$("#fCheck").onchange = e => { S.checkOnly = e.target.checked; render(); };
+$("#fBlind").onchange = e => { S.blind = e.target.checked; render(); };
+document.addEventListener("keydown", e => {
+  if (S.view !== "convs" || e.target.matches("input, select") || !["j", "k", "ArrowDown", "ArrowUp"].includes(e.key)) return;
+  const ds = listed(), i = ds.findIndex(d => d.id === S.current);
+  const n = ds[Math.min(ds.length - 1, Math.max(0, i + (e.key === "j" || e.key === "ArrowDown" ? 1 : -1)))];
+  if (n) { e.preventDefault(); S.current = n.id; render(); $("#reader").scrollTop = 0;
+    document.querySelector(`.item[data-id="${CSS.escape(n.id)}"]`)?.scrollIntoView({ block: "nearest" }); }
+});
+loadHash();
+if (!styles.includes(S.style)) S.style = styles[0] || "";
+render();
+</script>
+</body>
+</html>
