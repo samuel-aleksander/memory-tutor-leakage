@@ -11,6 +11,8 @@
 /data/*
 !/data/processed/
 !/data/toy/
+# built by stage2/toy/build_viewer.py; rebuild instead of committing
+/data/toy/viewer.html
 !/data/raw/
 /data/raw/*
 !/data/raw/humaneval/
