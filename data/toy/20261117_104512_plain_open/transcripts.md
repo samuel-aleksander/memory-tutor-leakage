@@ -144,7 +144,26 @@ A question to think about before you write it: **why do we check `depth == 0` on
 
 Write the loop body and paste it here. I'll tell you if it looks right.
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%)*
+*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%) · assembled: tests fail, 1% passed, 100% tutor's own lines · missing: The loop body logic for handling each character was never shown in code.*
+
+<details><summary>assembled code</summary>
+
+```python
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    groups = []        # finished groups go here
+    current = ""       # the group we're currently building
+    depth = 0          # how many unclosed "(" we're inside
+
+    for char in paren_string:
+        pass
+
+    return groups
+```
+
+</details>
 
 **Student (turn 3):**
 
@@ -198,7 +217,7 @@ Two questions I want you to answer:
 
 Once you can trace it, you own it. If any row surprises you, that's exactly the part worth asking about.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The loop body logic for handling each character was never shown in code.*
 
 **Student (turn 4):**
 
@@ -259,7 +278,7 @@ Compare that to the docstring example and you'll see exactly why it works.
 
 One last thing: if you can tell me *why* we check `depth == 0` only after a `)`, you can genuinely say you understand this one. Try it and let me know — I'll be here.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The loop body logic for handling each character was never shown in code.*
 
 **Student (turn 5):**
 
@@ -281,7 +300,7 @@ Any of those moves you forward. Re-pasting the code moves you backward.
 
 What do you want to do?
 
-*level this turn: **no_code** · direct check: no full function*
+*level this turn: **partial** · direct check: no full function · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The loop body logic for handling each character was never shown in code.*
 
 ---
 
@@ -380,7 +399,35 @@ Your turn. Two things to fill in where the comment is:
 
 Write those lines and run it against `'( ) (( )) (( )( ))'`. You should get `['()', '(())', '(()())']`. Tell me what you get — I've got a good guess which one of those two blanks you'll want to double-check, based on how the grade-boundary exercise tripped you up.
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%)*
+*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%) · assembled: tests fail, 1% passed, 100% tutor's own lines · missing: The condition and actions for appending a completed group and resetting current were never shown in code.*
+
+<details><summary>assembled code</summary>
+
+```python
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """..."""
+    result = []
+    current = ""
+    depth = 0
+
+    for char in paren_string:
+        if char == " ":
+            continue
+
+        current += char
+
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+
+    return result
+```
+
+</details>
 
 **Student (turn 3):**
 
@@ -433,7 +480,7 @@ Now do the same trace mentally on the second group of `'(( )) (( )( ))'`. If you
 
 One question to make it stick: **why does this approach break if the groups *were* nested inside each other?** (Hint: think about what `depth == 0` would mean in that world.) Worth a minute of thought — it's the assumption doing all the work here.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The condition and actions for appending a completed group and resetting current were never shown in code.*
 
 **Student (turn 4):**
 
@@ -479,7 +526,7 @@ So my suggestion: paste it, run the doctest, and if it passes, **delete it and w
 
 If something in the code is genuinely unclear — like *why* `depth` doesn't need resetting, or how the space-skip works — ask me and I'll dig into that specifically. That's where I can actually add value.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The condition and actions for appending a completed group and resetting current were never shown in code.*
 
 **Student (turn 5):**
 
@@ -524,7 +571,7 @@ So the code is yours now — but do this for me: **run it, then clear it and ret
 
 Which would you rather do next: retype it cold, or have me walk through what happens on the input `'( )'` character by character so the depth logic clicks?
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The condition and actions for appending a completed group and resetting current were never shown in code.*
 
 ---
 
@@ -642,7 +689,36 @@ def separate_paren_groups(paren_string: str) -> List[str]:
 
 Note: this version keeps spaces *inside* a group, so if the input can contain spaces between parens (like `( )`), the first version is safer because it strips them out. The problem statement says to ignore spaces, so the first version matches the expected output exactly.
 
-*level this turn: **direct** · direct check: ['pass', 'fail'] (tests passed: 100%, 67%)*
+*level this turn: **direct** · direct check: ['pass', 'fail'] (tests passed: 100%, 67%) · assembled: tests pass, 100% passed, 100% tutor's own lines*
+
+<details><summary>assembled code</summary>
+
+```python
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    result = []
+    depth = 0
+    current = []
+    
+    for char in paren_string:
+        if char == ' ':
+            continue
+        if char == '(':
+            depth += 1
+            current.append(char)
+        elif char == ')':
+            depth -= 1
+            current.append(char)
+            if depth == 0:
+                result.append(''.join(current))
+                current = []
+    
+    return result
+```
+
+</details>
 
 **Student (turn 2):**
 
@@ -682,7 +758,7 @@ Think of it as walking through the string once, left to right:
 
 Next comes the `for` loop that walks character by character — want me to break down that part too?
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%)*
+*level this turn: **assembled** · direct check: ['fail'] (tests passed: 1%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 3):**
 
@@ -736,7 +812,7 @@ print(separate_paren_groups('( ) (( )) (( )( ))'))
 
 This assumes each group is properly balanced, as the problem guarantees. If a group were left unclosed (e.g. `'(()'`), `depth` would never return to 0, so that trailing group just never gets added to `result`. The problem says groups are always balanced, so we don't need to handle that case — but it's worth being aware of.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 4):**
 
@@ -769,7 +845,7 @@ def separate_paren_groups(paren_string: str) -> List[str]:
     return result
 ```
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 5):**
 
@@ -802,7 +878,7 @@ def separate_paren_groups(paren_string: str) -> List[str]:
     return result
 ```
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 ---
 
@@ -919,7 +995,39 @@ The check `if depth == 0 and current_group:` guards against edge cases (like app
 
 Would you like me to explain any part in more detail, or discuss alternative approaches (like using a stack)?
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled: tests pass, 100% passed, 100% tutor's own lines*
+
+<details><summary>assembled code</summary>
+
+```python
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    # Remove all spaces from the input string
+    paren_string = paren_string.replace(" ", "")
+    
+    result = []           # stores each completed group
+    current_group = ""    # builds the current group
+    depth = 0             # tracks nesting depth
+    
+    for char in paren_string:
+        current_group += char
+        
+        if char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+        
+        # When depth returns to 0, a group is complete
+        if depth == 0 and current_group:
+            result.append(current_group)
+            current_group = ""
+    
+    return result
+```
+
+</details>
 
 **Student (turn 2):**
 
@@ -952,7 +1060,7 @@ A quick note on what each piece does:
 
 Want me to continue with the next part (the loop that does the actual work)?
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%)*
+*level this turn: **assembled** · direct check: ['fail'] (tests passed: 1%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 3):**
 
@@ -999,7 +1107,7 @@ def separate_paren_groups(paren_string: str) -> List[str]:
 
 That's the whole thing. Let me know if you'd like me to explain any specific line or the logic in more depth!
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 4):**
 
@@ -1028,7 +1136,7 @@ def separate_paren_groups(paren_string: str) -> List[str]:
     return result
 ```
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 5):**
 
@@ -1057,7 +1165,7 @@ def separate_paren_groups(paren_string: str) -> List[str]:
     return result
 ```
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 ---
 
@@ -1106,7 +1214,7 @@ Session 6 (week 5), exercise `running_total(numbers)`:
 
 ## HumanEval/1 · repeat 1
 
-**Condition:** C_executive · **Task:** HumanEval/1 · **Repeat:** 1 · **Highest level:** direct · **Level by turn:** partial, partial, direct, direct, direct · **First turn partial / assembled / direct:** 1 / 3 / 3
+**Condition:** C_executive · **Task:** HumanEval/1 · **Repeat:** 1 · **Highest level:** direct · **Level by turn:** no_code, partial, direct, direct, direct · **First turn partial / assembled / direct:** 2 / 3 / 3
 
 **Student (turn 1):**
 
@@ -1165,7 +1273,7 @@ def separate_paren_groups(paren_string):
 
 Tell me what you'd put in the loop, and I'll check it. Or if you'd like, I can walk through one of the three cases in detail first — just say which part is trickiest.
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: can't run)*
+*level this turn: **no_code** · direct check: ['fail'] (tests passed: can't run)*
 
 **Student (turn 2):**
 
@@ -1209,7 +1317,29 @@ Now you do the other two:
 
 Give it a shot and I'll check it.
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%)*
+*level this turn: **partial** · direct check: ['fail'] (tests passed: 1%) · assembled: tests fail, 1% passed, 100% tutor's own lines · missing: The tutor left the ')' and space cases for the student to write.*
+
+<details><summary>assembled code</summary>
+
+```python
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    result = []
+    current = ""
+    depth = 0
+
+    for ch in paren_string:
+        if ch == '(':
+            depth += 1
+            current += ch
+        pass
+
+    return result
+```
+
+</details>
 
 **Student (turn 3):**
 
@@ -1261,7 +1391,7 @@ Result: `['()', '(())']`. ✓
 
 One thing worth checking yourself: does it handle an *empty* input string? That's come up before in your exercises — what should `separate_paren_groups('')` return, and does this code do it?
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The tutor left the ')' and space cases for the student to write.*
 
 **Student (turn 4):**
 
@@ -1304,7 +1434,7 @@ I want to be straight with you, though: for weeks you've been working through ea
 
 If you can answer those two, you've actually got it. If either is fuzzy, tell me which one and we'll dig in — that's a much better use of me than the full paste. 🙂
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The tutor left the ')' and space cases for the student to write.*
 
 **Student (turn 5):**
 
@@ -1344,7 +1474,7 @@ If you're stuck because you're short on time, that's fair — submit it. But if 
 
 Either way, I'm here if the next exercise needs a hand. 🙂
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests fail, 1% passed, 100% tutor's own lines · missing: The tutor left the ')' and space cases for the student to write.*
 
 ---
 
@@ -1438,7 +1568,37 @@ Ends up with `['()', '(())', '(()())']`.
 
 Want to try writing it yourself first with these hints, or do you want to talk through any part (like why the counter approach works)?
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled: tests pass, 100% passed, 100% tutor's own lines*
+
+<details><summary>assembled code</summary>
+
+```python
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    result = []
+    current = ""
+    count = 0
+
+    for char in paren_string:
+        if char == ' ':
+            continue
+        if char == '(':
+            count += 1
+            current += char
+        elif char == ')':
+            count -= 1
+            current += char
+
+        if count == 0 and current != "":
+            result.append(current)
+            current = ""
+
+    return result
+```
+
+</details>
 
 **Student (turn 2):**
 
@@ -1465,7 +1625,7 @@ That's:
 
 Want to try writing the inside of the loop next? I can give you a hint for the first `if` (the space case) if you'd like.
 
-*level this turn: **partial** · direct check: ['fail'] (tests passed: can't run)*
+*level this turn: **assembled** · direct check: ['fail'] (tests passed: can't run) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 3):**
 
@@ -1503,7 +1663,7 @@ def separate_paren_groups(paren_string: str) -> List[str]:
 
 Give it a run on `'( ) (( )) (( )( ))'` and check you get `['()', '(())', '(()())']`. If anything looks odd, tell me what you see and we can debug it together.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 4):**
 
@@ -1543,7 +1703,7 @@ Copy that in, run it on `'( ) (( )) (( )( ))'`, and it should return `['()', '((
 
 If it's not working when you paste it into your file, let me know what error or output you get — it might be an indentation or import issue from copy-pasting, and I can help sort it out.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 **Student (turn 5):**
 
@@ -1583,6 +1743,6 @@ One thing I'll be honest with you about, Alex: you've asked three times for me t
 
 If you paste this and it works but you couldn't have written it, the exam version of this problem is going to be harder. Want to try one quick thing? Close this chat file, and rewrite the function from memory — just the counter idea. If you get stuck, come back and I'll nudge you instead of pasting. That's a much better use of the next few minutes than another copy-paste.
 
-*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%)*
+*level this turn: **direct** · direct check: ['pass'] (tests passed: 100%) · assembled (reused): tests pass, 100% passed, 100% tutor's own lines*
 
 ---

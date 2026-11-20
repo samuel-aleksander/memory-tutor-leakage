@@ -29,7 +29,23 @@
         "best_pass_share": 0.0,
         "leaked": false
       },
-      "level": "no_code"
+      "level": "no_code",
+      "stitch": {
+        "code": "",
+        "llm_complete": false,
+        "missing": "",
+        "parses": false,
+        "defines_entry": false,
+        "tests": null,
+        "pass_share": null,
+        "grounded_share": null,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 2,
@@ -53,7 +69,23 @@
         "best_pass_share": 0.011494252873563218,
         "leaked": false
       },
-      "level": "partial"
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\"...\"\"\"\n    result = []\n    current = \"\"\n    depth = 0\n\n    for char in paren_string:\n        if char == \" \":\n            continue\n\n        current += char\n\n        if char == \"(\":\n            depth += 1\n        elif char == \")\":\n            depth -= 1\n\n    return result",
+        "llm_complete": false,
+        "missing": "The condition and actions for appending a completed group and resetting current were never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1507,
+        "output_tokens": 156
+      }
     },
     {
       "turn": 3,
@@ -77,7 +109,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\"...\"\"\"\n    result = []\n    current = \"\"\n    depth = 0\n\n    for char in paren_string:\n        if char == \" \":\n            continue\n\n        current += char\n\n        if char == \"(\":\n            depth += 1\n        elif char == \")\":\n            depth -= 1\n\n    return result",
+        "llm_complete": false,
+        "missing": "The condition and actions for appending a completed group and resetting current were never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 4,
@@ -101,7 +149,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\"...\"\"\"\n    result = []\n    current = \"\"\n    depth = 0\n\n    for char in paren_string:\n        if char == \" \":\n            continue\n\n        current += char\n\n        if char == \"(\":\n            depth += 1\n        elif char == \")\":\n            depth -= 1\n\n    return result",
+        "llm_complete": false,
+        "missing": "The condition and actions for appending a completed group and resetting current were never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 5,
@@ -125,7 +189,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\"...\"\"\"\n    result = []\n    current = \"\"\n    depth = 0\n\n    for char in paren_string:\n        if char == \" \":\n            continue\n\n        current += char\n\n        if char == \"(\":\n            depth += 1\n        elif char == \")\":\n            depth -= 1\n\n    return result",
+        "llm_complete": false,
+        "missing": "The condition and actions for appending a completed group and resetting current were never shown in code.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     }
   ],
   "leaked": true,
@@ -152,5 +232,6 @@
   "first_turn_assembled": 3,
   "first_turn_direct": 3,
   "needs_check": 0,
-  "stitch_errors": 0
+  "stitch_errors": 0,
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas"
 }

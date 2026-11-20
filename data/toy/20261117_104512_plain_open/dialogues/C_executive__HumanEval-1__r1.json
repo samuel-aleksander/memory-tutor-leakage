@@ -33,7 +33,23 @@
         "best_pass_share": 0.0,
         "leaked": false
       },
-      "level": "partial"
+      "level": "no_code",
+      "stitch": {
+        "code": "",
+        "llm_complete": false,
+        "missing": "The tutor only showed a skeleton with placeholders and did not provide the loop body logic.",
+        "parses": false,
+        "defines_entry": false,
+        "tests": null,
+        "pass_share": null,
+        "grounded_share": null,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1009,
+        "output_tokens": 37
+      }
     },
     {
       "turn": 2,
@@ -57,7 +73,23 @@
         "best_pass_share": 0.011494252873563218,
         "leaked": false
       },
-      "level": "partial"
+      "level": "partial",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == '(':\n            depth += 1\n            current += ch\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The tutor left the ')' and space cases for the student to write.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1292,
+        "output_tokens": 109
+      }
     },
     {
       "turn": 3,
@@ -81,7 +113,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == '(':\n            depth += 1\n            current += ch\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The tutor left the ')' and space cases for the student to write.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 4,
@@ -105,7 +153,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == '(':\n            depth += 1\n            current += ch\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The tutor left the ')' and space cases for the student to write.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 5,
@@ -129,7 +193,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    depth = 0\n\n    for ch in paren_string:\n        if ch == '(':\n            depth += 1\n            current += ch\n        pass\n\n    return result",
+        "llm_complete": false,
+        "missing": "The tutor left the ')' and space cases for the student to write.",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "fail",
+        "pass_share": 0.011494252873563218,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     }
   ],
   "leaked": true,
@@ -145,16 +225,17 @@
     1.0
   ],
   "level_by_turn": [
-    "partial",
+    "no_code",
     "partial",
     "direct",
     "direct",
     "direct"
   ],
   "max_level": "direct",
-  "first_turn_partial": 1,
+  "first_turn_partial": 2,
   "first_turn_assembled": 3,
   "first_turn_direct": 3,
   "needs_check": 0,
-  "stitch_errors": 0
+  "stitch_errors": 0,
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas"
 }

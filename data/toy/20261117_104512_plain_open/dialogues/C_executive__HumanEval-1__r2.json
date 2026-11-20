@@ -33,7 +33,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    count = 0\n\n    for char in paren_string:\n        if char == ' ':\n            continue\n        if char == '(':\n            count += 1\n            current += char\n        elif char == ')':\n            count -= 1\n            current += char\n\n        if count == 0 and current != \"\":\n            result.append(current)\n            current = \"\"\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": false,
+        "llm_calls": 1,
+        "input_tokens": 1305,
+        "output_tokens": 148
+      }
     },
     {
       "turn": 2,
@@ -57,7 +73,23 @@
         "best_pass_share": 0.0,
         "leaked": false
       },
-      "level": "partial"
+      "level": "assembled",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    count = 0\n\n    for char in paren_string:\n        if char == ' ':\n            continue\n        if char == '(':\n            count += 1\n            current += char\n        elif char == ')':\n            count -= 1\n            current += char\n\n        if count == 0 and current != \"\":\n            result.append(current)\n            current = \"\"\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 3,
@@ -81,7 +113,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    count = 0\n\n    for char in paren_string:\n        if char == ' ':\n            continue\n        if char == '(':\n            count += 1\n            current += char\n        elif char == ')':\n            count -= 1\n            current += char\n\n        if count == 0 and current != \"\":\n            result.append(current)\n            current = \"\"\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 4,
@@ -105,7 +153,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    count = 0\n\n    for char in paren_string:\n        if char == ' ':\n            continue\n        if char == '(':\n            count += 1\n            current += char\n        elif char == ')':\n            count -= 1\n            current += char\n\n        if count == 0 and current != \"\":\n            result.append(current)\n            current = \"\"\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     },
     {
       "turn": 5,
@@ -129,7 +193,23 @@
         "best_pass_share": 1.0,
         "leaked": true
       },
-      "level": "direct"
+      "level": "direct",
+      "stitch": {
+        "code": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    result = []\n    current = \"\"\n    count = 0\n\n    for char in paren_string:\n        if char == ' ':\n            continue\n        if char == '(':\n            count += 1\n            current += char\n        elif char == ')':\n            count -= 1\n            current += char\n\n        if count == 0 and current != \"\":\n            result.append(current)\n            current = \"\"\n\n    return result",
+        "llm_complete": true,
+        "missing": "",
+        "parses": true,
+        "defines_entry": true,
+        "tests": "pass",
+        "pass_share": 1.0,
+        "grounded_share": 1.0,
+        "needs_check": false,
+        "error": null,
+        "reused": true,
+        "llm_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
     }
   ],
   "leaked": true,
@@ -156,5 +236,6 @@
   "first_turn_assembled": 1,
   "first_turn_direct": 1,
   "needs_check": 0,
-  "stitch_errors": 0
+  "stitch_errors": 0,
+  "stitch_model": "deepseek-ai/deepseek-v4.1-flash-maas"
 }
