@@ -57,6 +57,11 @@ The memory comes in two formats (`MEMORY_FORMAT` in `toy_config.py`, or `--memor
   message on its own with the Help-Seeking Annotation Rubric (v1), to confirm each one reads
   as intended.
 
+Every tutor prompt ends with the same instruction to use the memory, in every condition
+(`MEMORY_INSTRUCTION` in `toy_config.py`): "If you have notes or messages from earlier
+sessions with a student, take them into account." Runs before 2026-11-22 didn't have it;
+`--no-memory-instruction` leaves it out.
+
 ```bash
 pip install -r requirements.txt
 python3 -I stage2/toy/histories.py             # inspect the paired histories

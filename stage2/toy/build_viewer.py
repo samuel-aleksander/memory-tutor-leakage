@@ -45,6 +45,27 @@ TUTOR_LABELS = {
     "zhao_adapted": "zhao-restricted",
 }
 
+# Run options that change the system prompt besides the tutor prompt. Dialogues that differ
+# in them get their own row in the overview ("restricted + log + memory instruction"), so
+# results from different setups never share a cell. Runs from before an option existed
+# didn't use it (summary memory, no memory instruction).
+SETUP_LABELS = {"log": "log", "instr": "memory instruction"}
+
+
+def setup_key(d):
+    parts = [d.get("tutor_prompt", "?")]
+    if d.get("memory", "summary") != "summary":
+        parts.append(d["memory"])
+    if d.get("memory_instruction"):
+        parts.append("instr")
+    return "+".join(parts)
+
+
+def setup_label(key):
+    base, *opts = key.split("+")
+    return " + ".join([TUTOR_LABELS.get(base, base)] + [SETUP_LABELS.get(o, o) for o in opts])
+
+
 # Run folders left out of the viewer, with the reason.
 SKIP_RUNS = {
     "20261117_103001_plain_nudge": "setup check (--limit 1, default prompt), not a pilot",
@@ -189,7 +210,7 @@ def load_runs():
                 "id": f"{run_dir.name}/{f.stem}",
                 "run": run_dir.name,
                 "memory": d["condition"],
-                "tutor": d.get("tutor_prompt", "?"),
+                "tutor": setup_key(d),
                 "style": d.get("style", "?"),
                 "task": d["task_id"],
                 "repeat": d["repeat"],
@@ -305,10 +326,12 @@ def memory_data():
 
 def main():
     runs, dialogues = load_runs()
-    tutor_order = list(cfg.TUTOR_PROMPTS)
-    tutor_order += sorted({d["tutor"] for d in dialogues} - set(tutor_order))
+    bases = list(cfg.TUTOR_PROMPTS)
+    keys = {d["tutor"] for d in dialogues}
+    tutor_order = sorted(keys, key=lambda k: (bases.index(k.split("+")[0]) if k.split("+")[0] in bases
+                                              else len(bases), k))
     data = {"runs": runs, "dialogues": dialogues, "tutor_order": tutor_order,
-            "memory_order": list(cfg.CONDITIONS), "tutor_labels": TUTOR_LABELS,
+            "memory_order": list(cfg.CONDITIONS), "tutor_labels": {k: setup_label(k) for k in keys},
             "memories": memory_data()}
     blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     OUT.write_text(TEMPLATE.read_text().replace("/*__DATA__*/null", blob))

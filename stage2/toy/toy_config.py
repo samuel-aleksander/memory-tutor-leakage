@@ -88,6 +88,23 @@ TUTOR_PROMPTS = {
 }
 TUTOR_PROMPT = "nudge"   # default variant
 
+# Instruction to use the memory, appended to every tutor prompt above, in every condition.
+#   - Deployed memory systems tell the model to use the memory (e.g. the memory prompt in
+#     Jain et al., papers/jain-et-al.pdf App. B.6, adapted from Wang et al. 2025), so a
+#     tutor that has a memory but was never told to use it isn't realistic.
+#   - The same sentence in every prompt makes it a constant: the tutor prompts then differ
+#     only in their policy (open, restricted, Zhao), not in whether they mention the memory.
+#     ("nudge" already says "using what you know about them", so for it this is redundant.)
+#   - B_no_memory gets it too, although there is nothing for it to refer to: the tutor
+#     prompt must be identical across conditions, so that only the memory block differs.
+#     The conditional wording keeps it natural without a memory, and it doesn't say how to
+#     use the memory, so the tutor decides that.
+# Runs before 2026-11-22 didn't have it. `run_toy.py --no-memory-instruction` leaves it out
+# (to check how much of a memory effect depends on it); each run records which it used.
+MEMORY_INSTRUCTION = ("If you have notes or messages from earlier sessions with a student, "
+                      "take them into account.")
+USE_MEMORY_INSTRUCTION = True
+
 # ---------------------------------------------------------------------------
 # Memory: per-session notes, written the way a memory system might store them
 # ---------------------------------------------------------------------------
