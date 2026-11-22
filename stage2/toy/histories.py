@@ -7,10 +7,14 @@ exercises, order, number of requests, header, pasted material) is identical by c
 This module checks what the templates can't guarantee: that each request pair, and the
 histories as a whole, have about the same length.
 
+The log format also has a neutral history (condition D_neutral, toy_config.NEUTRAL_LOG_SESSIONS):
+the same sessions and number of messages, about the same length, but no help-seeking. It is
+built in the same layout and checked for the same structure and length.
+
 Usage (from the project root):
     python3 -I stage2/toy/histories.py                 # summary format
-    python3 -I stage2/toy/histories.py --memory log    # message-log format
-Prints both histories, the length table and a diff.
+    python3 -I stage2/toy/histories.py --memory log    # message-log format, plus the neutral log
+Prints the histories, the length table and a diff.
 """
 
 import argparse
@@ -22,9 +26,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I drops the script dir
 import toy_config as cfg  # noqa: E402
 
-KINDS = ("instr", "exec")
+KINDS = ("instr", "exec")  # the paired histories
+NEUTRAL = "neutral"        # the neutral log (log format only)
 FORMATS = ("summary", "log")
-PASTE_KEYS = (("exercise", ""), ("code", "python"), ("output", ""), ("error", ""))  # in this order
+PASTE_KEYS = (("exercise", ""), ("announcement", ""), ("code", "python"), ("output", ""),
+              ("error", ""))  # shown in this order
 POLITENESS = ("please", "thanks", "thank you", "sorry")  # must appear in both versions or neither
 
 
@@ -52,27 +58,43 @@ def message_text(m, kind):
     return "\n".join(parts)
 
 
+def log_sessions(kind):
+    """(week, exercise, messages) per session: the neutral log reuses LOG_SESSIONS' weeks and
+    exercises with its own messages."""
+    if kind == NEUTRAL:
+        return [(s["week"], s["exercise"], msgs)
+                for s, msgs in zip(cfg.LOG_SESSIONS, cfg.NEUTRAL_LOG_SESSIONS)]
+    return [(s["week"], s["exercise"], s["messages"]) for s in cfg.LOG_SESSIONS]
+
+
 def log_messages(kind):
     """(session number, message number, message dict, text) for every message in the log."""
     return [(i, j, m, message_text(m, kind))
-            for i, s in enumerate(cfg.LOG_SESSIONS, 1)
-            for j, m in enumerate(s["messages"], 1)]
+            for i, (_, _, msgs) in enumerate(log_sessions(kind), 1)
+            for j, m in enumerate(msgs, 1)]
 
 
 def build_log(kind):
-    """Message-log memory block for one kind of history ("instr" or "exec")."""
+    """Message-log memory block for one kind of history ("instr", "exec" or "neutral")."""
     lines = [cfg.LOG_HEADER]
-    for i, s in enumerate(cfg.LOG_SESSIONS, 1):
-        lines.append(f"\n### Session {i} (week {s['week']}), exercise `{s['exercise']}`")
-        for m in s["messages"]:
+    for i, (week, exercise, msgs) in enumerate(log_sessions(kind), 1):
+        lines.append(f"\n### Session {i} (week {week}), exercise `{exercise}`")
+        for m in msgs:
             text = message_text(m, kind)
             # a code fence must start its own line to render
             lines.append(f"\nStudent:\n{text}" if text.startswith("```") else f"\nStudent: {text}")
     return "\n".join(lines)
 
 
+def available_kinds(memory):
+    """The histories a format has: the neutral one exists only as a log."""
+    return KINDS + ((NEUTRAL,) if memory == "log" else ())
+
+
 def build_memory(kind, memory):
     """Memory block in the given format ("summary" or "log")."""
+    if kind not in available_kinds(memory):
+        raise ValueError(f"no {kind} history in the {memory} format")
     return {"summary": build_history, "log": build_log}[memory](kind)
 
 
@@ -135,11 +157,36 @@ def form_problems():
     return problems
 
 
+def neutral_problems():
+    """The neutral log must match the paired logs in structure and (roughly) length."""
+    problems = []
+    if len(cfg.NEUTRAL_LOG_SESSIONS) != len(cfg.LOG_SESSIONS):
+        return [f"neutral log has {len(cfg.NEUTRAL_LOG_SESSIONS)} sessions, "
+                f"LOG_SESSIONS has {len(cfg.LOG_SESSIONS)}"]
+    for i, (s, msgs) in enumerate(zip(cfg.LOG_SESSIONS, cfg.NEUTRAL_LOG_SESSIONS), 1):
+        if len(msgs) != len(s["messages"]):
+            problems.append(f"neutral session {i}: {len(msgs)} messages, LOG_SESSIONS has "
+                            f"{len(s['messages'])}")
+        for j, m in enumerate(msgs, 1):
+            if set(m) - {k for k, _ in PASTE_KEYS} != {NEUTRAL} or not m[NEUTRAL].strip():
+                problems.append(f"neutral session {i} message {j}: needs a non-empty 'neutral' "
+                                f"(plus optional pasted material) and nothing else")
+    if problems:
+        return problems
+    a, b = len(build_log(NEUTRAL)), max(len(build_log(k)) for k in KINDS)
+    rel = abs(a - b) / max(a, b)
+    if rel > cfg.MAX_TOTAL_LENGTH_DIFF:
+        problems.append(f"neutral log differs in length from the paired logs by {rel:.1%} "
+                        f"(max {cfg.MAX_TOTAL_LENGTH_DIFF:.0%})")
+    return problems
+
+
 def all_problems():
     shape = shape_problems()
     if shape:  # the length check would trip over malformed messages
         return shape
-    return [p for memory in FORMATS for p in length_problems(memory)] + form_problems()
+    return ([p for memory in FORMATS for p in length_problems(memory)] + form_problems()
+            + neutral_problems())
 
 
 def check():
@@ -152,6 +199,8 @@ def check():
 def print_log_shape():
     """The log's size and shape, next to the StudyChat numbers it was written to match."""
     msgs = [m for s in cfg.LOG_SESSIONS for m in s["messages"]]
+    nmsgs = [m for s in cfg.NEUTRAL_LOG_SESSIONS for m in s]
+    nwords = [len(m[NEUTRAL].split()) for m in nmsgs]
     own = {k: [len((m.get("both") or m[k]).split()) for m in msgs] for k in KINDS}
     short = sum(n <= 3 for n in own[KINDS[0]])
     pasted = sum(any(key in m for key, _ in PASTE_KEYS) for m in msgs)
@@ -159,14 +208,21 @@ def print_log_shape():
     words = sorted(n for k in KINDS for n, m in zip(own[k], msgs) if "both" not in m)
     pairs = [m for m in msgs if "both" not in m]
     questions = sum(sentence_form(m[KINDS[0]]) == "question" for m in pairs)
-    print(f"\n{'':<34}{'log':>12}   StudyChat")
-    print(f"{'messages':<34}{len(msgs):>12}   ~29 by week 6 (median 67 per semester)")
-    print(f"{'messages per session':<34}{f'{min(per_session)}-{max(per_session)}':>12}   median 4 per chat")
-    print(f"{'3 words or fewer':<34}{f'{short / len(msgs):.0%}':>12}   5%")
-    print(f"{'with pasted code/output/error':<34}{f'{pasted / len(msgs):.0%}':>12}   about 34%")
-    print(f"{'own words per request':<34}{f'{words[0]}-{words[-1]}':>12}   median 11, middle half 7-20")
+    npasted = sum(any(key in m for key, _ in PASTE_KEYS) for m in nmsgs)
+    nrequests = sorted(n for n in nwords if n > 3)
+    print(f"\n{'':<34}{'instr/exec':>12}{'neutral':>9}   StudyChat")
+    print(f"{'messages':<34}{len(msgs):>12}{len(nmsgs):>9}   ~29 by week 6 (median 67 per semester)")
+    print(f"{'messages per session':<34}{f'{min(per_session)}-{max(per_session)}':>12}"
+          f"{f'{min(map(len, cfg.NEUTRAL_LOG_SESSIONS))}-{max(map(len, cfg.NEUTRAL_LOG_SESSIONS))}':>9}"
+          "   median 4 per chat")
+    print(f"{'3 words or fewer':<34}{f'{short / len(msgs):.0%}':>12}"
+          f"{f'{sum(n <= 3 for n in nwords) / len(nmsgs):.0%}':>9}   5%")
+    print(f"{'with pasted material':<34}{f'{pasted / len(msgs):.0%}':>12}{f'{npasted / len(nmsgs):.0%}':>9}"
+          "   about 34% (code)")
+    print(f"{'own words per request':<34}{f'{words[0]}-{words[-1]}':>12}"
+          f"{f'{nrequests[0]}-{nrequests[-1]}':>9}   median 11, middle half 7-20")
     print(f"{'pairs as questions / commands':<34}{f'{questions} / {len(pairs) - questions}':>12}"
-          "   ~half questions, >=11% commands (rough)")
+          f"{'':>9}   ~half questions, >=11% commands (rough)")
 
 
 def main():
@@ -199,7 +255,12 @@ def main():
                                      "instr", "exec", n=0, lineterm=""):
         print(line)
 
-    problems = length_problems(memory) + (form_problems() if memory == "log" else [])
+    if memory == "log":
+        neutral = build_log(NEUTRAL)
+        print(f"\n{'=' * 70}\nneutral history (log, condition D_neutral)\n{'=' * 70}{neutral}\n")
+        print(f"neutral total: {len(neutral.split())} words, {len(neutral)} characters")
+
+    problems = length_problems(memory) + (form_problems() + neutral_problems() if memory == "log" else [])
     print("\nLength and form check: " + ("OK" if not problems else "FAILED\n  " + "\n  ".join(problems)))
 
 

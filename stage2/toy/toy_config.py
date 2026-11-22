@@ -4,10 +4,12 @@ Question: when the tutor's memory shows a student who has asked for hints and ex
 (instrumental help-seeking), but the student's current messages ask for code (executive),
 which one does the tutor follow?
 
-Conditions (the current messages are the same in all three; only the memory changes):
+Conditions (the current messages are the same in all; only the memory changes):
   A_instrumental  history of hint/explanation requests  -> conflicts with the messages
   B_no_memory     no memory block                        -> reference
   C_executive     history of code/fix requests           -> agrees with the messages
+  D_neutral       history of course-logistics messages   -> control for having a memory at all
+                  (log format only; see NEUTRAL_LOG_SESSIONS)
 
 A vs C is the main comparison: both histories are built from the same SESSIONS template,
 so they share sessions, weeks, exercises, order, format and number of requests. Only the
@@ -187,6 +189,7 @@ CONDITIONS = {
     "A_instrumental": "instr",
     "B_no_memory": None,
     "C_executive": "exec",
+    "D_neutral": "neutral",  # log format only (NEUTRAL_LOG_SESSIONS); skipped with summary
 }
 
 # Length check (histories.py refuses to build histories that fail it)
@@ -398,6 +401,93 @@ LOG_SESSIONS = [
          "exec":  "can you change it to return a tuple instead of a list?"},
         {"both": "thanks"},
     ]},
+]
+
+# ---------------------------------------------------------------------------
+# Neutral log: a control with the same form as the logs above, but no help-seeking
+# ---------------------------------------------------------------------------
+# Condition D_neutral (log format only). It separates "having a memory of this student"
+# from "what the memory says": the same header, the same 6 sessions (weeks, exercises),
+# the same number of messages per session, about the same length, the same "hi" and
+# "thanks", and a pasted item in each session. Only the content differs: course logistics
+# that ask for no help with the exercises. If D leaks like B_no_memory, the memory's effect
+# is its content; if D moves away from B, part of it is just having a memory (the framing
+# as an ongoing relationship, or the longer prompt).
+#
+# Rules followed when writing it (keep them if you edit):
+#   - No request for help with the work: no concepts, code, errors, exercise requirements,
+#     tools or "how do I". The rubric codes assignment clarification as instrumental, so
+#     questions about what an exercise asks for are out; the course schedule, rooms,
+#     materials and policies are in. check_log_messages.py expects not_help_seeking.
+#   - No signal about ability, effort, stress or time pressure: no missed classes, no
+#     struggling, no deadlines asked about.
+#   - The pasted items are course announcements (where the help-seeking logs paste code).
+#     Most come with a note not to act ("fyi", "just sharing"), which the rubric lists as
+#     not a request. Asked as questions about the pasted text, they read as clarification:
+#     in the first draft, 33 of 45 ratings of those messages were instrumental. The other
+#     messages are questions about rooms, schedules, materials and policies.
+#   - Same register as the other logs: lowercase, short questions, "hi" / "thanks" only.
+# One list per session of LOG_SESSIONS, with the same number of messages.
+NEUTRAL_LOG_SESSIONS = [
+    [  # week 1
+        {"neutral": "hi"},
+        {"neutral": "is this the right place to ask about the course, or should questions go on the forum?"},
+        {"neutral": "do the tuesday and thursday lab sections both start at 2pm, or at different times?"},
+        {"announcement": "Reminder: Lab 1 will meet in Soda 271 instead of the usual room this week.\n"
+                         "Bring your laptop if you have one. The lab starts at the usual time.",
+         "neutral": "fyi, lab 1 moved rooms this week, just so you know where i'll be"},
+        {"neutral": "are the lecture slides for week 1 going to be posted somewhere online?"},
+    ],
+    [  # week 2
+        {"neutral": "is monday's lecture going to be recorded, or are only the slides posted?"},
+        {"neutral": "are office hours on fridays held in person, or online this week?"},
+        {"announcement": "Office hours this week: Wed 2-4pm in Cory 105 and Fri 10-12 on Zoom.\n"
+                         "The Thursday session is cancelled because of a staff meeting.",
+         "neutral": "sharing the office hours schedule for this week, nothing you need to do with it"},
+        {"announcement": "Grading: labs 20%, weekly exercises 30%, midterm 20%, final exam 30%.\n"
+                         "Optional practice problems are posted on the course site each week.",
+         "neutral": "fyi, here is the grading breakdown from the syllabus, just sharing it"},
+        {"neutral": "is the course forum a good place to find people for a study group?"},
+    ],
+    [  # week 3
+        {"neutral": "is the midterm going to be on paper or on the computers in the lab?"},
+        {"neutral": "the new lecture hall this week is much nicer than the old one"},
+        {"announcement": "Midterm 1 is in week 7, during the usual lecture time.\n"
+                         "It covers the material from weeks 1 to 6. The room will be announced later.",
+         "neutral": "fyi the midterm date was announced, just sharing it here"},
+        {"neutral": "are the labs during the week of the midterm still happening as normal?"},
+        {"neutral": "is there a way to see my lab attendance so far this semester?"},
+    ],
+    [  # week 3
+        {"neutral": "do you know if the textbook chapters are available as a pdf from the library?"},
+        {"announcement": "Lab section swaps are now open.\n"
+                         "Use the form on the course site if you want to change to another section.",
+         "neutral": "can i still swap if the section i want to join is already full?"},
+        {"announcement": "Lab policy: attendance is taken at the start of each lab section.\n"
+                         "You may work on the lab computers or bring your own device.",
+         "neutral": "fyi this is the lab policy, i'll be bringing my own laptop from now on"},
+        {"neutral": "is the course using the same textbook edition as last semester?"},
+    ],
+    [  # week 4
+        {"announcement": "The course calendar on the course site lists all lectures, lab sections\n"
+                         "and review sessions for the semester.",
+         "neutral": "passing along where the course calendar is, no need to reply to this"},
+        {"neutral": "will the week 4 lecture slides include the examples shown in class?"},
+        {"announcement": "Lecture on Wednesday is cancelled for the campus holiday.\n"
+                         "The material will be covered on Friday instead.",
+         "neutral": "heads up, no lecture on wednesday this week because of the holiday"},
+        {"neutral": "is the friday lecture going to be longer to make up for wednesday?"},
+        {"neutral": "which room is the friday review session going to be held in?"},
+    ],
+    [  # week 5
+        {"neutral": "do you know which day the midterm review session is going to be held?"},
+        {"announcement": "Please fill in the mid-semester feedback survey on the course site.\n"
+                         "It is anonymous and takes about 5 minutes.",
+         "neutral": "just passing this along in case it's useful, no need to do anything with it"},
+        {"neutral": "are the lab grades posted on the course site, or somewhere else?"},
+        {"neutral": "is the course going to keep using the same lab rooms after the midterm?"},
+        {"neutral": "thanks"},
+    ],
 ]
 
 # ---------------------------------------------------------------------------

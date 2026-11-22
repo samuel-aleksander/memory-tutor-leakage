@@ -11,7 +11,7 @@
   --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eef0f4; --ink: #14171c; --muted: #5a6170;
   --rule: #dde1e7; --link: #2f45b5; --warn: #8a5a00; --warn-bg: #fdf2dc; --bad: #b3261e; --ok: #1d7a46;
   /* memory conditions */
-  --m-a: #7a4fd0; --m-b: #7d8492; --m-c: #13996a;
+  --m-a: #7a4fd0; --m-b: #7d8492; --m-c: #13996a; --m-d: #c0621a;
   /* leakage levels: ordinal blue ramp, 0 = neutral */
   --l0: #eef0f4; --l1: #86b6ef; --l2: #3987e5; --l3: #184f95;
   --l0-ink: #5a6170; --l1-ink: #0d366b; --l2-ink: #ffffff; --l3-ink: #ffffff;
@@ -24,7 +24,7 @@
   :root:not([data-theme="light"]) {
     --bg: #111317; --surface: #191c21; --surface-2: #23272e; --ink: #e8eaee; --muted: #a2a9b6;
     --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90; --ok: #5ccf8f;
-    --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893;
+    --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893; --m-d: #f0a35e;
     --l0: #23272e; --l1: #1c5cab; --l2: #3987e5; --l3: #9ec5f4;
     --l0-ink: #a2a9b6; --l1-ink: #ffffff; --l2-ink: #ffffff; --l3-ink: #0d1726;
     --student-bg: #23272e; --code-bg: #14161a;
@@ -34,7 +34,7 @@
 :root[data-theme="dark"] {
   --bg: #111317; --surface: #191c21; --surface-2: #23272e; --ink: #e8eaee; --muted: #a2a9b6;
   --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90; --ok: #5ccf8f;
-  --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893;
+  --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893; --m-d: #f0a35e;
   --l0: #23272e; --l1: #1c5cab; --l2: #3987e5; --l3: #9ec5f4;
   --l0-ink: #a2a9b6; --l1-ink: #ffffff; --l2-ink: #ffffff; --l3-ink: #0d1726;
   --student-bg: #23272e; --code-bg: #14161a;
@@ -189,7 +189,7 @@ table.mcheck { border-collapse: collapse; font-size: 13px; min-width: 360px; }
 table.mcheck th, table.mcheck td { padding: 5px 12px 5px 0; border-bottom: 1px solid var(--rule); text-align: left; }
 table.mcheck td.num { font-variant-numeric: tabular-nums; }
 table.mcheck th { color: var(--muted); font-weight: 500; }
-.rawcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.rawcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .rawcols pre { white-space: pre-wrap; background: var(--code-bg); padding: 10px; border-radius: 6px; margin: 0; font-size: 12px; }
 
 @media (max-width: 800px) {
@@ -281,6 +281,7 @@ const MEM = {
   A_instrumental: { name: "Instrumental history", chip: "Instrumental", short: "I", color: "var(--m-a)", help: "memory of hint/explanation requests" },
   B_no_memory: { name: "No memory", chip: "No memory", short: "C", color: "var(--m-b)", help: "control: no memory block" },
   C_executive: { name: "Executive history", chip: "Executive", short: "E", color: "var(--m-c)", help: "memory of code/fix requests" },
+  D_neutral: { name: "Neutral history", chip: "Neutral", short: "N", color: "var(--m-d)", help: "control: memory of course-logistics messages, no help-seeking" },
 };
 const memInfo = m => MEM[m] || { name: m, chip: m, short: m[0], color: "var(--muted)", help: "" };
 const lvlIdx = l => Math.max(0, LEVELS.indexOf(l));
@@ -634,6 +635,7 @@ const MF_HELP = {
   summary: "third-person notes, one line per past request (SESSIONS)",
 };
 const VERS = [["instr", "A_instrumental"], ["exec", "C_executive"]];
+const CHECK_VERS = [...VERS, ["neutral", "D_neutral"]];
 const CHECK_ROWS = [["confidence", "Confidence"], ["programming_ability", "Programming ability"],
   ["frustration", "Frustration"], ["politeness", "Politeness"], ["time_pressure", "Time pressure"]];
 function vhead(v) { const mi = memInfo(v[1]); return `<i class="mdot" style="background:${mi.color}"></i>${esc(mi.name)} (${mi.short})`; }
@@ -646,14 +648,29 @@ function labelChip(lb) {
 }
 function wholeCheck(c) {
   if (!c) return `<p class="sub">No whole-history check yet. Run <code>python3 -I stage2/toy/check_histories.py --memory ${esc(S.memFmt)}</code>.</p>`;
-  const V = c.versions;
+  const V = c.versions, VERS = CHECK_VERS.filter(([k]) => V[k]);
   const cell = (k, f) => V[k] && V[k][f] != null ? V[k][f].toFixed(1) : "–";
   return `<div class="scroll-x"><table class="mcheck"><tr><th></th>${VERS.map(v => `<th>${vhead(v)}</th>`).join("")}</tr>
     <tr><td>Read as intended</td>${VERS.map(([k]) => `<td class="num">${V[k] ? `${V[k].intended}/${V[k].n}` : "–"}</td>`).join("")}</tr>
     ${CHECK_ROWS.map(([f, name]) => `<tr><td>${name}</td>${VERS.map(([k]) => `<td class="num">${cell(k, f)}</td>`).join("")}</tr>`).join("")}
     </table></div>
-    <p class="sub" style="margin:8px 0 0">Means of 1–5 ratings by a rater model that reads each history unlabeled (<code>check_histories.py</code>). Only the first row should differ.
+    <p class="sub" style="margin:8px 0 0">Means of 1–5 ratings by a rater model that reads each history unlabeled (<code>check_histories.py</code>). "Read as intended": understanding (I), solutions (E), no help-seeking (N). The other rows should match.
     <code>${esc(c.file)}</code>${c.fresh ? "" : ` <span class="pill">out of date: rated an older version of these histories</span>`}</p>`;
+}
+function neutralSection(sessions) {
+  let rows = "";
+  sessions.forEach((s, i) => {
+    rows += `<h3 class="span">Session ${i + 1} <small>· week ${s.week} · <code>${esc(s.exercise)}</code></small></h3>`;
+    for (const m of s.messages) {
+      for (const p of m.pastes || [])
+        rows += `<div class="span paste"><div class="plabel">pasted ${esc(p.kind)}</div><div class="md">${md(p.text)}</div></div>`;
+      rows += `<div class="span mreq"><div class="md">${md(m.text)}</div><div class="chips">${labelChip(m.label)}</div></div>`;
+    }
+  });
+  return `<section>
+    <h2>${vhead(["neutral", "D_neutral"])}: the control</h2>
+    <p class="sub">Same header, sessions, number of messages and length as the logs above, but course logistics instead of help-seeking (<code>NEUTRAL_LOG_SESSIONS</code>). Compared with no memory, it shows the effect of having a memory at all. Expected rubric label: not help seeking.</p>
+    <div class="mgrid">${rows}</div></section>`;
 }
 function renderMemory() {
   const fmts = Object.keys(MF).filter(f => DATA.memories && DATA.memories[f]);
@@ -693,9 +710,10 @@ function renderMemory() {
     <div class="mhead"><div class="md">${md(M.header)}</div></div>
     <div class="mgrid">${rows}</div>
   </section>
+  ${isLog && M.neutral_sessions ? neutralSection(M.neutral_sessions) : ""}
   <section>
     <details><summary style="cursor:pointer">Full text as the tutor sees it (appended to the tutor prompt)</summary>
-      <div class="rawcols" style="margin-top:10px">${VERS.map(([k, c]) => `<div><div class="plabel">${vhead([k, c])}</div><pre>${esc(M.text[k].trim())}</pre></div>`).join("")}</div>
+      <div class="rawcols" style="margin-top:10px">${CHECK_VERS.filter(([k]) => M.text[k]).map(([k, c]) => `<div><div class="plabel">${vhead([k, c])}</div><pre>${esc(M.text[k].trim())}</pre></div>`).join("")}</div>
     </details>
   </section>`;
   box.querySelectorAll("#mfSeg button").forEach(b => b.onclick = () => { S.memFmt = b.dataset.f; render(); });

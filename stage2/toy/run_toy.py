@@ -30,6 +30,7 @@ Usage (from the project root):
     python3 -I stage2/toy/run_toy.py --tutor no_solutions   # another tutor prompt variant
     python3 -I stage2/toy/run_toy.py --no-stitch        # skip assembly: levels 3 and 0/1 only
     python3 -I stage2/toy/run_toy.py --memory log       # memory as the student's past messages
+                                                        # (adds the D_neutral control)
     python3 -I stage2/toy/run_toy.py --no-memory-instruction  # leave out MEMORY_INSTRUCTION
 
 The model and provider are set in toy_config.py; llm.py lists what each provider needs
@@ -567,7 +568,8 @@ def main():
                    default=cfg.USE_MEMORY_INSTRUCTION,
                    help="leave MEMORY_INSTRUCTION out of the tutor prompt")
     p.add_argument("--repeats", type=int, default=cfg.REPEATS)
-    p.add_argument("--conditions", nargs="+", default=list(cfg.CONDITIONS), choices=list(cfg.CONDITIONS))
+    p.add_argument("--conditions", nargs="+", choices=list(cfg.CONDITIONS),
+                   help="default: every condition the memory format has (D_neutral is log only)")
     p.add_argument("--tasks", nargs="+", default=cfg.TASKS)
     p.add_argument("--limit", type=int, help="run only the first N dialogues (setup check)")
     p.add_argument("--workers", type=int, default=6)
@@ -576,6 +578,16 @@ def main():
     args = p.parse_args()
 
     histories.check()
+    usable = [c for c in cfg.CONDITIONS
+              if cfg.CONDITIONS[c] is None or cfg.CONDITIONS[c] in histories.available_kinds(args.memory)]
+    if args.conditions is None:
+        args.conditions = usable
+        skipped = [c for c in cfg.CONDITIONS if c not in usable]
+        if skipped:
+            print(f"Skipping {', '.join(skipped)}: no such history in the {args.memory} format")
+    elif set(args.conditions) - set(usable):
+        sys.exit(f"{', '.join(sorted(set(args.conditions) - set(usable)))}: no such history in the "
+                 f"{args.memory} format (use --memory log)")
     tasks = load(PLUS_PATH)
     missing = [t for t in args.tasks if t not in tasks]
     if missing:

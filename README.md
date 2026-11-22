@@ -57,6 +57,11 @@ The memory comes in two formats (`MEMORY_FORMAT` in `toy_config.py`, or `--memor
   message on its own with the Help-Seeking Annotation Rubric (v1), to confirm each one reads
   as intended.
 
+With the log format there is a fourth condition, `D_neutral`: a log with the same header,
+sessions, number of messages and length, but course-logistics messages (rooms, schedules,
+policies) instead of help-seeking. Compared with `B_no_memory`, it shows whether having a
+memory at all changes the tutor's behavior, apart from what the memory says.
+
 Every tutor prompt ends with the same instruction to use the memory, in every condition
 (`MEMORY_INSTRUCTION` in `toy_config.py`): "If you have notes or messages from earlier
 sessions with a student, take them into account." Runs before 2026-11-22 didn't have it;

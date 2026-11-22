@@ -244,7 +244,7 @@ def load_runs():
 # Memory view: the paired histories and their latest checks
 # ---------------------------------------------------------------------------
 RATING_FIELDS = ("confidence", "programming_ability", "frustration", "politeness", "time_pressure")
-EXPECTED_HELP_TYPE = {"instr": "understanding", "exec": "solutions"}
+EXPECTED_HELP_TYPE = {"instr": "understanding", "exec": "solutions", "neutral": "none"}
 
 
 def latest(pattern):
@@ -258,10 +258,14 @@ def whole_log_check(memory):
     if f is None:
         return None
     d = json.loads(f.read_text())
-    current = {k: histories.build_memory(k, memory) for k in histories.KINDS}
-    out = {"file": f.name, "fresh": d.get("histories") == current, "versions": {}}
-    for k in histories.KINDS:
-        ok = [r for r in d["results"].get(k, []) if "error" not in r]
+    rated = d.get("histories", {})
+    fresh = bool(rated) and all(k in histories.available_kinds(memory)
+                                and rated[k] == histories.build_memory(k, memory) for k in rated)
+    out = {"file": f.name, "fresh": fresh, "versions": {}}
+    for k in [k for k in histories.available_kinds(memory) if k in d["results"]]:
+        # ratings outside 1-5 are rater errors (check_histories.py now rejects them)
+        ok = [r for r in d["results"].get(k, []) if "error" not in r
+              and all(isinstance(r.get(f), int) and 1 <= r[f] <= 5 for f in RATING_FIELDS)]
         out["versions"][k] = {
             "n": len(ok), "errors": len(d["results"].get(k, [])) - len(ok),
             "intended": sum(r.get("help_type") == EXPECTED_HELP_TYPE[k] for r in ok),
@@ -282,6 +286,8 @@ def message_check():
         for i, j, m, text in histories.log_messages(kind):
             k = "both" if "both" in m else kind
             current[f"s{i}m{j}_{k}"] = text
+    for i, j, m, text in histories.log_messages(histories.NEUTRAL):
+        current[f"s{i}m{j}_neutral"] = text
     labels = {}
     for m in d["messages"]:
         counts = Counter(r.get("label", "error") for r in m["ratings"])
@@ -309,6 +315,12 @@ def memory_data():
                              **{k: m[k] for k in histories.KINDS},
                              "labels": {k: labels.get(f"s{i}m{j}_{k}") for k in histories.KINDS}})
         log_sessions.append({"week": s["week"], "exercise": s["exercise"], "messages": msgs})
+    neutral_sessions = [{"week": week, "exercise": exercise, "messages": [
+        {"id": f"s{i}m{j}", "text": m[histories.NEUTRAL], "label": labels.get(f"s{i}m{j}_neutral"),
+         "pastes": [{"kind": key, "text": f"```{lang}\n{m[key]}\n```"}
+                    for key, lang in histories.PASTE_KEYS if key in m]}
+        for j, m in enumerate(msgs, 1)]}
+        for i, (week, exercise, msgs) in enumerate(histories.log_sessions(histories.NEUTRAL), 1)]
     summary_sessions = [{"week": s["week"], "exercise": s["exercise"],
                          "messages": [{"id": f"s{i}r{j}", **{k: r[k] for k in histories.KINDS}}
                                       for j, r in enumerate(s["requests"], 1)]}
@@ -316,7 +328,8 @@ def memory_data():
     return {
         "default": cfg.MEMORY_FORMAT,
         "log": {"header": cfg.LOG_HEADER.strip(), "sessions": log_sessions,
-                "text": {k: histories.build_memory(k, "log") for k in histories.KINDS},
+                "text": {k: histories.build_memory(k, "log") for k in histories.available_kinds("log")},
+                "neutral_sessions": neutral_sessions,
                 "check": whole_log_check("log"), "message_check": log_meta},
         "summary": {"header": cfg.HISTORY_HEADER.strip(), "sessions": summary_sessions,
                     "text": {k: histories.build_memory(k, "summary") for k in histories.KINDS},
@@ -331,7 +344,9 @@ def main():
     tutor_order = sorted(keys, key=lambda k: (bases.index(k.split("+")[0]) if k.split("+")[0] in bases
                                               else len(bases), k))
     data = {"runs": runs, "dialogues": dialogues, "tutor_order": tutor_order,
-            "memory_order": list(cfg.CONDITIONS), "tutor_labels": {k: setup_label(k) for k in keys},
+            # only conditions with dialogues, so old runs don't get an empty D_neutral column
+            "memory_order": [c for c in cfg.CONDITIONS if any(d["memory"] == c for d in dialogues)]
+                            or list(cfg.CONDITIONS), "tutor_labels": {k: setup_label(k) for k in keys},
             "memories": memory_data()}
     blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     OUT.write_text(TEMPLATE.read_text().replace("/*__DATA__*/null", blob))

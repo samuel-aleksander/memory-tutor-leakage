@@ -9,6 +9,7 @@ Expected labels:
     instr version of a pair   -> instrumental
     exec version of a pair    -> executive
     shared ("both") messages  -> not_help_seeking
+    neutral log (D_neutral)   -> not_help_seeking
 
 What you want to see: every message gets its expected label in every repeat. A message that
 is labeled mixed, unclear or the other type even once is ambiguous under the rubric:
@@ -38,7 +39,8 @@ import llm  # noqa: E402
 import toy_config as cfg  # noqa: E402
 
 LABELS = ["instrumental", "executive", "mixed", "unclear", "not_help_seeking"]
-EXPECTED = {"instr": "instrumental", "exec": "executive", "both": "not_help_seeking"}
+EXPECTED = {"instr": "instrumental", "exec": "executive", "both": "not_help_seeking",
+            "neutral": "not_help_seeking"}
 
 # The rubric's labels and decision rules, condensed. The rubric reads the tutor turn before
 # each message for context; the log saves no tutor replies, so the rater gets the exercise
@@ -108,6 +110,9 @@ def items():
                 continue
             out.append({"id": f"s{i}m{j}_{k}", "session": i, "message": j, "kind": k,
                         "exercise": cfg.LOG_SESSIONS[i - 1]["exercise"], "text": text})
+    for i, j, m, text in histories.log_messages(histories.NEUTRAL):  # the control's messages
+        out.append({"id": f"s{i}m{j}_neutral", "session": i, "message": j, "kind": "neutral",
+                    "exercise": cfg.LOG_SESSIONS[i - 1]["exercise"], "text": text})
     return out
 
 
@@ -162,9 +167,12 @@ def main():
         if not ok:
             failing.append(m)
 
-    pairs_ok = sum(m["all_as_expected"] for m in msgs if m["kind"] != "both")
-    n_pairs = sum(m["kind"] != "both" for m in msgs)
+    pairs_ok = sum(m["all_as_expected"] for m in msgs if m["kind"] in histories.KINDS)
+    n_pairs = sum(m["kind"] in histories.KINDS for m in msgs)
     print(f"\nRequest messages labeled as intended in every repeat: {pairs_ok}/{n_pairs}")
+    nm = [m for m in msgs if m["kind"] == "neutral"]
+    print(f"Neutral-log messages labeled not_help_seeking in every repeat: "
+          f"{sum(m['all_as_expected'] for m in nm)}/{len(nm)}")
     for m in failing:
         wrong = next((r for r in m["ratings"] if r.get("label") != m["expected"]), {})
         print(f"\n{m['id']} ({m['exercise']}):\n{m['text']}\n  -> {wrong.get('label', wrong.get('error'))}: "

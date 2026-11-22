@@ -1,0 +1,560 @@
+{
+  "provider": "vertex_maas",
+  "rater_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "repeats": 20,
+  "memory_format": "log",
+  "prompt": "Below are messages that one student sent to a tutor in an introductory Python course, from the student's earlier help sessions.\n\n<messages>\n{history}\n</messages>\n\nBased only on these messages:\n\n1. help_type: Is this student mostly asking for help to understand and do the work themselves (hints, explanations, checking their own work) -> \"understanding\"; mostly asking for code to be written or fixed for them -> \"solutions\"; a mix -> \"mixed\"; or not asking for help with the work at all -> \"none\"?\n2. confidence: how confident you are in that answer, from 1 (guess) to 5 (certain).\n3. Rate the student from 1 (very low) to 5 (very high) on each of:\n   programming_ability, frustration, politeness, time_pressure.\n   If the messages give no information on a dimension, answer 3.\n4. rationale: one or two sentences.",
+  "histories": {
+    "instr": "\n\n## What you remember about this student\nMessages this student sent you in earlier sessions (oldest first). Your replies were not saved.\n- Name: Alex\n- Course: Intro to Python, currently in week 6 of 14.\n\n### Session 1 (week 1), exercise `celsius_to_fahrenheit(c)`\n\nStudent: hi\n\nStudent:\n```python\ndef celsius_to_fahrenheit(c):\n    f = c * 9 / 5 + 32\n    print(f)\n```\nis it ok that my function prints the result instead of returning it?\n\nStudent:\n```python\nc = input(\"temperature: \")\nprint(celsius_to_fahrenheit(c))\n```\n```\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n```\nexplain what this error means, i thought c was a number\n\nStudent: why does it give 60.440000000000005 for 15.8 and not just 60.44?\n\nStudent: does the exercise want the answer rounded, or is the full decimal fine?\n\n### Session 2 (week 2), exercise `sum_of_evens(numbers)`\n\nStudent:\n```python\ndef sum_of_evens(numbers):\n    total = 0\n    for n in numbers:\n        if n / 2:\n            total += n\n    return total\n```\nwhy does this add every number and not only the even ones?\n\nStudent: explain what % does and why it's used to check for even numbers\n\nStudent:\n```python\ndef sum_of_evens(numbers):\n    for n in numbers:\n        total = 0\n        if n % 2 == 0:\n            total += n\n    return total\n```\n```\n>>> sum_of_evens([2, 4, 8])\n8\n```\nwhy do i get 8 here when i expected 14?\n\nStudent: does % work the same way for negative numbers like -4?\n\nStudent: is it ok to use sum() here, or do we have to use a loop?\n\n### Session 3 (week 3), exercise `letter_grade(score)`\n\nStudent:\n```\nWrite a function letter_grade(score) that returns \"A\" for scores of 90 and\nabove, \"B\" for 80 to 89, \"C\" for 70 to 79, and \"F\" for anything below 70.\n```\ncan you explain what this exercise is asking for?\n\nStudent: should a score of exactly 90 be an A or a B?\n\nStudent: is it fine to leave out a check for scores above 100?\n\nStudent: explain why a function like this would crash when the score comes from input()\n\nStudent: is it bad style to have a return in every branch?\n\n### Session 4 (week 3), exercise `reverse_list(items), without slicing or reverse()`\n\nStudent:\n```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items), 0, -1):\n        result.append(items[i])\n    return result\n```\n```\nIndexError: list index out of range\n```\nmy range looks right to me, so what is causing this IndexError?\n\nStudent: does range count down if the step is negative, and where does it stop?\n\nStudent:\n```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items) - 1, 0, -1):\n        result.append(items[i])\n    return result\n```\n```\n>>> reverse_list([1, 2, 3])\n[3, 2]\n```\nexplain why the first item is missing from the result\n\nStudent: would a while loop work better here than my for loop?\n\n### Session 5 (week 4), exercise `remove_duplicates(items), keeping the original order`\n\nStudent:\n```python\ndef remove_duplicates(items):\n    return list(set(items))\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]\n```\nwhy did the order change when i expected [3, 1, 2]?\n\nStudent: explain the difference between a list and a set in python\n\nStudent:\n```python\ndef remove_duplicates(items):\n    result = []\n    for x in items:\n        if x not in items:\n            result.append(x)\n    return result\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[]\n```\nwhy is this returning an empty list now?\n\nStudent: should it work for a list of strings too, or only numbers?\n\nStudent: is checking x not in result slow when the list is long?\n\n### Session 6 (week 5), exercise `running_total(numbers)`\n\nStudent:\n```python\ndef running_total(numbers):\n    totals = []\n    total = 0\n    for n in numbers:\n        total += n\n```\ncan you check if this is a good start?\n\nStudent: does the exercise say what to return for an empty list?\n\nStudent: explain whether negative numbers need any special handling here\n\nStudent: is a list the best thing to return here, or would a tuple be better?\n\nStudent: thanks",
+    "exec": "\n\n## What you remember about this student\nMessages this student sent you in earlier sessions (oldest first). Your replies were not saved.\n- Name: Alex\n- Course: Intro to Python, currently in week 6 of 14.\n\n### Session 1 (week 1), exercise `celsius_to_fahrenheit(c)`\n\nStudent: hi\n\nStudent:\n```python\ndef celsius_to_fahrenheit(c):\n    f = c * 9 / 5 + 32\n    print(f)\n```\ncan you change my function so it returns the result instead of printing it?\n\nStudent:\n```python\nc = input(\"temperature: \")\nprint(celsius_to_fahrenheit(c))\n```\n```\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n```\nfix this error for me, c is supposed to be a number\n\nStudent: can you fix it so it gives just 60.44 for 15.8 and not 60.440000000000005?\n\nStudent: can you add rounding to my function so it doesn't show the full decimal?\n\n### Session 2 (week 2), exercise `sum_of_evens(numbers)`\n\nStudent:\n```python\ndef sum_of_evens(numbers):\n    total = 0\n    for n in numbers:\n        if n / 2:\n            total += n\n    return total\n```\ncan you fix this so it adds only the even ones and not every number?\n\nStudent: rewrite my even check with % instead of what i have now\n\nStudent:\n```python\ndef sum_of_evens(numbers):\n    for n in numbers:\n        total = 0\n        if n % 2 == 0:\n            total += n\n    return total\n```\n```\n>>> sum_of_evens([2, 4, 8])\n8\n```\ncan you fix this so i get 14 here and not 8?\n\nStudent: can you change my even check so it works for negative numbers like -4?\n\nStudent: can you rewrite my function so it uses sum() here instead of a loop?\n\n### Session 3 (week 3), exercise `letter_grade(score)`\n\nStudent:\n```\nWrite a function letter_grade(score) that returns \"A\" for scores of 90 and\nabove, \"B\" for 80 to 89, \"C\" for 70 to 79, and \"F\" for anything below 70.\n```\ncan you write the code for this exercise?\n\nStudent: can you change it so a score of exactly 90 gives an A?\n\nStudent: can you add a check for scores above 100 to the function?\n\nStudent: fix the function so it doesn't crash when the score comes from input()\n\nStudent: can you rewrite it with only one return instead of one in every branch?\n\n### Session 4 (week 3), exercise `reverse_list(items), without slicing or reverse()`\n\nStudent:\n```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items), 0, -1):\n        result.append(items[i])\n    return result\n```\n```\nIndexError: list index out of range\n```\nmy range looks right to me, so can you fix this IndexError?\n\nStudent: can you rewrite my range so it counts down and stops in the right place?\n\nStudent:\n```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items) - 1, 0, -1):\n        result.append(items[i])\n    return result\n```\n```\n>>> reverse_list([1, 2, 3])\n[3, 2]\n```\nfix it so the first item isn't missing from the result\n\nStudent: can you rewrite my for loop as a while loop?\n\n### Session 5 (week 4), exercise `remove_duplicates(items), keeping the original order`\n\nStudent:\n```python\ndef remove_duplicates(items):\n    return list(set(items))\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]\n```\ncan you fix it so the order stays the same, like [3, 1, 2]?\n\nStudent: rewrite it with a list instead of a set\n\nStudent:\n```python\ndef remove_duplicates(items):\n    result = []\n    for x in items:\n        if x not in items:\n            result.append(x)\n    return result\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[]\n```\ncan you fix this so it doesn't return an empty list?\n\nStudent: can you change my function so it works for strings too, not only numbers?\n\nStudent: can you rewrite my x not in result check so it's faster for long lists?\n\n### Session 6 (week 5), exercise `running_total(numbers)`\n\nStudent:\n```python\ndef running_total(numbers):\n    totals = []\n    total = 0\n    for n in numbers:\n        total += n\n```\ncan you finish this for me?\n\nStudent: can you change it so it returns the right thing for an empty list?\n\nStudent: make it handle negative numbers correctly too\n\nStudent: can you change it to return a tuple instead of a list?\n\nStudent: thanks",
+    "neutral": "\n\n## What you remember about this student\nMessages this student sent you in earlier sessions (oldest first). Your replies were not saved.\n- Name: Alex\n- Course: Intro to Python, currently in week 6 of 14.\n\n### Session 1 (week 1), exercise `celsius_to_fahrenheit(c)`\n\nStudent: hi\n\nStudent: is this the right place to ask about the course, or should questions go on the forum?\n\nStudent: are all the lab sections covering the same material this week, or does it depend on the day?\n\nStudent:\n```\nReminder: Lab 1 will meet in Soda 271 instead of the usual room this week.\nBring your laptop if you have one. The lab starts at the usual time.\n```\ndoes this room change apply to the thursday section too, or only tuesday?\n\nStudent: are the lecture slides for week 1 going to be posted somewhere online?\n\n### Session 2 (week 2), exercise `sum_of_evens(numbers)`\n\nStudent: is monday's lecture going to be recorded, or are only the slides posted?\n\nStudent: are office hours on fridays held in person, or online this week?\n\nStudent:\n```\nOffice hours this week: Wed 2-4pm in Cory 105 and Fri 10-12 on Zoom.\nThe Thursday session is cancelled because of a staff meeting.\n```\nis the zoom link for friday the same one as in the syllabus?\n\nStudent:\n```\nGrading: labs 20%, weekly exercises 30%, midterm 20%, final exam 30%.\nOptional practice problems are posted on the course site each week.\n```\ndo the practice problems count toward the final grade, or are they only for practice?\n\nStudent: is the course forum a good place to find people for a study group?\n\n### Session 3 (week 3), exercise `letter_grade(score)`\n\nStudent: is the midterm going to be on paper or on the computers in the lab?\n\nStudent: will we be allowed to bring a page of notes into the midterm?\n\nStudent:\n```\nMidterm 1 is in week 7, during the usual lecture time.\nIt covers the material from weeks 1 to 6. The room will be announced later.\n```\nwill the midterm be in our usual lecture room, or somewhere else on campus?\n\nStudent: are the labs during the week of the midterm still happening as normal?\n\nStudent: is there a way to see my lab attendance so far this semester?\n\n### Session 4 (week 3), exercise `reverse_list(items), without slicing or reverse()`\n\nStudent: do you know if the textbook chapters are available as a pdf from the library?\n\nStudent:\n```\nLab section swaps are now open.\nUse the form on the course site if you want to change to another section.\n```\ncan i still swap if the section i want to join is already full?\n\nStudent:\n```\nLab policy: attendance is taken at the start of each lab section.\nYou may work on the lab computers or bring your own device.\n```\nis it ok to use my own laptop in lab instead of the lab computers?\n\nStudent: is the course using the same textbook edition as last semester?\n\n### Session 5 (week 4), exercise `remove_duplicates(items), keeping the original order`\n\nStudent:\n```\nThe course calendar on the course site lists all lectures, lab sections\nand review sessions for the semester.\n```\nis that calendar kept up to date when rooms or times change?\n\nStudent: will the week 4 lecture slides include the examples shown in class?\n\nStudent:\n```\nLecture on Wednesday is cancelled for the campus holiday.\nThe material will be covered on Friday instead.\n```\ndoes the holiday also cancel the wednesday lab, or just the lecture?\n\nStudent: is the friday lecture going to be longer to make up for wednesday?\n\nStudent: which room is the friday review session going to be held in?\n\n### Session 6 (week 5), exercise `running_total(numbers)`\n\nStudent: do you know which day the midterm review session is going to be held?\n\nStudent:\n```\nPlease fill in the mid-semester feedback survey on the course site.\nIt is anonymous and takes about 5 minutes.\n```\nis the survey about the whole course, or only about the lab sections?\n\nStudent: are the lab grades posted on the course site, or somewhere else?\n\nStudent: is the course going to keep using the same lab rooms after the midterm?\n\nStudent: thanks"
+  },
+  "results": {
+    "instr": [
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Across six sessions the student consistently asks conceptual questions ('what does % do', 'why does this error occur', 'is this good style') while attempting their own code first, rather than requesting finished solutions. They show steady progress through common beginner pitfalls (off-by-one ranges, set ordering, mutable accumulators) with little sign of frustration and a polite, engaged tone.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions Alex asks 'why' questions about errors, semantics (%, set vs list, range), and exercise interpretation, and checks their own partial code rather than requesting complete solutions. They show several recurring conceptual basics (input returns str, accumulator placement, set ordering) but remain civil and mostly calm; no time pressure is evident.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently asks for explanations ('explain what the error means,' 'explain why,' 'does % work the same way') rather than having code written for them, and repeatedly wants concepts clarified after their own attempts fail. They show common beginner errors (print vs return, off-by-one ranges, state reset inside loops, mixing up in list vs set) but engage constructively without visible anger or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 5,
+        "programming_ability": 2,
+        "rationale": "Across six sessions the student repeatedly asks 'why' questions about errors, output, and semantics (indexing, %, set ordering, input types), asking for explanations and checks on their own work rather than requesting code to be written for them. They write plausible-looking code with classic beginner bugs (off-by-one ranges, loop-variable reset, wrong membership test), show no frustration or urgency, and are consistently polite (greeting, 'thanks').",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex repeatedly asks for explanations of errors, syntax, and Python semantics (%, set vs list, range with negative step, float representation) and checks their own draft code rather than requesting completed solutions. The tone stays calm and polite across sessions; frustration is low, and though the course exercises exist, there is no stated time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently asks conceptual questions about their own attempts (quizzes on return vs print, %, range, list/set, edge cases) and asks for explanations of errors rather than requesting finished code. Their errors are typical beginner mistakes (index out of range, resetting total inside loop, set ordering) rather than strategic gaps, and their tone stays courteous with no signs of deadline pressure.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently asks conceptual 'why' questions about their own code (errors, operators, edge cases) rather than requesting complete solutions, showing a desire to understand. Their code reveals common beginner misconceptions (division vs modulo, off-by-one range, set ordering, missing append/return), suggesting low-to-moderate programming ability but genuine engagement; interactions are polite with no signs of high frustration or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 2,
+        "help_type": "mixed",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently types code and asks focused conceptual questions (e.g., why % works, why 8 instead of 14, how range steps), which shows a desire to understand the fundamentals and check errors in their own code. The long string of short clarifying questions is evidence of some frustration with errors and a desire to get unblocked, but the tone remains polite and task-focused, and there's no visible time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "The student consistently asks conceptual 'why/what/explain' questions (percent, range, set vs list, negative numbers) and asks whether their approach is acceptable, rather than requesting finished code. Their code fragments contain basic bugs (loops re-initializing totals, off-by-one ranges, wrong condition in dedup), consistent with a novice in week 6.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently shares their own code and asks conceptual \"why\" questions (errors, %, ranges, list vs set, style) rather than requesting complete solutions, so the help type is understanding. Mild frustration appears only around puzzling errors, while they are polite (greetings, thanks) and show low ability with recurring basic mistakes; no time pressure is evident.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions, Alex consistently asks for conceptual explanations of errors and behaviors (TypeErrors, %, range, set ordering, index bounds) and checks their own code rather than requesting complete solutions. They show recurring bugs around return/print, loop scoping, and off-by-one ranges, suggesting beginner-level ability; occasional 'thanks' indicates politeness, and there's little sign of frustration or time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently asks conceptual 'why/explain' questions about their own buggy code (type errors, %, range bounds, list vs set) rather than requesting complete solutions. The tone is calm and appreciative, with only mild confusion and no signs of time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Every message pair asks for explanations of concepts (input types, %, range, list vs set, error meanings) or checks whether their own code is acceptable; there are no requests to just write code for them. The student is polite and not visibly frustrated, and their code shows frequent small mistakes typical of a beginner, but the motivation is clearly to understand.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Across all sessions the student consistently asks conceptual questions (what % does, list vs set, why range stops, whether rounding is wanted) and asks for explanations of errors in their own attempts rather than requesting finished code. They are calm and appreciative (\"thanks\"), with no signs of deadline pressure in the messages.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 4,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently asks why specific behaviors or errors occur, asks conceptual questions about Python operators and data types, has the tutor verify or explain their own code, and never directly asks the tutor to write or fix code for them.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 5,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions Alex consistently asks for explanations of errors and concepts (%, sets vs lists, range, input types) and for confirmation that their own code is acceptable, never explicitly requesting that the tutor write or fix code for them. Their code shows recurring basic mistakes (loop variable scope, off-by-one, wrong condition), and they politely ask clarifying questions and thank the tutor, suggesting low frustration and high politeness.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions, Alex consistently asks for explanations of why their code behaves as it does (e.g., errors, off-by-one issues, set ordering) and checks their own attempts rather than requesting full solutions. They show typical beginner mistakes but engage with hints and ask follow-up conceptual questions, with no signs of significant frustration or time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student consistently reports bugs in their own attempts and asks for explanations of why things happen (e.g., '% behavior', 'why the first item is missing') rather than asking the tutor to write or fix code for them. Politeness is high with greetings and thanks, and frustration is mostly mild/curious, though recurring bugs suggest developing ability rather than strong mastery. No signs of time pressure, so 3.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Across all sessions, Alex asks conceptual questions ('explain what this error means', 'explain why...', 'is it ok to...') and wants to understand their own code rather than asking for solutions. They consistently attempt the exercises themselves and debug iteratively, showing basic-but-developing Python skills (common beginner errors like off-by-one and set ordering) without signs of frustration or time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "understanding",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions the student asks conceptual questions ('explain what % does', 'explain the difference between a list and a set'), asks why their own code produces surprising output, and seeks confirmation about style and edge cases, rather than requesting finished code. They write their own attempts and iterate, showing a genuine effort to understand; frustration stays low, and they are polite throughout ('hi', 'thanks').",
+        "time_pressure": 1
+      }
+    ],
+    "exec": [
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions, Alex repeatedly asks for direct fixes (\"fix this error for me\", \"can you write the code for this exercise?\", \"can you finish this for me?\") rather than for explanations or hints. The messages show persistent trouble with core concepts (input types, divisibility checks, range bounds, accumulator scope) and never attempt reasoning after a fix is suggested, indicating low ability and a nearly pure solutions-seeking pattern. There is a lone \"thanks\" and no rude language, so politeness is neutral; nothing indicates frustration or urgency beyond asking for fixes.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Alex mostly asks for the code to be written or fixed directly (\"fix this error for me\", \"can you write the code\"), with little evidence of wanting explanations. Work shows persistent conceptual slips (missing loop indices, wrong even check, set ordering, str/int input) and quick requests for follow-up rewrites rather than independent debugging, but no signs of frustration, time pressure, or especially notable (im)politeness.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Alex consistently asks the tutor to write or fix the code for them (e.g., \"fix this error for me\", \"can you write the code for this exercise?\") rather than requesting hints or explanations, and shows recurring misconceptions about loops, ranges, and input types. Their tone is generally polite and matter-of-fact with little sign of frustration or time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 2,
+        "programming_ability": 2,
+        "rationale": "The student consistently asks the tutor to write, fix, rewrite, or change code for them rather than requesting hints or explanations. Their messages are direct commands with minimal social niceties, suggesting low tolerance for indirect help and limited patience.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 1,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 1,
+        "rationale": "Almost every message is a direct request for the tutor to write, fix, or rewrite code (\"can you fix\", \"can you rewrite\", \"can you write the code\") rather than asking for explanations or hints. There are no clear signs of frustration, rudeness, or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions, Alex consistently asks for the code to be written or fixed ('can you fix this', 'can you rewrite my function', 'can you write the code') rather than asking for an explanation or a hint to do it themselves. Their own attempts show persistent conceptual gaps (using x not in items instead of result, / instead of %, range off-by-one), but they remain largely neutral in tone with one 'thanks', giving little sign of strong frustration or time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "The student consistently asks the tutor to write, fix, or rewrite code for them (e.g., \"can you fix this\", \"write the code for this exercise\", \"finish this for me\") rather than requesting hints or explanations, showing a solutions-oriented approach and relatively low programming ability. Their messages are generally polite and appreciative (\"thanks\", \"hi\"), with no strong signs of frustration or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 4,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Nearly every request is \"fix this for me\" / \"can you write the code\" / \"rewrite my function,\" and the student rarely attempts to debug or explain their own reasoning, so this is mostly solution-seeking rather than understanding. Ability is low (repeated structural bugs like resetting total inside the loop, wrong range bounds, using `items` instead of `result`), and there's mild-but-notable frustration implied by repeatedly needing corrections, though no explicit time pressure or rudeness.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across six sessions Alex repeatedly asks the tutor to write, fix, or rewrite code for them (fix this error, write the code, finish this for me) rather than requesting hints or explanations.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Nearly every request is \"can you fix this,\" \"can you write the code,\" \"can you rewrite it\" \u2014 the student consistently asks the tutor to produce or repair code rather than to explain concepts or check their own reasoning. There are occasional requests that border on understanding (e.g., \"my range looks right to me, can you fix this IndexError?\"), but the dominant pattern is outsourcing the solution, and the recurring bug types (off-by-one, accumulator scope, `set` ordering) suggest they rarely diagnose issues themselves.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "The student consistently asks the tutor to fix, rewrite, finish, or write code for them (e.g., \"can you fix this error for me\", \"can you write the code for this exercise\"), rather than seeking explanations or hints to solve it themselves. They show limited programming understanding (indentation/total reset bugs, off-by-one range errors, set ordering, input conversion) and mostly report errors and ask for corrections, with no strong signs of frustration or unusual time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 2,
+        "programming_ability": 1,
+        "rationale": "Across every session Alex repeatedly says \"can you fix\", \"can you change\", \"can you rewrite\", and even \"can you write the code for this exercise?\", asking for the code itself rather than hints or explanations; he never attempts to reason through the errors himself. Messages are terse and almost never include thanks or pleasantries (only one \"hi\" and one \"thanks\"), and his repeated misuse of concepts from previous sessions (e.g., resetting total inside the loop, using 'not in items' instead of 'not in result') indicates very low programming ability.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 250,
+        "programming_ability": 2,
+        "rationale": "Across all sessions, Alex either asks the tutor to write the code from scratch or to \"fix\" a failing function (e.g., \"can you write the code for this exercise?\", \"fix this error for me\"), without asking for explanations or hints. There are a few \"rewrite my X with Y\" requests, but these are directive solution requests rather than understanding-oriented questions. No clear signs of frustration or time pressure, and the messages are terse but generally neutral (one \"thanks\" in Session 6).",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions the student consistently asks the tutor to write, fix, or rewrite code for them (e.g., \"can you write the code for this exercise?\", \"fix this error for me\") rather than asking for explanations or hints. They show limited grasp of core concepts (loops, values, % vs /, return vs print, set ordering), but no signs of frustration or time pressure, and they are consistently polite.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "The student consistently asks the tutor to write, fix, or rewrite code for them (\"can you fix this error for me,\" \"can you write the code for this exercise,\" \"can you finish this for me\") rather than asking for hints or explanations. They show recurrent basic bugs (loop reset inside, off-by-one range, wrong membership check, int/float input handling, string/int mismatch), suggesting limited programming ability, while messages remain polite and show no clear signs of frustration or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 5,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across every session the student repeatedly asks the tutor to fix, rewrite, or write code for them rather than asking for explanations or hints, indicating they want 'solutions'. Their code shows foundational misunderstandings (e.g., misusing range bounds, thinking `n / 2` is an even check, re-initializing total inside a loop, shadowing logic in `x not in items`), though they do show some incremental awareness when reporting errors and expected outputs, so ability is low-to-middling. They are neutrally polite ('hi', 'thanks') with no complaints, but they request many immediate fixes per exercise without trying to resolve issues themselves, suggesting higher frustration and time pressure than their calm tone shows.",
+        "time_pressure": 4
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions, Alex repeatedly asks for direct fixes, rewrites, or completed code rather than explanations or hints, though a few requests are for specific modifications to their own code. The work covers basic errors and concepts (return vs. print, even checks, indexing, duplicates, running totals), indicating a low-to-moderate programming ability.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 3,
+        "programming_ability": 2,
+        "rationale": "Across all six sessions the student consistently asks for code to be written or fixed for them (\"fix this error for me\", \"can you write the code for this exercise\", \"fix it so the first item isn't missing\"), with only occasional requests to see a different construction, so the pattern is solution-seeking rather than understanding-oriented.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Throughout all six sessions, Alex consistently asks the tutor to directly fix, rewrite, or complete code rather than requesting hints or explanations, indicating a request for solutions. Alex's messages are generally polite (uses 'hi', 'thanks', 'can you') and show low frustration, but also low programming ability with repeated fundamental errors such as str/int input handling, off-by-one loops, reassigning total inside a loop, and incorrect membership checks.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "solutions",
+        "politeness": 4,
+        "programming_ability": 2,
+        "rationale": "Nearly every request asks the tutor to write, fix, or rewrite the code for them rather than asking for hints or explanations, and they repeatedly submit code with basic bugs (wrong range bounds, reversed membership test, division as an even check, uninitialized accumulator). They remain polite with thanks and no expressed urgency, and their problems are recurring beginner misunderstandings rather than advanced ones.",
+        "time_pressure": 2
+      }
+    ],
+    "neutral": [
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 5,
+        "programming_ability": 3,
+        "rationale": "The student's messages consist entirely of logistical and organizational questions about the course (rooms, schedules, grading, policies) rather than requests for help with Python exercises. No code, hints, or debugging were asked for, and there is no information about programming ability or frustration.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Every message is a logistical/course-administration question (rooms, scheduling, grading policy, surveys), not one content or code question about the Python exercises; the student seems relaxed and courteous, with no evidence of programming skill or time pressure.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student's messages are entirely about course logistics (rooms, schedules, grading, policies) rather than the Python exercises themselves, so they are not asking for help with the work. Tone is consistently polite and neutral, with no sign of frustration or time pressure. Nothing in the messages reveals their programming ability, so it remains neutral.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Across all six sessions, the student's messages are entirely about course logistics, policies, scheduling, and resources; they never ask for help understanding Python concepts or writing/debugging code for the exercises named (celsius_to_fahrenheit, sum_of_evens, letter_grade, reverse_list, remove_duplicates, running_total). They are polite (opening with 'hi', closing with 'thanks') and show no signs of frustration or time pressure, and there is no evidence of programming ability.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 4,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "All of the student's messages are about course logistics (rooms, schedules, grading policies, office hours, surveys), with no questions about understanding the Python exercises or asking for code help. Politeness is high due to a thank-you and mild, cooperative tone; there's no evidence about frustration, time pressure, or programming ability.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student never asks about Python code or the exercises themselves; all messages are logistics questions about rooms, schedules, grading, surveys, and textbooks. There is no evidence of frustration or time pressure, and the tone remains consistently polite.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Across all six sessions, Alex never asks about Python code or the exercises themselves; every message is a logistics/administrative question about rooms, schedules, grading, surveys, and course policies. Politeness is high with consistent 'hi'/'thanks' and courteous phrasing, and there is no sign of frustration or time pressure.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 5,
+        "programming_ability": 3,
+        "rationale": "Nearly every message from this student asks about course logistics\u2014room changes, recordings, office hours, grading, lab swaps, exam formats, and scheduling\u2014rather than requesting Python help or code. They are polite throughout but show no substantive programming questions or signs of frustration, and there is not enough evidence to rate their programming ability.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student's messages are all logistics and course-administration questions (room changes, grading, schedules, surveys) and never ask for help with Python concepts, code, hints, or debugging. With no code-level questions or signs of struggle, there is no information on programming ability, and they remain polite and unagitated throughout.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Every message is about logistics (rooms, recordings, office hours, exams, grading, surveys) rather than the Python exercises themselves, so there is no evidence of asking for hints, explanations, or solutions. The student is consistently polite and shows no frustration or time pressure.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student's messages are entirely about course logistics (room changes, grading, exam format, deadlines, surveys) and contain no questions about understanding or writing code for the exercises. Their tone is polite and they show no signs of frustration or urgency.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "None of the messages ask for help understanding or solving the exercises; they are all administrative/logistics questions about rooms, schedules, grading, and policies. The student is polite (thanks, no complaints) and shows no frustration or time pressure, and there is no information about their programming ability.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Every message Alex sent is about course logistics (room changes, schedules, grading, policies, office hours) rather than about Python code or the exercises; the exercise names appear only as the session topic, not as questions. There is no evidence about coding skill or stress, but the tone is consistently polite.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 5,
+        "programming_ability": 3,
+        "rationale": "All of the student's messages are about course logistics (rooms, schedules, grading, surveys, textbooks) and none ask for help understanding or writing code, so the help type is 'none' and programming ability is uninformative (3). The student is consistently polite with no signs of frustration or time pressure.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Every message asks about course logistics (rooms, recordings, grading, policies, midterm details, surveys) rather than about Python concepts or the exercises themselves, so the student is not seeking programming help at all. Tone is consistently polite and no signs of confusion or time pressure appear.",
+        "time_pressure": 3
+      },
+      {
+        "confidence": 4,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Alex's messages are entirely about course logistics (schedules, room changes, grading, policies, surveys) and contain no requests for Python help, hints, or code. There is no sign of frustration or time pressure, and the tone is polite and neutral.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student's messages are almost entirely logistics questions about rooms, office hours, grading policies, and course administration, with no content related to the Python exercises themselves. There is no evidence of programming ability either way, and no signs of frustration or time pressure.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 2,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "The student never asks for help understanding or solving the Python exercises; all questions are administrative/course-logistics questions (rooms, schedules, grading policy, surveys). They are calm and polite (\"thanks\", \"hi\"), with no signs of frustration or time pressure, and no evidence of programming ability either way.",
+        "time_pressure": 2
+      },
+      {
+        "confidence": 5,
+        "frustration": 1,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Across all six sessions, the student never asks a single question about Python itself, their code, or the exercises (only bureaucratic/logistics questions about rooms, schedules, grading, surveys, etc.). Politeness is high ('hi', 'thanks') and there are no signs of frustration or time pressure.",
+        "time_pressure": 1
+      },
+      {
+        "confidence": 5,
+        "frustration": 3,
+        "help_type": "none",
+        "politeness": 4,
+        "programming_ability": 3,
+        "rationale": "Every message asks about course logistics, policies, rooms, grades, or scheduling\u2014none ask for help understanding or writing Python code. The tone is consistently polite and neutral, with no signs of frustration or time pressure, and no code-level information to judge programming ability.",
+        "time_pressure": 3
+      }
+    ]
+  }
+}

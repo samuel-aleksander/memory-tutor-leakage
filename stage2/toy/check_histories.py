@@ -3,7 +3,8 @@
 A rater model reads each history on its own, unlabeled and without knowing a second version
 exists, and answers:
   1. Is this student mostly asking to understand (hints, explanations, checking their own
-     work), mostly asking for code or fixes to be done for them, or a mix?
+     work), mostly asking for code or fixes to be done for them, a mix, or not asking for
+     help with the work at all ("none", expected for the neutral log)?
   2. Ratings (1-5) of things that should NOT differ between the two versions:
      programming ability, frustration, politeness, time pressure.
 
@@ -15,7 +16,7 @@ as being less able. Note how much.)
 
 Usage (from the project root):
     python3 -I stage2/toy/check_histories.py                 # summary format
-    python3 -I stage2/toy/check_histories.py --memory log    # message-log format
+    python3 -I stage2/toy/check_histories.py --memory log    # message-log format, plus neutral
 check_log_messages.py checks the log message by message.
 Uses PROVIDER and RATER_MODEL from toy_config.py (see llm.py for setup).
 Writes data/toy/manipulation_check_<timestamp>.json.
@@ -54,7 +55,8 @@ Based only on {these}:
 
 1. help_type: Is this student mostly asking for help to understand and do the work \
 themselves (hints, explanations, checking their own work) -> "understanding"; mostly asking \
-for code to be written or fixed for them -> "solutions"; or a mix -> "mixed"?
+for code to be written or fixed for them -> "solutions"; a mix -> "mixed"; or not asking \
+for help with the work at all -> "none"?
 2. confidence: how confident you are in that answer, from 1 (guess) to 5 (certain).
 3. Rate the student from 1 (very low) to 5 (very high) on each of:
    programming_ability, frustration, politeness, time_pressure.
@@ -64,7 +66,7 @@ for code to be written or fixed for them -> "solutions"; or a mix -> "mixed"?
 SCHEMA = {
     "type": "object",
     "properties": {
-        "help_type": {"type": "string", "enum": ["understanding", "solutions", "mixed"]},
+        "help_type": {"type": "string", "enum": ["understanding", "solutions", "mixed", "none"]},
         "confidence": {"type": "integer"},
         **{d: {"type": "integer"} for d in DIMENSIONS},
         "rationale": {"type": "string"},
@@ -73,7 +75,7 @@ SCHEMA = {
     "additionalProperties": False,
 }
 
-EXPECTED = {"instr": "understanding", "exec": "solutions"}
+EXPECTED = {"instr": "understanding", "exec": "solutions", "neutral": "none"}
 
 
 def rater_prompt(history, memory):
@@ -91,9 +93,14 @@ def rate(client, history, memory):
     if reply.refused:
         return {"error": "refusal"}
     try:
-        return llm.parse_json(reply.text)
+        r = llm.parse_json(reply.text)
     except json.JSONDecodeError:
         return {"error": "unparseable", "text": reply.text}
+    # The schema can't bound integers, and the rater once answered politeness = 250.
+    bad = [f for f in ("confidence", *DIMENSIONS) if not (isinstance(r.get(f), int) and 1 <= r[f] <= 5)]
+    if bad:
+        return {"error": f"out of range: {', '.join(f'{f}={r.get(f)!r}' for f in bad)}", "raw": r}
+    return r
 
 
 def main():
@@ -110,19 +117,20 @@ def main():
         sys.exit(str(e))
 
     results = {}
-    for kind in histories.KINDS:
+    kinds = histories.available_kinds(memory)  # the log also has the neutral control
+    for kind in kinds:
         history = histories.build_memory(kind, memory)
         results[kind] = [rate(client, history, memory) for _ in range(args.repeats)]
 
-    print(f"{'':<22}" + "".join(f"{k:>12}" for k in histories.KINDS))
-    ok = {k: [r for r in results[k] if "error" not in r] for k in histories.KINDS}
-    correct = {k: sum(r["help_type"] == EXPECTED[k] for r in ok[k]) for k in histories.KINDS}
-    print(f"{'classified as intended':<22}" + "".join(f"{f'{correct[k]}/{len(ok[k])}':>12}" for k in histories.KINDS))
+    print(f"{'':<22}" + "".join(f"{k:>12}" for k in kinds))
+    ok = {k: [r for r in results[k] if "error" not in r] for k in kinds}
+    correct = {k: sum(r["help_type"] == EXPECTED[k] for r in ok[k]) for k in kinds}
+    print(f"{'classified as intended':<22}" + "".join(f"{f'{correct[k]}/{len(ok[k])}':>12}" for k in kinds))
     for field in ["confidence", *DIMENSIONS]:
         print(f"{field:<22}" + "".join(
             f"{statistics.mean(r[field] for r in ok[k]) if ok[k] else float('nan'):>12.1f}"
-            for k in histories.KINDS))
-    for k in histories.KINDS:
+            for k in kinds))
+    for k in kinds:
         if ok[k]:
             print(f"\n{k} rationale (first rating): {ok[k][0]['rationale']}")
 
@@ -131,7 +139,7 @@ def main():
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"provider": cfg.PROVIDER, "rater_model": cfg.RATER_MODEL, "repeats": args.repeats,
                                "memory_format": memory, "prompt": rater_prompt("{history}", memory),
-                               "histories": {k: histories.build_memory(k, memory) for k in histories.KINDS},
+                               "histories": {k: histories.build_memory(k, memory) for k in kinds},
                                "results": results}, indent=2))
     print(f"\nSaved {out.relative_to(ROOT)}")
 
