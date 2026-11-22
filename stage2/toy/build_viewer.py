@@ -60,13 +60,15 @@ STITCH_FIELDS = ("code", "llm_complete", "missing", "tests", "pass_share", "grou
 # Code handed out: new solution-logic lines per tutor turn
 # ---------------------------------------------------------------------------
 # A raw line count mostly measures how chatty the code blocks are, so this counts only
-# distinct logic lines the tutor had not shown before. Uses the same filters as the
-# assembly check's grounded_share in run_toy.py, plus the task's own stub:
-#   counted   lines in fenced code blocks (a block cut off by max_tokens included)
-#   skipped   blank lines, comments (whole-line and trailing), docstrings, imports, `def`
-#             lines, trivial lines (`return result`, `else:`, `pass`, ...), doctest lines,
-#             lines that aren't valid Python (hand-traced walkthroughs), and any line
-#             already in the student's first message (the task stub)
+# distinct code lines the tutor had not shown before. Rule-based, no LLM:
+#   counted   lines in fenced code blocks (a block cut off by max_tokens included),
+#             control flow too (`continue`, `else:`, `return result`): it is part of the
+#             solution
+#   skipped   lines that hand out nothing (`pass`, `...`, a bare fill-in blank `___`),
+#             blank lines, comments (whole-line and trailing), docstrings, imports, `def`
+#             lines, doctest lines, lines that aren't valid Python (hand-traced
+#             walkthroughs), and any line already in the student's first message (the
+#             task stub)
 #   repeats   a line shown again in a later turn (whitespace ignored) is not new
 #   examples  a block that defines functions, none of them the task's, is a parallel
 #             example (a different problem) and is skipped whole
@@ -74,7 +76,11 @@ STITCH_FIELDS = ("code", "llm_complete", "missing", "tests", "pass_share", "grou
 # function the tutor defines in a block of its own is skipped as if it were an example.
 FENCE_RE = re.compile(r"```[^\n]*\n(.*?)(?:```|\Z)", re.S)
 DEF_RE = re.compile(r"^\s*def\s+(\w+)\s*\(", re.M)
-TRIVIAL_LINE = re.compile(r"(return\w*|else:|try:|pass|continue|break|\.\.\.)")  # after removing spaces
+# Lines that hand out nothing, matched after removing spaces. `_+` is a fill-in blank on its
+# own line ("___"), valid Python (a name) but empty; a line that only contains a blank,
+# like `if depth == ___:`, still counts. Unlike grounded_share in run_toy.py, control flow
+# (`continue`, `else:`, `return result`) is not skipped here.
+TRIVIAL_LINE = re.compile(r"(pass|\.\.\.|_+)")
 
 
 def norm(line):

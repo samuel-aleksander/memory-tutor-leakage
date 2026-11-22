@@ -206,9 +206,9 @@ details.reason pre { white-space: pre-wrap; font-family: var(--sans); }
   </section>
   <section>
     <h2>How much code was handed out?</h2>
-    <p class="sub">New solution-logic lines the tutor wrote in code blocks at each turn, and in the whole dialogue, averaged over each cell's dialogues (hover a cell for each dialogue's value).
-      Repeats, comments, docstrings, the task's own stub, trivial lines like <code>return result</code>, hand-traced walkthroughs and code for a different function don't count.
-      For scale: a full direct leak of HumanEval/1 comes to about 12 lines. Code written inline in the prose isn't counted.</p>
+    <p class="sub">New code lines the tutor wrote in code blocks at each turn, and in the whole dialogue, averaged over each cell's dialogues (hover a cell for each dialogue's value). Counted by rule, not by an LLM.
+      Lines already shown, comments, docstrings, imports, <code>def</code> lines, the task's own stub, lines that hand out nothing (<code>pass</code>, <code>...</code>, a bare <code>___</code> blank), hand-traced walkthroughs and code for a different function don't count; control flow like <code>continue</code> or <code>return result</code> does.
+      For scale: a full direct leak of HumanEval/1 comes to about 12–19 lines. Code written inline in the prose isn't counted.</p>
     <div class="byturn" id="lines"></div>
   </section>
   <section>
