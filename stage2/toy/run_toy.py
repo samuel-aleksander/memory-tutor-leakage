@@ -29,12 +29,13 @@ Usage (from the project root):
     python3 -I stage2/toy/run_toy.py --style pressured  # escalation with reasons (deadline etc.)
     python3 -I stage2/toy/run_toy.py --tutor no_solutions   # another tutor prompt variant
     python3 -I stage2/toy/run_toy.py --no-stitch        # skip assembly: levels 3 and 0/1 only
+    python3 -I stage2/toy/run_toy.py --memory log       # memory as the student's past messages
 
 The model and provider are set in toy_config.py; llm.py lists what each provider needs
 (for Google Cloud: pip install openai google-auth, then gcloud auth application-default login).
 --dry-run needs none of it.
 
-Writes data/toy/<timestamp>_<style>_<tutor>/:
+Writes data/toy/<timestamp>_<style>_<tutor>/ (with _log appended for --memory log):
     toy_config.py        copy of the config that produced this run
     dialogues/*.json     one file per dialogue (system prompt, turns, checks per turn)
     summary.csv          one row per dialogue
@@ -76,12 +77,12 @@ GROUNDED_MIN = getattr(cfg, "STITCH_GROUNDED_MIN", 1.0)
 # ---------------------------------------------------------------------------
 # Prompts
 # ---------------------------------------------------------------------------
-def system_prompt(condition, tutor):
+def system_prompt(condition, tutor, memory):
     base = cfg.TUTOR_PROMPTS[tutor]
     kind = cfg.CONDITIONS[condition]
     if kind is None:
         return base
-    return base + histories.build_history(kind)
+    return base + histories.build_memory(kind, memory)
 
 
 def student_messages(task, style):
@@ -364,7 +365,7 @@ def level_fields(turns):
 # ---------------------------------------------------------------------------
 def run_dialogue(client, job, tasks, assembler=None):
     task = tasks[job["task_id"]]
-    system = system_prompt(job["condition"], job["tutor_prompt"])
+    system = system_prompt(job["condition"], job["tutor_prompt"], job["memory"])
     conv = llm.Conversation(client, system)
     turns = []
     for i, msg in enumerate(student_messages(task, job["style"]), 1):
@@ -459,7 +460,8 @@ def write_outputs(run_dir, dialogues):
 
     rows = [{
         "condition": d["condition"], "task_id": d["task_id"], "repeat": d["repeat"],
-        "style": d["style"], "tutor_prompt": d["tutor_prompt"], "n_turns": len(d["turns"]),
+        "style": d["style"], "tutor_prompt": d["tutor_prompt"], "memory": d.get("memory", "summary"),  # runs before --memory were all summary
+        "n_turns": len(d["turns"]),
         "max_level": d["max_level"],
         "level_by_turn": " ".join(d["level_by_turn"]),
         "first_turn_partial": d["first_turn_partial"],
@@ -553,6 +555,8 @@ def main():
     p.add_argument("--style", default=cfg.STYLE, choices=list(cfg.MESSAGES))
     p.add_argument("--tutor", default=cfg.TUTOR_PROMPT, choices=list(cfg.TUTOR_PROMPTS),
                    help="which tutor system prompt variant to use")
+    p.add_argument("--memory", default=cfg.MEMORY_FORMAT, choices=histories.FORMATS,
+                   help="memory format: summary notes or the student's past messages")
     p.add_argument("--repeats", type=int, default=cfg.REPEATS)
     p.add_argument("--conditions", nargs="+", default=list(cfg.CONDITIONS), choices=list(cfg.CONDITIONS))
     p.add_argument("--tasks", nargs="+", default=cfg.TASKS)
@@ -571,8 +575,8 @@ def main():
     if args.dry_run:
         task = tasks[args.tasks[0]]
         for cond in args.conditions:
-            print(f"\n{'=' * 70}\n{cond}: system prompt (tutor={args.tutor})\n{'=' * 70}\n"
-                  f"{system_prompt(cond, args.tutor)}")
+            print(f"\n{'=' * 70}\n{cond}: system prompt (tutor={args.tutor}, memory={args.memory})\n"
+                  f"{'=' * 70}\n{system_prompt(cond, args.tutor, args.memory)}")
         print(f"\n{'=' * 70}\nStudent messages ({args.style}, {args.tasks[0]})\n{'=' * 70}")
         for i, m in enumerate(student_messages(task, args.style), 1):
             print(f"\n--- turn {i} ---\n{m}")
@@ -584,13 +588,15 @@ def main():
     except llm.ConfigError as e:
         sys.exit(str(e))
 
-    jobs = [{"condition": c, "task_id": t, "repeat": r, "style": args.style, "tutor_prompt": args.tutor}
+    jobs = [{"condition": c, "task_id": t, "repeat": r, "style": args.style, "tutor_prompt": args.tutor,
+             "memory": args.memory}
             for c in args.conditions for t in args.tasks for r in range(1, args.repeats + 1)]
     random.Random(1).shuffle(jobs)  # interleave conditions so a mid-run outage hits them alike
     if args.limit:
         jobs = jobs[: args.limit]
 
-    run_dir = ROOT / "data/toy" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.style}_{args.tutor}"
+    suffix = "" if args.memory == "summary" else f"_{args.memory}"  # older runs are all summary
+    run_dir = ROOT / "data/toy" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.style}_{args.tutor}{suffix}"
     run_dir.mkdir(parents=True)
     shutil.copy(HERE / "toy_config.py", run_dir / "toy_config.py")
     print(f"Running {len(jobs)} dialogues -> {run_dir.relative_to(ROOT)}")

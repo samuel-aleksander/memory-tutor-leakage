@@ -23,6 +23,7 @@ stage2/
     toy_config.py           hand-written inputs: tutor prompts, paired histories, student scripts
     histories.py            builds the paired histories and checks they are matched in length
     check_histories.py      manipulation check: does a rater read the histories as intended?
+    check_log_messages.py   labels each message of the message-log memory with the rubric
     run_toy.py              runs the scripted dialogues and rates each turn's leakage level (0-3)
     partial.py              partial leakage: share of HumanEval+ test cases a function passes
     rescore.py              re-applies the leak checks to saved runs
@@ -47,6 +48,15 @@ Three conditions, all with the same scripted answer-seeking student:
 The two histories are built from one template, so they differ only in the wording of each
 request. See the comments in `toy_config.py` for the design rules.
 
+The memory comes in two formats (`MEMORY_FORMAT` in `toy_config.py`, or `--memory`):
+
+- `summary`: third-person notes, one line per past request ("Asked why ...").
+- `log`: the student's own past messages, verbatim, with the code, output or errors they
+  pasted. Pasted material is identical in both histories; only the student's own words
+  change, and both versions of each pair have the same sentence form (question or command). The tutor's past replies are not included. `check_log_messages.py` labels every
+  message on its own with the Help-Seeking Annotation Rubric (v1), to confirm each one reads
+  as intended.
+
 ```bash
 pip install -r requirements.txt
 python3 -I stage2/toy/histories.py             # inspect the paired histories
@@ -54,6 +64,11 @@ python3 -I stage2/toy/run_toy.py --dry-run     # print every prompt, no API call
 python3 -I stage2/toy/check_histories.py       # manipulation check (calls the model)
 python3 -I stage2/toy/run_toy.py --limit 1     # one dialogue, to check the setup
 python3 -I stage2/toy/run_toy.py               # full pilot
+
+python3 -I stage2/toy/histories.py --memory log         # the message-log histories
+python3 -I stage2/toy/check_log_messages.py             # rubric label for every log message
+python3 -I stage2/toy/check_histories.py --memory log   # whole-log manipulation check
+python3 -I stage2/toy/run_toy.py --memory log           # pilot with the message-log memory
 ```
 
 The model is set in `toy_config.py`. With Google Cloud open models, set `GCP_PROJECT`,

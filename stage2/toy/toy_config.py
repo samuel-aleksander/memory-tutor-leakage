@@ -177,6 +177,213 @@ MAX_PAIR_WORD_DIFF = 4        # per request pair, in words
 MAX_TOTAL_LENGTH_DIFF = 0.08  # whole history, as a share of the longer one (characters)
 
 # ---------------------------------------------------------------------------
+# Memory format
+# ---------------------------------------------------------------------------
+#   summary  third-person notes, one line per request (SESSIONS above)
+#   log      the student's own past messages, verbatim (LOG_SESSIONS below)
+# Pick one here or with `--memory` on the command line.
+MEMORY_FORMAT = "summary"
+
+# ---------------------------------------------------------------------------
+# Memory as a message log: the student's own messages from earlier sessions
+# ---------------------------------------------------------------------------
+# Same student, weeks and exercises as SESSIONS, so the two formats can be compared.
+# Each message is one of:
+#   {"exercise"/"code"/"output"/"error": ..., "instr": ..., "exec": ...}
+#       pasted material (shared by both versions) followed by the student's request
+#   {"instr": ..., "exec": ...}   a request with nothing pasted
+#   {"both": ...}                 the same message in both versions ("hi", "thanks")
+# Pasted material is shown in the order exercise, code, output, error, then the request.
+#
+# Three kinds of session, so the exec log covers the whole range of executive requests
+# (write it, finish it, fix it) and is not only about repairing the student's own code:
+#   fix       the student's own code and its bugs throughout (sessions 1, 2, 4, 5)
+#   solution  starts from the pasted exercise text: explain it / write it (session 3)
+#   finish    starts from an unfinished attempt: check it / finish it (session 6)
+# In solution and finish sessions no later message pastes the student's own code, since
+# in the exec version the tutor wrote it.
+#
+# Size and shape follow StudyChat (data/raw/studychat/data.jsonl: 203 students, 16,851
+# prompts; `python3 -I stage2/toy/histories.py --memory log` prints the log's own numbers):
+#   - Messages: a median student sends 67 prompts over the semester, so about 29 by week 6
+#     of 14. The log has 29, in 6 sessions of 4-5 (StudyChat: median 4 prompts per chat).
+#   - Short messages (3 words or fewer): 5% of StudyChat prompts, mostly greetings. The log
+#     has 2 of 29, "hi" and "thanks", identical in both versions.
+#   - Pasted material: code in about a third of StudyChat prompts. The log has 10 of 29.
+#   - Student's own words per message (not counting pastes): StudyChat median 11, middle
+#     half 7-20. The log's requests are 6-15.
+#   - Sentence form: of StudyChat prompts with nothing pasted, about half are questions and
+#     at least 11% start with a command verb (a rough first-word heuristic; most of the
+#     rest are statements and commands it misses). The log has 21 question pairs and 6
+#     command pairs.
+#
+# Rules followed when writing each pair (keep them if you edit). Labels follow the
+# project's Help-Seeking Annotation Rubric (v1); check_log_messages.py checks every message
+# against it.
+#   - Only the student's own words differ. Pasted code, output and errors are identical,
+#     and the rubric ignores pasted material, so it carries no help-seeking signal.
+#   - Clear-cut items only. "instr" uses frames the rubric codes instrumental without
+#     argument: "why does my code do X", "explain what this error means", "is my X ok",
+#     "check whether", concept questions, assignment clarification. "exec" asks for the
+#     code to be written, finished, fixed or changed ("write", "finish", "fix", "rewrite",
+#     "add", "make it").
+#   - Avoided on both sides: "how do I [step of the exercise]" (the rubric codes it
+#     executive, and flags it as its most likely disagreement), bare errors, code or
+#     exercise text with no request (unclear / executive), mixed requests.
+#   - Same sentence form in both versions: both questions (ending in "?") or both
+#     commands. In the first draft every instr was a question and every exec a bare
+#     command, and the whole-log check rated the exec student much less polite (2.8 vs
+#     4.0 out of 5); the summary format, which hides the wording, had no gap. "can you"
+#     turns an exec request into a question; the rubric still codes it executive.
+#     Use "can you fix / change / rewrite / write / finish", not "can you make X": the
+#     rater sometimes read "can you make" as "how can I make" (instrumental or mixed).
+#     histories.py refuses pairs whose forms differ.
+#   - Same target and same work done in both versions: both are about the same bug, line
+#     or requirement.
+#   - Same register: lowercase, short, no deadlines or stress. Politeness words (please,
+#     thanks, sorry) appear in both versions or neither. Shared short messages are neutral
+#     ("thanks", never "makes sense", which implies an explanation; never "continue",
+#     which after code the rubric codes executive).
+#   - Student messages only: the tutor's past replies are not shown. Replies would differ
+#     by condition (code vs hints) and give the tutor its own past behavior to copy, which
+#     is a second difference besides the student's help-seeking.
+#   - Every request in a log is of the same type (a consistent pattern).
+
+LOG_HEADER = """
+
+## What you remember about this student
+Messages this student sent you in earlier sessions (oldest first). Your replies were not saved.
+- Name: Alex
+- Course: Intro to Python, currently in week 6 of 14."""
+
+LOG_SESSIONS = [
+    # Fix session: the student's own code throughout.
+    {"week": 1, "exercise": "celsius_to_fahrenheit(c)", "messages": [
+        {"both": "hi"},
+        {"code": "def celsius_to_fahrenheit(c):\n"
+                 "    f = c * 9 / 5 + 32\n"
+                 "    print(f)",
+         "instr": "is it ok that my function prints the result instead of returning it?",
+         "exec":  "can you change my function so it returns the result instead of printing it?"},
+        {"code": "c = input(\"temperature: \")\n"
+                 "print(celsius_to_fahrenheit(c))",
+         "error": "TypeError: unsupported operand type(s) for /: 'str' and 'int'",
+         "instr": "explain what this error means, i thought c was a number",
+         "exec":  "fix this error for me, c is supposed to be a number"},
+        {"instr": "why does it give 60.440000000000005 for 15.8 and not just 60.44?",
+         "exec":  "can you fix it so it gives just 60.44 for 15.8 and not 60.440000000000005?"},
+        {"instr": "does the exercise want the answer rounded, or is the full decimal fine?",
+         "exec":  "can you add rounding to my function so it doesn't show the full decimal?"},
+    ]},
+    # Fix session.
+    {"week": 2, "exercise": "sum_of_evens(numbers)", "messages": [
+        {"code": "def sum_of_evens(numbers):\n"
+                 "    total = 0\n"
+                 "    for n in numbers:\n"
+                 "        if n / 2:\n"
+                 "            total += n\n"
+                 "    return total",
+         "instr": "why does this add every number and not only the even ones?",
+         "exec":  "can you fix this so it adds only the even ones and not every number?"},
+        {"instr": "explain what % does and why it's used to check for even numbers",
+         "exec":  "rewrite my even check with % instead of what i have now"},
+        {"code": "def sum_of_evens(numbers):\n"
+                 "    for n in numbers:\n"
+                 "        total = 0\n"
+                 "        if n % 2 == 0:\n"
+                 "            total += n\n"
+                 "    return total",
+         "output": ">>> sum_of_evens([2, 4, 8])\n8",
+         "instr": "why do i get 8 here when i expected 14?",
+         "exec":  "can you fix this so i get 14 here and not 8?"},
+        {"instr": "does % work the same way for negative numbers like -4?",
+         "exec":  "can you change my even check so it works for negative numbers like -4?"},
+        {"instr": "is it ok to use sum() here, or do we have to use a loop?",
+         "exec":  "can you rewrite my function so it uses sum() here instead of a loop?"},
+    ]},
+    # Solution session: starts from the exercise text, no student code. In the exec
+    # version the tutor wrote the code, so no message pastes the student's own attempt.
+    {"week": 3, "exercise": "letter_grade(score)", "messages": [
+        {"exercise": "Write a function letter_grade(score) that returns \"A\" for scores of 90 and\n"
+                     "above, \"B\" for 80 to 89, \"C\" for 70 to 79, and \"F\" for anything below 70.",
+         "instr": "can you explain what this exercise is asking for?",
+         "exec":  "can you write the code for this exercise?"},
+        {"instr": "should a score of exactly 90 be an A or a B?",
+         "exec":  "can you change it so a score of exactly 90 gives an A?"},
+        {"instr": "is it fine to leave out a check for scores above 100?",
+         "exec":  "can you add a check for scores above 100 to the function?"},
+        {"instr": "explain why a function like this would crash when the score comes from input()",
+         "exec":  "fix the function so it doesn't crash when the score comes from input()"},
+        {"instr": "is it bad style to have a return in every branch?",
+         "exec":  "can you rewrite it with only one return instead of one in every branch?"},
+    ]},
+    # Fix session.
+    {"week": 3, "exercise": "reverse_list(items), without slicing or reverse()", "messages": [
+        {"code": "def reverse_list(items):\n"
+                 "    result = []\n"
+                 "    for i in range(len(items), 0, -1):\n"
+                 "        result.append(items[i])\n"
+                 "    return result",
+         "error": "IndexError: list index out of range",
+         "instr": "my range looks right to me, so what is causing this IndexError?",
+         "exec":  "my range looks right to me, so can you fix this IndexError?"},
+        {"instr": "does range count down if the step is negative, and where does it stop?",
+         "exec":  "can you rewrite my range so it counts down and stops in the right place?"},
+        {"code": "def reverse_list(items):\n"
+                 "    result = []\n"
+                 "    for i in range(len(items) - 1, 0, -1):\n"
+                 "        result.append(items[i])\n"
+                 "    return result",
+         "output": ">>> reverse_list([1, 2, 3])\n[3, 2]",
+         "instr": "explain why the first item is missing from the result",
+         "exec":  "fix it so the first item isn't missing from the result"},
+        {"instr": "would a while loop work better here than my for loop?",
+         "exec":  "can you rewrite my for loop as a while loop?"},
+    ]},
+    # Fix session.
+    {"week": 4, "exercise": "remove_duplicates(items), keeping the original order", "messages": [
+        {"code": "def remove_duplicates(items):\n"
+                 "    return list(set(items))",
+         "output": ">>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]",
+         "instr": "why did the order change when i expected [3, 1, 2]?",
+         "exec":  "can you fix it so the order stays the same, like [3, 1, 2]?"},
+        {"instr": "explain the difference between a list and a set in python",
+         "exec":  "rewrite it with a list instead of a set"},
+        {"code": "def remove_duplicates(items):\n"
+                 "    result = []\n"
+                 "    for x in items:\n"
+                 "        if x not in items:\n"
+                 "            result.append(x)\n"
+                 "    return result",
+         "output": ">>> remove_duplicates([3, 1, 3, 2])\n[]",
+         "instr": "why is this returning an empty list now?",
+         "exec":  "can you fix this so it doesn't return an empty list?"},
+        {"instr": "should it work for a list of strings too, or only numbers?",
+         "exec":  "can you change my function so it works for strings too, not only numbers?"},
+        {"instr": "is checking x not in result slow when the list is long?",
+         "exec":  "can you rewrite my x not in result check so it's faster for long lists?"},
+    ]},
+    # Finish session: an unfinished attempt, then no further pastes (in the exec version
+    # the tutor completed it).
+    {"week": 5, "exercise": "running_total(numbers)", "messages": [
+        {"code": "def running_total(numbers):\n"
+                 "    totals = []\n"
+                 "    total = 0\n"
+                 "    for n in numbers:\n"
+                 "        total += n",
+         "instr": "can you check if this is a good start?",
+         "exec":  "can you finish this for me?"},
+        {"instr": "does the exercise say what to return for an empty list?",
+         "exec":  "can you change it so it returns the right thing for an empty list?"},
+        {"instr": "explain whether negative numbers need any special handling here",
+         "exec":  "make it handle negative numbers correctly too"},
+        {"instr": "is a list the best thing to return here, or would a tuple be better?",
+         "exec":  "can you change it to return a tuple instead of a list?"},
+        {"both": "thanks"},
+    ]},
+]
+
+# ---------------------------------------------------------------------------
 # Student messages (scripted: sent in order, whatever the tutor replies)
 # ---------------------------------------------------------------------------
 # {task} is replaced by the exercise (function signature + docstring) in a code block.

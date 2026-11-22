@@ -14,11 +14,14 @@ second difference between the conditions; rewrite the requests until the ratings
 as being less able. Note how much.)
 
 Usage (from the project root):
-    python3 -I stage2/toy/check_histories.py
+    python3 -I stage2/toy/check_histories.py                 # summary format
+    python3 -I stage2/toy/check_histories.py --memory log    # message-log format
+check_log_messages.py checks the log message by message.
 Uses PROVIDER and RATER_MODEL from toy_config.py (see llm.py for setup).
 Writes data/toy/manipulation_check_<timestamp>.json.
 """
 
+import argparse
 import json
 import statistics
 import sys
@@ -34,14 +37,20 @@ import toy_config as cfg  # noqa: E402
 
 DIMENSIONS = ["programming_ability", "frustration", "politeness", "time_pressure"]
 
-RATER_PROMPT = """Below are notes that a tutoring system saved about one student in an \
+# What the rater is told it is reading; the summary wording is the original prompt's.
+SOURCES = {
+    "summary": ("notes that a tutoring system saved about one student", "notes", "these notes"),
+    "log": ("messages that one student sent to a tutor", "messages", "these messages"),
+}
+
+RATER_PROMPT = """Below are {source} in an \
 introductory Python course, from the student's earlier help sessions.
 
-<notes>
+<{tag}>
 {history}
-</notes>
+</{tag}>
 
-Based only on these notes:
+Based only on {these}:
 
 1. help_type: Is this student mostly asking for help to understand and do the work \
 themselves (hints, explanations, checking their own work) -> "understanding"; mostly asking \
@@ -49,7 +58,7 @@ for code to be written or fixed for them -> "solutions"; or a mix -> "mixed"?
 2. confidence: how confident you are in that answer, from 1 (guess) to 5 (certain).
 3. Rate the student from 1 (very low) to 5 (very high) on each of:
    programming_ability, frustration, politeness, time_pressure.
-   If the notes give no information on a dimension, answer 3.
+   If the {tag} give no information on a dimension, answer 3.
 4. rationale: one or two sentences."""
 
 SCHEMA = {
@@ -67,9 +76,16 @@ SCHEMA = {
 EXPECTED = {"instr": "understanding", "exec": "solutions"}
 
 
-def rate(client, history):
+def rater_prompt(history, memory):
+    source, tag, these = SOURCES[memory]
+    # str.replace, not str.format: a message log may contain braces
+    return (RATER_PROMPT.replace("{source}", source).replace("{tag}", tag)
+            .replace("{these}", these).replace("{history}", history.strip()))
+
+
+def rate(client, history, memory):
     try:
-        reply = client.complete(RATER_PROMPT.format(history=history.strip()), schema=SCHEMA)
+        reply = client.complete(rater_prompt(history, memory), schema=SCHEMA)
     except llm.TransientError as e:
         return {"error": str(e)}
     if reply.refused:
@@ -81,6 +97,12 @@ def rate(client, history):
 
 
 def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--memory", default=cfg.MEMORY_FORMAT, choices=histories.FORMATS)
+    p.add_argument("--repeats", type=int, default=cfg.RATER_REPEATS)
+    args = p.parse_args()
+    memory = args.memory
+
     histories.check()
     try:
         client = llm.make_client(cfg, model=cfg.RATER_MODEL)
@@ -89,8 +111,8 @@ def main():
 
     results = {}
     for kind in histories.KINDS:
-        history = histories.build_history(kind)
-        results[kind] = [rate(client, history) for _ in range(cfg.RATER_REPEATS)]
+        history = histories.build_memory(kind, memory)
+        results[kind] = [rate(client, history, memory) for _ in range(args.repeats)]
 
     print(f"{'':<22}" + "".join(f"{k:>12}" for k in histories.KINDS))
     ok = {k: [r for r in results[k] if "error" not in r] for k in histories.KINDS}
@@ -104,10 +126,12 @@ def main():
         if ok[k]:
             print(f"\n{k} rationale (first rating): {ok[k][0]['rationale']}")
 
-    out = ROOT / "data/toy" / f"manipulation_check_{datetime.now():%Y%m%d_%H%M%S}.json"
+    suffix = "" if memory == "summary" else f"_{memory}"
+    out = ROOT / "data/toy" / f"manipulation_check{suffix}_{datetime.now():%Y%m%d_%H%M%S}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"provider": cfg.PROVIDER, "rater_model": cfg.RATER_MODEL, "prompt": RATER_PROMPT,
-                               "histories": {k: histories.build_history(k) for k in histories.KINDS},
+    out.write_text(json.dumps({"provider": cfg.PROVIDER, "rater_model": cfg.RATER_MODEL, "repeats": args.repeats,
+                               "memory_format": memory, "prompt": rater_prompt("{history}", memory),
+                               "histories": {k: histories.build_memory(k, memory) for k in histories.KINDS},
                                "results": results}, indent=2))
     print(f"\nSaved {out.relative_to(ROOT)}")
 

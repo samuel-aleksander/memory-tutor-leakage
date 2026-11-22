@@ -1,0 +1,1800 @@
+{
+  "provider": "vertex_maas",
+  "rater_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "repeats": 5,
+  "prompt": "You are annotating student messages sent to a programming tutor in an introductory Python course. Label what the student is asking the tutor to do, not what the tutor did or whether the student learned anything.\n\nCore question: is the student asking for help so they can do the work themselves, or asking the tutor to do the work for them?\n\nLabels:\n- instrumental: asks for help (explanation, hint, feedback) to understand the domain or task and do it themselves. Includes concept questions; \"why\" or \"what's wrong\" about their own code or output; explaining code or output; checking work they wrote (\"is my X correct?\"); clarifying the assignment; general how-to questions not tied to a step of their assignment.\n- executive: asks the tutor to produce the answer, code, or text that completes all or part of a task for them. Includes finish / complete / write the code; debug it or fix it for me; \"how do I do [step of my assignment]\" or \"how do I get [output the assignment asks for]\"; code, an error, or output pasted with no question; pasted assignment instructions or TODO scaffolds with no question; calculations for their specific task. Asking for less of the answer (e.g. \"just show the changes\") is still executive.\n- mixed: contains both an instrumental and an executive request (\"explain how this works and then write it for me\"; \"is this correct, and fix it\").\n- unclear: asks for help, but the message does not show which kind (e.g. a bare error whose intent the context does not make clear).\n- not_help_seeking: no request for help (greetings, thanks, \"ok\", \"got it\", small talk).\n\nDecision rules:\n1. Find the student's own words. Ignore questions inside pasted material.\n2. No request -> not_help_seeking.\n3. The student asks something -> label the ask: executive if it asks for all or part of the assignment's answer; instrumental if it asks to understand; mixed if both.\n4. Paste with no question or instruction -> executive.\n5. Still can't tell -> unclear.\nTie-breaker between executive and instrumental: if the tutor fully answered, would the student have finished part of their assignment? Yes -> executive. No -> instrumental.\n\nThe student was working on the exercise `{exercise}`. The tutor's previous reply is not available; label from the message alone.\n\n<message>\n{message}\n</message>\n\nGive the label and a one-sentence rationale.",
+  "messages": [
+    {
+      "id": "s1m1_both",
+      "session": 1,
+      "message": 1,
+      "kind": "both",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "hi",
+      "ratings": [
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a greeting with no request for help, so it does not seek assistance."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a greeting with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a greeting with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a greeting with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a greeting with no request for help."
+        }
+      ],
+      "expected": "not_help_seeking",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m2_instr",
+      "session": 1,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\ndef celsius_to_fahrenheit(c):\n    f = c * 9 / 5 + 32\n    print(f)\n```\nis it ok that my function prints the result instead of returning it?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks whether printing instead of returning is acceptable, which is a check/feedback question about their own code rather than a request for the tutor to produce the answer or fix the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for feedback/evaluation of their own code's approach ('is it ok that...') to check their understanding, not asking the tutor to write or fix the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks whether printing instead of returning is acceptable in their own code, which is a check/explanation question that helps them understand the task, not a request for the tutor to produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks whether printing instead of returning is acceptable, which is a conceptual/feedback question about understanding the task rather than a request for the tutor to produce the assignment answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks whether printing instead of returning is acceptable, seeking feedback/validation on their own code rather than asking the tutor to write or fix it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m3_instr",
+      "session": 1,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\nc = input(\"temperature: \")\nprint(celsius_to_fahrenheit(c))\n```\n```\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n```\nexplain what this error means, i thought c was a number",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of the error and why their assumption about c being a number is wrong, seeking understanding rather than a fix or answer code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of what the TypeError means and why their assumption about c being a number is wrong, seeking understanding rather than asking the tutor to fix or complete the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of the error and expresses a conceptual misunderstanding about input types, seeking understanding rather than asking the tutor to fix or complete the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of the TypeError and states their misconception that c is a number, seeking understanding rather than asking the tutor to write or fix code for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of the TypeError and why their assumption about c being a number is wrong, seeking understanding rather than having the code fixed for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m4_instr",
+      "session": 1,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "why does it give 60.440000000000005 for 15.8 and not just 60.44?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "Asking why their code's output has floating-point imprecision rather than requesting the converted value, so it seeks understanding, not the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a 'why' question about floating-point output to understand the behavior, not asking the tutor to complete the task."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why their output shows floating-point imprecision, a conceptual question about understanding rather than a request to produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why their output has floating-point imprecision (why 60.440000000000005 instead of 60.44), which is a conceptual question about understanding the behaviour, not a request to complete the task."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why their code produces a specific floating-point output, which is a concept/explanation request to understand the result rather than asking the tutor to complete the task."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m5_instr",
+      "session": 1,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "does the exercise want the answer rounded, or is the full decimal fine?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment's requirements (rounding vs. full decimal) so they can complete it correctly themselves, not asking for the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment's requirements (rounding vs. full decimal) so they can complete it correctly themselves, not asking the tutor to produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment requirements, not requesting the answer itself."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment requirements (rounding), not asking the tutor to produce the answer or code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment requirements so they can complete the exercise themselves."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m1_instr",
+      "session": 2,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    total = 0\n    for n in numbers:\n        if n / 2:\n            total += n\n    return total\n```\nwhy does this add every number and not only the even ones?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual 'why' question about their own code to understand the behavior, not asking the tutor to produce or fix the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a 'why' question about their own code to understand the behavior (why it adds all numbers), not to have it rewritten for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual 'why' question about their own code's behavior to understand it, not for the tutor to produce or fix the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a 'why' question about their own code's behavior to understand it, not to have it fixed or completed."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why their own code behaves incorrectly, seeking an explanation to understand it rather than asking the tutor to complete the task."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m2_instr",
+      "session": 2,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "explain what % does and why it's used to check for even numbers",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for a conceptual explanation of the modulo operator and its use in checking for even numbers, not for the assignment answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for an explanation of what the % operator does and why it checks for even numbers, which is a concept question to help them understand rather than a request for the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of what the % operator does and why it checks for even numbers, which is a concept question to understand the domain rather than a request for the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for an explanation of the modulo operator and why it checks for even numbers, which is a concept question to help them understand the domain themselves."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of what the modulo operator does and why it checks evenness, which is a concept question for understanding rather than a request to produce the assignment answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m3_instr",
+      "session": 2,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    for n in numbers:\n        total = 0\n        if n % 2 == 0:\n            total += n\n    return total\n```\n```\n>>> sum_of_evens([2, 4, 8])\n8\n```\nwhy do i get 8 here when i expected 14?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their own code and output and asked 'why do i get 8 here when i expected 14?', which is a request to understand their own bug rather than to have the code fixed for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student pastes their own code and output and asks why it produced 8 instead of 14, seeking to understand the behavior of their own code rather than asking the tutor to solve the exercise."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code produces an unexpected output, which is a question about understanding their code rather than a request to complete the task for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code produces 8 instead of the expected 14, which is a request to understand their code's behavior rather than to have the work done for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why their own code produces output 8 instead of the expected 14, a diagnostic 'why' question about their own code, which is a request to understand rather than to have the work done for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m4_instr",
+      "session": 2,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "does % work the same way for negative numbers like -4?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general concept question about how the modulo operator behaves with negative numbers, seeking understanding rather than asking for the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general conceptual question about how the modulus operator behaves with negative numbers, which seeks understanding rather than asking the tutor to produce their assignment answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general concept question about how the modulo operator behaves with negative numbers, not requesting the answer or code for their assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about how the modulo operator works with negative numbers, seeking understanding rather than asking for the assignment answer to be produced."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general concept question about how the modulo operator works with negative numbers, not requesting the answer to their assignment."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m5_instr",
+      "session": 2,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "is it ok to use sum() here, or do we have to use a loop?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about whether using sum() is acceptable or a loop is required, seeking to understand constraints rather than asking for the answer to be produced."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general how-to question about whether using a built-in function is acceptable versus a loop, which is about understanding the task constraints rather than asking for the answer to be produced."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for guidance on whether a particular built-in function is allowed for their task, which is a clarification question rather than a request to write the code for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about whether a specific built-in function is allowed for the assignment, which is to understand constraints rather than requesting the answer itself."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether a built-in approach is acceptable versus the required method, which is a clarifying question about the task rather than a request for the tutor to produce the answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m1_instr",
+      "session": 3,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "```\nWrite a function letter_grade(score) that returns \"A\" for scores of 90 and\nabove, \"B\" for 80 to 89, \"C\" for 70 to 79, and \"F\" for anything below 70.\n```\ncan you explain what this exercise is asking for?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of the exercise, which is a request to understand the task rather than to have the tutor produce the solution."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of what the exercise is asking for, which helps them understand the task rather than requesting the completed code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of what the exercise is asking for, seeking to understand the task rather than asking the tutor to write the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of what the exercise requires, which is clarifying the assignment so they can do it themselves, not asking for the code or answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of the assignment rather than for the code or answer, so they can complete it themselves."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m2_instr",
+      "session": 3,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "should a score of exactly 90 be an A or a B?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual clarification question about the assignment's requirements (grade boundary), not asking the tutor to produce the answer or code for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment's grading criteria to understand it themselves, not requesting that the tutor produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual clarifying question about grading cutoffs to understand the task, not for the code or answer to be produced."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying conceptual question about the grading boundaries to understand the task, not asking the tutor to write or complete the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual clarification question about the assignment criteria (how to classify a boundary score), not asking the tutor to write or complete code for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m3_instr",
+      "session": 3,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "is it fine to leave out a check for scores above 100?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for feedback/confirmation about their own design decision (whether omitting a check is acceptable), seeking understanding rather than asking the tutor to write or complete the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether their design choice of omitting a check is acceptable, seeking feedback/understanding rather than asking the tutor to write or fix code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about whether their design choice is acceptable, seeking feedback to understand the task rather than asking the tutor to write or fix code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether omitting a check for scores above 100 is acceptable, which is a question about their own code design rather than a request for the tutor to complete part of the assignment for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether omitting a score-above-100 check is acceptable, seeking feedback/validation on their design decision rather than asking the tutor to write or fix code for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m4_instr",
+      "session": 3,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "explain why a function like this would crash when the score comes from input()",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why a function would crash with input(), seeking understanding rather than the completed answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why a function would crash, seeking understanding rather than asking the tutor to produce or fix the assignment's code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why their function (with input()) would crash, seeking understanding of their code's behavior rather than asking the tutor to produce or fix the assignment answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why a function crashes with input(), which is a concept question to help them understand rather than a request to produce the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why a function would crash \u2014 a concept question about their code, not a request for the assignment's answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m5_instr",
+      "session": 3,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "is it bad style to have a return in every branch?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general style/concept question about their own approach, not asking the tutor to write or fix the exercise for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general style/concept question about Python coding practices, not requesting the assignment's answer, so answering it would not complete part of their task for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general style question about Python (whether returns in every branch are bad style) to understand the concept, not to get the assignment completed for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general style/concept question about return statements to understand good practice, not for the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general style question about whether returning in every branch is bad practice, seeking understanding rather than asking the tutor to write or fix their code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m1_instr",
+      "session": 4,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items), 0, -1):\n        result.append(items[i])\n    return result\n```\n```\nIndexError: list index out of range\n```\nmy range looks right to me, so what is causing this IndexError?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code produces an IndexError, seeking an explanation of the error rather than asking the tutor to write or fix the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code produces an IndexError, seeking an explanation to fix it themselves rather than asking for the completed code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student shows their own code and error and asks what is causing the IndexError, seeking an explanation to fix it themselves rather than asking for the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student shows their own code and error and asks why the IndexError occurs, seeking an explanation of their mistake rather than asking the tutor to write or fix the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their own code and error but asks a specific 'why/what's causing this' question about their reasoning, seeking to understand the bug rather than asking the tutor to fix or rewrite it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m2_instr",
+      "session": 4,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "does range count down if the step is negative, and where does it stop?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general concept question about how `range` behaves with a negative step, not asking the tutor to write or fix code for the assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general concept question about how range works with a negative step, which helps them understand the domain to do the assignment themselves rather than asking for the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general concept question about how range works with a negative step, seeking understanding rather than asking the tutor to complete part of the assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general conceptual question about how range works with negative steps, which helps them understand the concept rather than asking for the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general conceptual question about how range works with a negative step, which is about understanding Python rather than requesting the assignment's answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m3_instr",
+      "session": 4,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items) - 1, 0, -1):\n        result.append(items[i])\n    return result\n```\n```\n>>> reverse_list([1, 2, 3])\n[3, 2]\n```\nexplain why the first item is missing from the result",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why their own code's output is missing the first item, which is a request to understand their code rather than to have the tutor complete the task."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why their own code produces the wrong output, which is a request to understand rather than to have the work done for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why their own code's output is missing the first item, which is a request to understand rather than to have the assignment completed."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation of why their own code's output is missing the first item, which is a request to understand their bug rather than to have the work done for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student pastes their own code and output and asks for an explanation of why the first item is missing, which is a request to understand their own bug rather than to have it fixed for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m4_instr",
+      "session": 4,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "would a while loop work better here than my for loop?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for conceptual guidance about loop choice for their own approach, not asking the tutor to write or fix code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for feedback on their approach (comparing a while loop to their for loop) to understand it better, not to have the code written for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for a comparison/opinion about their own code choice to understand better, not asking the tutor to write or fix the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for feedback on which loop construct would work better for their own code, seeking understanding rather than having the tutor produce the solution."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a concept/comparison question about which loop construct works better, seeking understanding rather than asking the tutor to produce the solution."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m1_instr",
+      "session": 5,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    return list(set(items))\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]\n```\nwhy did the order change when i expected [3, 1, 2]?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code's output order changed, seeking an explanation to understand the behavior rather than asking the tutor to fix or write code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual 'why' question about their own code's output, seeking to understand behavior rather than asking for the answer to be produced."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their code's output order changed, seeking an explanation of their own code rather than asking the tutor to write or fix it."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why the order changed in their own code's output, seeking an explanation to understand the behavior rather than asking the tutor to produce the code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why the output order changed, a conceptual 'why' question about their own code's behavior, not asking the tutor to produce or fix the code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m2_instr",
+      "session": 5,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "explain the difference between a list and a set in python",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for a conceptual explanation of lists versus sets, which supports their own understanding rather than requesting the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for a conceptual explanation of the difference between lists and sets, which helps them understand the domain rather than requesting the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for a conceptual explanation of the difference between lists and sets, which helps them understand the domain rather than produce the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for a conceptual explanation of the difference between lists and sets, not for the answer or code to complete their assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for a conceptual explanation of the difference between lists and sets, not for the exercise answer itself."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m3_instr",
+      "session": 5,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    result = []\n    for x in items:\n        if x not in items:\n            result.append(x)\n    return result\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[]\n```\nwhy is this returning an empty list now?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their own code and output and asks 'why is this returning an empty list now?', which is a request to understand what's wrong with their code rather than to have the tutor produce the fix."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their own code and output and asks why it returns an empty list, seeking an explanation of their code's behavior rather than asking the tutor to produce the corrected code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student shares their own code and failing output and asks why it returns an empty list, seeking an explanation to understand and fix it themselves."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code is returning an empty list, which is a request to understand their code or output rather than to have the tutor complete the task."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student pastes their own code and output and asks why it returns an empty list, requesting an explanation of what's wrong with their code rather than asking the tutor to write or fix it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m4_instr",
+      "session": 5,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "should it work for a list of strings too, or only numbers?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the scope/requirements of the exercise to understand it, not asking the tutor to produce code or an answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying concept question about whether their solution should handle strings as well as numbers, which helps them understand the requirement rather than asking the tutor to produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying concept question about whether the function should support strings as well as numbers, which helps them understand the task requirements rather than asking for the answer or code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying concept question about whether the function should handle strings as well as numbers, not asking the tutor to produce code or an answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the requirements/scope of the exercise, not requesting the answer or code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m5_instr",
+      "session": 5,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "is checking x not in result slow when the list is long?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual performance question about list lookups rather than asking the tutor to write or fix code for the assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual performance question about list membership checks, not requesting code or the assignment answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual question about performance/efficiency, not for the assignment's answer or code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general concept question about performance (whether checking membership in a list is slow for long lists), not requesting the answer to their assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual performance question about list membership checks, not requesting code or the assignment answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m1_instr",
+      "session": 6,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "```python\ndef running_total(numbers):\n    totals = []\n    total = 0\n    for n in numbers:\n        # TODO\n    return totals\n```\ncan you check if this is a good start?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks the tutor to check whether their code skeleton is a good start, which is a request for feedback on their own work rather than a request for the tutor to produce the solution."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for feedback on whether their code scaffold is a good start, which is checking their own work rather than asking the tutor to complete the assignment."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for feedback on whether their code skeleton is a good start, which is checking their own work to understand how to proceed rather than asking the tutor to write or complete the code."
+        },
+        {
+          "label": "executive",
+          "rationale": "The message pastes a TODO scaffold with the ask 'can you check if this is a good start?', which requests the tutor to complete or continue the code for the unfinished step rather than asking a conceptual question."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their own code scaffold and asks if it's a good start, requesting feedback to check their work rather than asking the tutor to complete it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": false
+    },
+    {
+      "id": "s6m2_instr",
+      "session": 6,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "what should a running total return for an empty list?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual question about what an empty list should return, which helps them understand the domain/edge case to do the work themselves rather than requesting the completed code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about what the running total should return for an empty list, seeking to understand the domain rather than requesting code or the answer to their exercise."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about what a running total should return for an empty list, which is asking to understand the domain/task rather than asking the tutor to write code or produce the answer for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about what the function should return for an edge case, seeking understanding about the domain rather than asking the tutor to produce the answer or code for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual clarifying question about what the function should return for an edge case, not asking the tutor to write or complete the assignment code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m3_instr",
+      "session": 6,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "explain whether negative numbers need any special handling here",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation about whether negative numbers require special handling, which is a conceptual question to help them understand the task rather than a request for the tutor to produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation about whether negative numbers need special handling, which is a concept/understanding question rather than a request to produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation about whether negative numbers require special handling, which is a concept clarification to help them do the work themselves, not a request for the answer or code."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation about whether negative numbers need special handling, which is a conceptual clarification to help them understand the task themselves."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student asks for an explanation about whether negative numbers need special handling, seeking conceptual understanding to do the work themselves rather than asking for code or the answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m4_instr",
+      "session": 6,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "is a list the best thing to return here, or would a tuple be better?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual design question about whether a list or tuple is more appropriate to return, seeking understanding to decide for themselves rather than asking the tutor to produce the assignment's answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a concept/design question (list vs. tuple) to understand the best approach, not asking the tutor to write the code for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for conceptual advice on choosing between a list and a tuple, not asking the tutor to write or complete the exercise for them."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about choosing between a list and a tuple for their return value, seeking understanding rather than having the tutor produce the answer."
+        },
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual design question about list vs. tuple to inform their own implementation choice, not asking the tutor to produce the code or answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m5_both",
+      "session": 6,
+      "message": 5,
+      "kind": "both",
+      "exercise": "running_total(numbers)",
+      "text": "thanks",
+      "ratings": [
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a thank-you with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a thanks with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a thank-you with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is just a thank-you with no request for help."
+        },
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message 'thanks' is an expression of gratitude with no request for help."
+        }
+      ],
+      "expected": "not_help_seeking",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m2_exec",
+      "session": 1,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\ndef celsius_to_fahrenheit(c):\n    f = c * 9 / 5 + 32\n    print(f)\n```\ncan you change my function so it returns the result instead of printing it?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their function and asks the tutor to change it to return the result instead of printing, which is a request to produce the code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their function to return instead of print, which does the task for them rather than seeking understanding."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify their function (change it to return instead of print), which produces the code change for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their function and asks the tutor to change it so it returns the result, requesting the tutor to do the work for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their function and explicitly asks the tutor to change it to return instead of print, which is asking for the code to be modified for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m3_exec",
+      "session": 1,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\nc = input(\"temperature: \")\nprint(celsius_to_fahrenheit(c))\n```\n```\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n```\nfix this error for me, c is supposed to be a number",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes code and an error, then explicitly asks the tutor to \"fix this error for me,\" which requests the completed correction rather than an explanation."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and error and asks the tutor to fix the error for them, which would complete part of their assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and error and explicitly asks the tutor to \"fix this error for me,\" requesting that the tutor produce the corrected code."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and error and explicitly asks the tutor to 'fix this error for me,' which requests the tutor to produce the corrected code for their task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to 'fix this error for me,' requesting a produced solution rather than an explanation."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m4_exec",
+      "session": 1,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "can you fix it so it gives just 60.44 for 15.8 and not 60.440000000000005?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to fix their code so it produces the specific output required by the assignment, which completes part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to fix their code so it produces the specific output required by the assignment, which would complete part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so it produces a specific desired output, which is a request to complete part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so it produces the specific formatted output their assignment/TODO requires, which is asking the tutor to complete part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so it produces the specific output the assignment requires, which is a request to complete part of the task for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m5_exec",
+      "session": 1,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "can you add rounding to my function so it doesn't show the full decimal?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add rounding to their function, requesting a specific code change that completes part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add rounding code to their function, which completes part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add rounding to their function, i.e. produce code that modifies all or part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add rounding to their function, which is asking the tutor to produce part of the code that completes the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add rounding to their function, which is a request to produce code that completes part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m1_exec",
+      "session": 2,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    total = 0\n    for n in numbers:\n        if n / 2:\n            total += n\n    return total\n```\ncan you fix this so it adds only the even ones and not every number?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and explicitly asks the tutor to fix it so it adds only even numbers, which is asking the tutor to complete part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to fix their code so it functions correctly, which would complete part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their code and explicitly asks the tutor to 'fix this,' requesting that the tutor produce the corrected code rather than explain the issue."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and asks the tutor to 'fix this' so it works, asking the tutor to produce the corrected code for the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so it correctly performs the assignment step, which is a request to produce the corrected code for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m2_exec",
+      "session": 2,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "rewrite my even check with % instead of what i have now",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their even check code for them, which produces part of the assignment's solution."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their code for them, producing part of the assignment's answer directly."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their even check using %, which requests a produced code change completing part of the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their even check code, which is a direct request for the tutor to produce code for part of the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their even check code using the % operator, requesting a direct code change that completes part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m3_exec",
+      "session": 2,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    for n in numbers:\n        total = 0\n        if n % 2 == 0:\n            total += n\n    return total\n```\n```\n>>> sum_of_evens([2, 4, 8])\n8\n```\ncan you fix this so i get 14 here and not 8?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and output with no question and explicitly asks the tutor to 'fix this' so it returns the correct value, which is a request to have the tutor complete part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and output and explicitly asks the tutor to fix it so it produces the expected result, requesting the completed solution to part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and asks the tutor to fix it so it produces the expected output, requesting the tutor to do the debugging work for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to fix their code so it produces the required output for the assignment task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their buggy code and output and explicitly asks the tutor to fix it so it returns the correct assignment result (14), which is a request to do the debugging/debug-fix work for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m4_exec",
+      "session": 2,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "can you make my even check work for negative numbers like -4?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their even check work for negative numbers, i.e., to fix/modify the code for them rather than understand why it fails."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their even check work for negative numbers, requesting a fix to their code rather than an explanation to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their even check work for negative numbers, which requests the tutor to produce the fix for part of the assignment rather than asking to understand how to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their even check work for negative numbers, which is a request to fix/produce code for part of the assignment rather than a request to understand."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their even check work for negative numbers, requesting that the tutor produce the fix rather than understand it themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m5_exec",
+      "session": 2,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "can you rewrite my function so it uses sum() here instead of a loop?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their function using sum(), which is producing the code that completes part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their function for them, producing part of the assignment rather than seeking an explanation to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their function, which directly produces the assignment's code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their function for them, which produces part of the assignment's solution rather than helping them understand it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their function, producing the code for them rather than helping them understand how to do it themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m1_exec",
+      "session": 3,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "```\nWrite a function letter_grade(score) that returns \"A\" for scores of 90 and\nabove, \"B\" for 80 to 89, \"C\" for 70 to 79, and \"F\" for anything below 70.\n```\ncan you write the code for this exercise?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to \"write the code\" for the exercise, requesting the complete answer rather than help understanding it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to write the code for the exercise, which requests the assignment's answer rather than help to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to 'write the code for this exercise,' requesting the completed answer rather than help to understand it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to write the code for the exercise, requesting the complete answer rather than help to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes the assignment instructions and explicitly asks the tutor to write the code for the exercise, which is a direct request to complete the task for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m2_exec",
+      "session": 3,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "can you make sure a score of exactly 90 gives an A?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to verify and, if needed, adjust the code for a specific case, effectively asking the tutor to fix/produce the solution rather than helping the student understand it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make the code handle a specific case (score of 90 \u2192 A), which is asking the tutor to produce part of the assignment's solution rather than to explain or get feedback for their own work."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to verify and, if needed, make the code produce a specific required output for their assignment, effectively asking the tutor to handle that part of the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to verify/fix behavior of their function for a specific assignment input, which requests work on the task rather than an explanation to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify/verify the function for a specific scoring case, which requests producing part of the assignment's answer rather than understanding."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m3_exec",
+      "session": 3,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "can you add a check for scores above 100 to the function?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add a check to the function, requesting a specific code modification that completes part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add a specific check to the function, which is asking the tutor to write part of the assignment code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add a specific check to their function, which produces part of the assignment's code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to add a specific piece of code (a check for scores above 100) to their function, which completes part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add a check to the function, directly requesting code that completes part of the assignment."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m4_exec",
+      "session": 3,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "fix the function so it doesn't crash when the score comes from input()",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student explicitly asks the tutor to fix the function for them, which is a direct request to modify their code and complete part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to fix the function for them, which would complete part of the assignment task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to fix their function for them, which would complete part of the assignment rather than helping them understand it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix the function for them, which would complete part of the assignment rather than helping them understand it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their function, which would complete that part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m5_exec",
+      "session": 3,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "can you rewrite it with only one return instead of one in every branch?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their code to use only one return statement, which is a request to produce code that completes part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their code for them (using a single return instead of one per branch), which produces the code rather than helping them understand it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their code to use a single return, which is a request for the tutor to produce the revised solution rather than an explanation to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite the code with a single return, requesting a completed solution to part of the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to produce a rewritten version of their code, which completes part of the task for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m1_exec",
+      "session": 4,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items), 0, -1):\n        result.append(items[i])\n    return result\n```\n```\nIndexError: list index out of range\n```\nmy range looks right to me, so can you fix this IndexError?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to 'fix this IndexError,' requesting that the tutor produce the corrected code for part of the assignment rather than helping them understand the bug themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and error and asks the tutor to fix it, which requests the completed working solution rather than help understanding the bug."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix the IndexError in their code, which would complete part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes broken code with an error and explicitly asks the tutor to 'fix this IndexError,' which is a request for the tutor to debug and produce the corrected code for their assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix the IndexError in their code, which is a request to complete/debug part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m2_exec",
+      "session": 4,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "can you rewrite my range so it counts down and stops in the right place?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their range code (count down and stop in the right place), which is producing part of the assignment's answer for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their range for them, i.e., produce the corrected code rather than explain how to fix it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite part of their code (the range) for them, which produces part of the assignment's answer."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their range code to count down and stop at the right place, which would complete part of their assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their range code, i.e., to produce the corrected code for their assignment rather than to understand it."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m3_exec",
+      "session": 4,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items) - 1, 0, -1):\n        result.append(items[i])\n    return result\n```\n```\n>>> reverse_list([1, 2, 3])\n[3, 2]\n```\nfix it so the first item isn't missing from the result",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and output and asks the tutor to 'fix it,' which requests the completed/corrected code for their assignment rather than an explanation."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their buggy code and output and asked the tutor to \"fix it,\" requesting the corrected code rather than an explanation to fix it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their buggy code and output and explicitly asks the tutor to fix it, which produces the corrected code for their assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and the incorrect output and asks the tutor to fix it, which requests the tutor to produce the corrected code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student provides their buggy code and output and says \"fix it so the first item isn't missing,\" asking the tutor to correct their code for the assignment rather than to explain the underlying issue."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m4_exec",
+      "session": 4,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "can you rewrite my for loop as a while loop?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their for loop as a while loop, which produces the code for them and directly completes part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to produce rewritten code (converting their for loop to a while loop), which does part of the assignment's work for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their for loop into a while loop, which produces code that completes part of their assignment task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their for loop as a while loop, which is asking the tutor to produce the code for them rather than help them understand how to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their code (produce the answer/lines of code), which completes part of the task for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m1_exec",
+      "session": 5,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    return list(set(items))\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]\n```\ncan you fix it so the order stays the same, like [3, 1, 2]?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes code and output and asks the tutor to fix it so it produces the assignment's required order, which is a request to complete part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so it produces the expected ordered output, which is part of completing the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and output and asks the tutor to fix it so it produces the specific required output."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so it produces the required ordered output, which completes part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code so the output has the correct order, which is asking the tutor to produce the working solution for the assignment."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m2_exec",
+      "session": 5,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "rewrite it with a list instead of a set",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their solution code using a list instead of a set, i.e., to produce the assignment's code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite the code using a list instead of a set, which is a request to perform part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite code using a list instead of a set, which is a directive to produce part of the assignment's solution for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their code using a list instead of a set, which is producing part of the assignment's answer for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite the code with a list instead of a set, which is a request to produce the solution code for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m3_exec",
+      "session": 5,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    result = []\n    for x in items:\n        if x not in items:\n            result.append(x)\n    return result\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[]\n```\ncan you fix this so it doesn't return an empty list?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes buggy code and output and explicitly asks the tutor to fix it, which is a request to do the debugging work for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their buggy code and output and explicitly asks the tutor to fix it for them, which is a request for the tutor to produce corrected code completing part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their buggy code and output and explicitly asked the tutor to fix it, which is a request for the tutor to make the code work for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and output and explicitly asks the tutor to fix it for them so it returns the correct result."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and error output and explicitly asks the tutor to fix it for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m4_exec",
+      "session": 5,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "can you change my function so it works for strings too, not only numbers?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify their function to handle strings, which is asking the tutor to produce the working code for part of the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to change their function for them so it works for strings, requesting production of a modified solution rather than an explanation to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify their function to work for strings, which is a request to produce code that completes part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify their function for them so it works with strings, which is producing code that completes part of the task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify (change) their function so it works for strings, which is asking the tutor to produce the code that completes part of the task."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m5_exec",
+      "session": 5,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "can you make my x not in result check faster for long lists?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their specific check faster, i.e., to produce optimized code that completes part of their task."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to optimize/fix their specific check to make it faster, which is asking the tutor to produce an improved part of the solution rather than seeking an explanation to do it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to optimize/rewrite their code to make the check faster, i.e., produce an improved answer that advances their assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to optimize/rewrite their specific check to be faster, i.e., produce improved code for their task rather than understand a concept."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make a specific part of their code faster, i.e., to produce an optimized implementation rather than understand the concept themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m1_exec",
+      "session": 6,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "```python\ndef running_total(numbers):\n    totals = []\n    total = 0\n    for n in numbers:\n        # TODO\n    return totals\n```\ncan you finish this for me?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes a code scaffold with a TODO and explicitly asks the tutor to finish the code for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes a code scaffold with a TODO and explicitly asks the tutor to \"finish this for me,\" requesting that the tutor complete the assignment's code."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pasted their scaffold code and explicitly asks the tutor to 'finish this for me,' requesting the completed solution rather than an explanation or hint."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their scaffolded code and explicitly asks the tutor to \"finish this for me,\" requesting the completed code for part of the assignment."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student pastes their scaffolded code and explicitly asks the tutor to \"finish this for me,\" requesting the completed assignment code."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m2_exec",
+      "session": 6,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "can you make it return the right thing for an empty list?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their code return the right thing for an empty list, i.e., to produce a fix that completes part of the task for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify their code so it returns the correct value for an empty list, requesting that part of the assignment be done for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make their function return the correct value for an empty list, requesting the tutor to produce the fix rather than understand it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to make their code return the correct value for an empty list, i.e., to produce a fix completing part of the assignment for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify the code so it returns the correct result for an empty list, which is a request to produce part of the assignment's answer."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m3_exec",
+      "session": 6,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "make it handle negative numbers correctly too",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify the code so it handles negative numbers, which is asking for part of the assignment's implementation to be done for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify the code so it handles negative numbers, which is a request to produce part of the assignment's solution rather than to understand it themselves."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify the code so it handles negative numbers, which is a request to produce part of the assignment's answer rather than to understand it."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify the code so it handles negative numbers, i.e., to produce part of the assignment's answer for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify the code so it handles negative numbers correctly, which requests the tutor to produce part of the assignment's solution."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m4_exec",
+      "session": 6,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "can you change it to return a tuple instead of a list?",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify the code to return a tuple instead of a list, which is producing part of the assignment's answer for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify the code to return a tuple instead of a list, which is a request to produce part of the assignment's answer."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify the code to return a tuple instead of a list, which is a request to produce part of the assignment's answer."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify the code to return a tuple instead of a list, which is a request to produce part of the assignment's answer for them."
+        },
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to change their code's return type, i.e., to produce a modification that completes part of the task for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    }
+  ]
+}

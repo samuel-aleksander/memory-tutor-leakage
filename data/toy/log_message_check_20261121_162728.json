@@ -1,0 +1,904 @@
+{
+  "provider": "vertex_maas",
+  "rater_model": "deepseek-ai/deepseek-v4.1-flash-maas",
+  "repeats": 1,
+  "prompt": "You are annotating student messages sent to a programming tutor in an introductory Python course. Label what the student is asking the tutor to do, not what the tutor did or whether the student learned anything.\n\nCore question: is the student asking for help so they can do the work themselves, or asking the tutor to do the work for them?\n\nLabels:\n- instrumental: asks for help (explanation, hint, feedback) to understand the domain or task and do it themselves. Includes concept questions; \"why\" or \"what's wrong\" about their own code or output; explaining code or output; checking work they wrote (\"is my X correct?\"); clarifying the assignment; general how-to questions not tied to a step of their assignment.\n- executive: asks the tutor to produce the answer, code, or text that completes all or part of a task for them. Includes finish / complete / write the code; debug it or fix it for me; \"how do I do [step of my assignment]\" or \"how do I get [output the assignment asks for]\"; code, an error, or output pasted with no question; pasted assignment instructions or TODO scaffolds with no question; calculations for their specific task. Asking for less of the answer (e.g. \"just show the changes\") is still executive.\n- mixed: contains both an instrumental and an executive request (\"explain how this works and then write it for me\"; \"is this correct, and fix it\").\n- unclear: asks for help, but the message does not show which kind (e.g. a bare error whose intent the context does not make clear).\n- not_help_seeking: no request for help (greetings, thanks, \"ok\", \"got it\", small talk).\n\nDecision rules:\n1. Find the student's own words. Ignore questions inside pasted material.\n2. No request -> not_help_seeking.\n3. The student asks something -> label the ask: executive if it asks for all or part of the assignment's answer; instrumental if it asks to understand; mixed if both.\n4. Paste with no question or instruction -> executive.\n5. Still can't tell -> unclear.\nTie-breaker between executive and instrumental: if the tutor fully answered, would the student have finished part of their assignment? Yes -> executive. No -> instrumental.\n\nThe student was working on the exercise `{exercise}`. The tutor's previous reply is not available; label from the message alone.\n\n<message>\n{message}\n</message>\n\nGive the label and a one-sentence rationale.",
+  "messages": [
+    {
+      "id": "s1m1_both",
+      "session": 1,
+      "message": 1,
+      "kind": "both",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "hi",
+      "ratings": [
+        {
+          "label": "not_help_seeking",
+          "rationale": "The student only sent a greeting ('hi') with no request for help."
+        }
+      ],
+      "expected": "not_help_seeking",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m2_instr",
+      "session": 1,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\ndef celsius_to_fahrenheit(c):\n    f = c * 9 / 5 + 32\n    print(f)\n```\nis it ok that my function prints the result instead of returning it?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether printing instead of returning is acceptable, which is checking their own work and understanding the concept, not asking the tutor to write or fix the code for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m3_instr",
+      "session": 1,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\nc = input(\"temperature: \")\nprint(celsius_to_fahrenheit(c))\n```\n```\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n```\nwhat does this error mean? i thought c was a number",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their code and error but asks what the error means and expresses a conceptual confusion about c's type, seeking understanding rather than asking the tutor to fix it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m4_instr",
+      "session": 1,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "why does it give 60.440000000000005 for 15.8 and not just 60.44?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking why their output has floating-point imprecision, seeking an explanation to understand the concept rather than asking the tutor to produce or fix code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m5_instr",
+      "session": 1,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "does the exercise want the answer rounded, or is the full decimal fine?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the assignment requirements (rounding vs. full decimal), not requesting the answer or code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m1_instr",
+      "session": 2,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    total = 0\n    for n in numbers:\n        if n / 2:\n            total += n\n    return total\n```\nwhy does this add every number and not only the even ones?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their own code and asks why it behaves incorrectly, seeking an explanation of the bug rather than asking the tutor to fix or complete it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m2_instr",
+      "session": 2,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "what does % do, and why is it used to check for even numbers?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual question about what the modulo operator does and why it checks for even numbers, seeking understanding rather than asking the tutor to complete the assignment."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m3_instr",
+      "session": 2,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    for n in numbers:\n        total = 0\n        if n % 2 == 0:\n            total += n\n    return total\n```\n```\n>>> sum_of_evens([2, 4, 8])\n8\n```\nwhy do i get 8 here when i expected 14?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code produces an output different from what they expected, which is a request to understand their code rather than to have the tutor complete the task."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m4_instr",
+      "session": 2,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "does % work the same way for negative numbers like -4?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general concept question about how the modulo operator behaves with negative numbers, seeking understanding rather than having the tutor complete the assignment."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m5_instr",
+      "session": 2,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "is it ok to use sum() here, or do we have to use a loop?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a clarification/concept question about allowed approach (whether sum() is acceptable vs. a loop), seeking understanding of constraints rather than asking the tutor to write the solution."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m1_instr",
+      "session": 3,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "```python\ndef letter_grade(score):\n    if score >= 80:\n        return \"B\"\n    elif score >= 90:\n        return \"A\"\n    elif score >= 70:\n        return \"C\"\n    else:\n        return \"F\"\n```\n```\n>>> letter_grade(95)\n'B'\n```\nwhy does 95 give a B and not an A?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pastes their own code and output and asks why 95 gives a B instead of an A, a 'why' question about their own code aimed at understanding the bug rather than asking the tutor to fix it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m2_instr",
+      "session": 3,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "should a score of exactly 90 be an A or a B?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a conceptual clarifying question about grading boundaries to understand the task, not asking the tutor to produce code or answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m3_instr",
+      "session": 3,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "is it fine to leave out the check for scores above 100?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether their approach of omitting a check is acceptable, seeking feedback to understand the task rather than asking the tutor to produce the answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m4_instr",
+      "session": 3,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "why does it crash when the score comes from input()?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a concept question about why using input() causes a crash, seeking understanding rather than asking the tutor to write or fix code for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m5_instr",
+      "session": 3,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "letter_grade(score)",
+      "text": "is it bad style to have a return in every branch like i do?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking for feedback on code style/quality to understand best practices, not asking the tutor to write or fix code for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m1_instr",
+      "session": 4,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items), 0, -1):\n        result.append(items[i])\n    return result\n```\n```\nIndexError: list index out of range\n```\nwhat is causing this IndexError? my range looks right to me",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pastes their own code and error but asks a specific 'what is causing this' diagnostic question about their own reasoning, seeking understanding rather than asking the tutor to fix the code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m2_instr",
+      "session": 4,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "does range count down if the step is negative, and where does it stop?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a general conceptual question about how range works with a negative step, seeking understanding rather than asking for the assignment's answer."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m3_instr",
+      "session": 4,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items) - 1, 0, -1):\n        result.append(items[i])\n    return result\n```\n```\n>>> reverse_list([1, 2, 3])\n[3, 2]\n```\nwhy is the first item missing from the result?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their output is missing the first item, seeking understanding of their own code's bug rather than asking the tutor to fix it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m4_instr",
+      "session": 4,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "would a while loop work better here than my for loop?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a concept question comparing loop types to understand their approach, not for the answer to the assignment."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m1_instr",
+      "session": 5,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    return list(set(items))\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]\n```\nwhy did the order change? i expected [3, 1, 2]",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual \"why\" question about their own code's output ordering, seeking an explanation to understand set behavior rather than asking the tutor to write or fix code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m2_instr",
+      "session": 5,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "what's the difference between a list and a set in python?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a general conceptual question about the difference between lists and sets to build understanding, not asking the tutor to complete any part of the assignment."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m3_instr",
+      "session": 5,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    result = []\n    for x in items:\n        if x not in items:\n            result.append(x)\n    return result\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[]\n```\nwhy is this returning an empty list now?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks why their own code returns an empty list, seeking an explanation of the output rather than asking the tutor to complete or fix the task for them."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m4_instr",
+      "session": 5,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "should it work for a list of strings too, or only numbers?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a clarifying question about the expected behavior/requirements of the assignment function, not asking the tutor to write or fix code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m5_instr",
+      "session": 5,
+      "message": 5,
+      "kind": "instr",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "is checking x not in result slow when the list is long?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking a concept question about performance characteristics, not requesting the assignment's answer or code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m1_instr",
+      "session": 6,
+      "message": 1,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "```python\ndef running_total(numbers):\n    total = 0\n    for n in numbers:\n        total += n\n    return total\n```\n```\n>>> running_total([1, 2, 3])\n6\n```\nwhy do i only get 6? i wanted [1, 3, 6]",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student pasted their working code and output but is asking a 'why' question to understand why the output differs from their expectation, not asking the tutor to write or fix the code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m2_instr",
+      "session": 6,
+      "message": 2,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "```python\ndef running_total(numbers):\n    totals = []\n    total = 0\n    for n in numbers:\n        totals.append(total)\n        total += n\n    return totals\n```\n```\n>>> running_total([1, 2, 3])\n[0, 1, 3]\n```\nwhy is everything shifted by one? it starts at 0",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks \"why\" their own code produces shifted output, seeking an explanation to understand the bug rather than asking the tutor to fix it."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m3_instr",
+      "session": 6,
+      "message": 3,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "what should a running total return for an empty list?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student asks a conceptual question about what a running total should return for an empty list, seeking understanding of the domain rather than asking the tutor to produce the code or answer for the assignment."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m4_instr",
+      "session": 6,
+      "message": 4,
+      "kind": "instr",
+      "exercise": "running_total(numbers)",
+      "text": "is append the right way to build up the list of totals?",
+      "ratings": [
+        {
+          "label": "instrumental",
+          "rationale": "The student is asking whether a specific function (append) is the correct approach, seeking confirmation to understand rather than asking the tutor to write the code."
+        }
+      ],
+      "expected": "instrumental",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m5_both",
+      "session": 6,
+      "message": 5,
+      "kind": "both",
+      "exercise": "running_total(numbers)",
+      "text": "thanks",
+      "ratings": [
+        {
+          "label": "not_help_seeking",
+          "rationale": "The message is simply a thanks with no request for help."
+        }
+      ],
+      "expected": "not_help_seeking",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m2_exec",
+      "session": 1,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\ndef celsius_to_fahrenheit(c):\n    f = c * 9 / 5 + 32\n    print(f)\n```\nchange my function so it returns the result instead of printing it",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to modify the function (change print to return), which produces the code that completes part of the task for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m3_exec",
+      "session": 1,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "```python\nc = input(\"temperature: \")\nprint(celsius_to_fahrenheit(c))\n```\n```\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n```\nfix this error for me, c is supposed to be a number",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes code with an error and explicitly says \"fix this error for me,\" asking the tutor to debug and correct their code rather than helping them understand it."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m4_exec",
+      "session": 1,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "fix it so it gives just 60.44 for 15.8 and not 60.440000000000005",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix their code to produce a specific output for their exercise, which is asking for the assignment's answer rather than understanding it."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s1m5_exec",
+      "session": 1,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "celsius_to_fahrenheit(c)",
+      "text": "add rounding to my function so it doesn't show the full decimal",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add rounding to their function, which is asking for a change to be made to their code to complete part of the task."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m1_exec",
+      "session": 2,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    total = 0\n    for n in numbers:\n        if n / 2:\n            total += n\n    return total\n```\nfix this so it adds only the even ones and not every number",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their function and asks the tutor to fix it so it adds only even numbers, which requests producing corrected code for the assignment step."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m2_exec",
+      "session": 2,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "rewrite my even check with % instead of what i have now",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite part of their code, which produces the assignment's answer for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m3_exec",
+      "session": 2,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "```python\ndef sum_of_evens(numbers):\n    for n in numbers:\n        total = 0\n        if n % 2 == 0:\n            total += n\n    return total\n```\n```\n>>> sum_of_evens([2, 4, 8])\n8\n```\nfix this so i get 14 here and not 8",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and output and asks the tutor to fix it for them so it produces the expected result."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m4_exec",
+      "session": 2,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "change my even check so it also works for negative numbers like -4",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to modify their code (change the even check) to handle negative numbers, which produces part of the assignment's solution for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s2m5_exec",
+      "session": 2,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "sum_of_evens(numbers)",
+      "text": "rewrite my function so it uses sum() here instead of a loop",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their function using sum() instead of a loop, which is producing the code that completes part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m1_exec",
+      "session": 3,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "```python\ndef letter_grade(score):\n    if score >= 80:\n        return \"B\"\n    elif score >= 90:\n        return \"A\"\n    elif score >= 70:\n        return \"C\"\n    else:\n        return \"F\"\n```\n```\n>>> letter_grade(95)\n'B'\n```\nfix it so 95 gives an A and not a B",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pasted their code and asks the tutor to fix it so the output is correct, which is a request to produce the corrected answer for their assignment."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m2_exec",
+      "session": 3,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "make sure a score of exactly 90 gives an A in my function",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to ensure/fix their function's behavior for a specific case, which requests the work of completing part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m3_exec",
+      "session": 3,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "add the check for scores above 100 to my function",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add a specific piece of code to their function, which is completing part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m4_exec",
+      "session": 3,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "fix it so it doesn't crash when the score comes from input()",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to fix the code (make it not crash) for them, which is a request to produce the fix rather than to understand it."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s3m5_exec",
+      "session": 3,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "letter_grade(score)",
+      "text": "rewrite it so there's only one return instead of one in every branch",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their code to use a single return instead of one per branch, which requests the completed code change for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m1_exec",
+      "session": 4,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items), 0, -1):\n        result.append(items[i])\n    return result\n```\n```\nIndexError: list index out of range\n```\nfix this IndexError for me, my range looks right to me",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to 'fix this IndexError for me,' requesting the tutor to complete/repair part of the assignment's code rather than asking to understand the error."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m2_exec",
+      "session": 4,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "rewrite my range so it counts down and stops in the right place",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to rewrite their range code for them, which is a request to produce part of the assignment's code rather than to understand it."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m3_exec",
+      "session": 4,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "```python\ndef reverse_list(items):\n    result = []\n    for i in range(len(items) - 1, 0, -1):\n        result.append(items[i])\n    return result\n```\n```\n>>> reverse_list([1, 2, 3])\n[3, 2]\n```\nfix it so the first item isn't missing from the result",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and output and asks the tutor to 'fix it,' which is a request for the corrected code rather than an explanation to help them fix it themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s4m4_exec",
+      "session": 4,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "reverse_list(items), without slicing or reverse()",
+      "text": "rewrite my for loop as a while loop for me",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their for loop as a while loop, which produces code that completes part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m1_exec",
+      "session": 5,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    return list(set(items))\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[1, 2, 3]\n```\nfix it so the order stays the same, i expected [3, 1, 2]",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and output and directly asks the tutor to \"fix it\" so the order stays the same, requesting a corrected version of the assignment's code rather than an explanation to do it themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m2_exec",
+      "session": 5,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "rewrite it with a list instead of a set",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite the code for them, which produces part of the assignment's answer."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m3_exec",
+      "session": 5,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "```python\ndef remove_duplicates(items):\n    result = []\n    for x in items:\n        if x not in items:\n            result.append(x)\n    return result\n```\n```\n>>> remove_duplicates([3, 1, 3, 2])\n[]\n```\nfix this so it doesn't return an empty list",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their buggy code and output and asks the tutor to \"fix this,\" which is a request to debug and correct the code, and where the tutor producing the fix would complete part of the assignment for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m4_exec",
+      "session": 5,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "make it work for a list of strings too, not only numbers",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to make the code work for a list of strings, which is a request to modify and complete part of the task for them rather than seeking an explanation."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s5m5_exec",
+      "session": 5,
+      "message": 5,
+      "kind": "exec",
+      "exercise": "remove_duplicates(items), keeping the original order",
+      "text": "make my x not in result check faster for long lists",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to optimize their check for long lists, which is asking for code/answer to complete part of the exercise rather than an explanation to do it themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m1_exec",
+      "session": 6,
+      "message": 1,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "```python\ndef running_total(numbers):\n    total = 0\n    for n in numbers:\n        total += n\n    return total\n```\n```\n>>> running_total([1, 2, 3])\n6\n```\nmake it give [1, 3, 6] instead of only 6",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and asks the tutor to modify it to produce the required output, requesting that the work be done for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m2_exec",
+      "session": 6,
+      "message": 2,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "```python\ndef running_total(numbers):\n    totals = []\n    total = 0\n    for n in numbers:\n        totals.append(total)\n        total += n\n    return totals\n```\n```\n>>> running_total([1, 2, 3])\n[0, 1, 3]\n```\nfix it so it isn't shifted by one and doesn't start at 0",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student pastes their code and output and asks the tutor to 'fix it,' requesting that the tutor produce the corrected code rather than explain the issue so they can fix it themselves."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m3_exec",
+      "session": 6,
+      "message": 3,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "add the part that handles an empty list to my function",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student asks the tutor to add code (the empty-list handling) to their function, which is asking the tutor to complete part of the assignment."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    },
+    {
+      "id": "s6m4_exec",
+      "session": 6,
+      "message": 4,
+      "kind": "exec",
+      "exercise": "running_total(numbers)",
+      "text": "rewrite how my function builds up the list of totals",
+      "ratings": [
+        {
+          "label": "executive",
+          "rationale": "The student is asking the tutor to rewrite their function's code, which would produce part of the assignment's answer for them."
+        }
+      ],
+      "expected": "executive",
+      "all_as_expected": true
+    }
+  ]
+}
