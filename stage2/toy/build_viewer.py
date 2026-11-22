@@ -5,24 +5,31 @@ embedded (no server needed: open the file in a browser). Rerun after each new ru
 
     python3 -I stage2/toy/build_viewer.py
 
-The page has two views:
+The page has three views:
     Overview        max leakage level per (tutor prompt x memory), leakage by turn, run list
     Conversations   one dialogue at a time (or the three memory conditions side by side),
                     with the leakage check under every tutor turn; a blind mode hides the
                     tutor prompt and memory so you can read without knowing the condition
+    Memory          the current paired histories from toy_config.py, in both formats, with
+                    the instr and exec versions side by side and the latest manipulation
+                    checks (check_histories.py, check_log_messages.py) next to them. A check
+                    run on an older version of the text is shown as out of date.
 The layout and scripts live in viewer_template.html next to this file.
 """
 
 import ast
 import json
 import re
+import statistics
 import sys
+from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path[:0] = [str(HERE)]  # -I drops the script dir from sys.path
 
+import histories  # noqa: E402
 import toy_config as cfg  # noqa: E402
 
 TOY_DIR = ROOT / "data/toy"
@@ -212,12 +219,97 @@ def load_runs():
     return runs, dialogues
 
 
+# ---------------------------------------------------------------------------
+# Memory view: the paired histories and their latest checks
+# ---------------------------------------------------------------------------
+RATING_FIELDS = ("confidence", "programming_ability", "frustration", "politeness", "time_pressure")
+EXPECTED_HELP_TYPE = {"instr": "understanding", "exec": "solutions"}
+
+
+def latest(pattern):
+    files = sorted(TOY_DIR.glob(pattern))  # names end in a sortable timestamp
+    return files[-1] if files else None
+
+
+def whole_log_check(memory):
+    """Latest check_histories.py result for this format, summarized per version."""
+    f = latest("manipulation_check_log_*.json" if memory == "log" else "manipulation_check_[0-9]*.json")
+    if f is None:
+        return None
+    d = json.loads(f.read_text())
+    current = {k: histories.build_memory(k, memory) for k in histories.KINDS}
+    out = {"file": f.name, "fresh": d.get("histories") == current, "versions": {}}
+    for k in histories.KINDS:
+        ok = [r for r in d["results"].get(k, []) if "error" not in r]
+        out["versions"][k] = {
+            "n": len(ok), "errors": len(d["results"].get(k, [])) - len(ok),
+            "intended": sum(r.get("help_type") == EXPECTED_HELP_TYPE[k] for r in ok),
+            **{field: round(statistics.mean(r[field] for r in ok), 1) if ok else None
+               for field in RATING_FIELDS},
+        }
+    return out
+
+
+def message_check():
+    """Latest check_log_messages.py result: rubric labels per message id, if still current."""
+    f = latest("log_message_check_*.json")
+    if f is None:
+        return None, {}
+    d = json.loads(f.read_text())
+    current = {}
+    for kind in histories.KINDS:
+        for i, j, m, text in histories.log_messages(kind):
+            k = "both" if "both" in m else kind
+            current[f"s{i}m{j}_{k}"] = text
+    labels = {}
+    for m in d["messages"]:
+        counts = Counter(r.get("label", "error") for r in m["ratings"])
+        labels[m["id"]] = {"expected": m["expected"], "n": len(m["ratings"]),
+                           "counts": dict(counts.most_common()),
+                           "fresh": current.get(m["id"]) == m["text"]}
+    return {"file": f.name, "repeats": d.get("repeats")}, labels
+
+
+def memory_data():
+    """Both memory formats, structured for side-by-side reading."""
+    log_meta, labels = message_check()
+    log_sessions = []
+    for i, s in enumerate(cfg.LOG_SESSIONS, 1):
+        msgs = []
+        for j, m in enumerate(s["messages"], 1):
+            pastes = [{"kind": key, "text": f"```{lang}\n{m[key]}\n```"}
+                      for key, lang in histories.PASTE_KEYS if key in m]
+            if "both" in m:
+                msgs.append({"id": f"s{i}m{j}", "pastes": pastes, "both": m["both"],
+                             "label": labels.get(f"s{i}m{j}_both")})
+            else:
+                msgs.append({"id": f"s{i}m{j}", "pastes": pastes,
+                             "form": histories.sentence_form(m["instr"]),
+                             **{k: m[k] for k in histories.KINDS},
+                             "labels": {k: labels.get(f"s{i}m{j}_{k}") for k in histories.KINDS}})
+        log_sessions.append({"week": s["week"], "exercise": s["exercise"], "messages": msgs})
+    summary_sessions = [{"week": s["week"], "exercise": s["exercise"],
+                         "messages": [{"id": f"s{i}r{j}", **{k: r[k] for k in histories.KINDS}}
+                                      for j, r in enumerate(s["requests"], 1)]}
+                        for i, s in enumerate(cfg.SESSIONS, 1)]
+    return {
+        "default": cfg.MEMORY_FORMAT,
+        "log": {"header": cfg.LOG_HEADER.strip(), "sessions": log_sessions,
+                "text": {k: histories.build_memory(k, "log") for k in histories.KINDS},
+                "check": whole_log_check("log"), "message_check": log_meta},
+        "summary": {"header": cfg.HISTORY_HEADER.strip(), "sessions": summary_sessions,
+                    "text": {k: histories.build_memory(k, "summary") for k in histories.KINDS},
+                    "check": whole_log_check("summary")},
+    }
+
+
 def main():
     runs, dialogues = load_runs()
     tutor_order = list(cfg.TUTOR_PROMPTS)
     tutor_order += sorted({d["tutor"] for d in dialogues} - set(tutor_order))
     data = {"runs": runs, "dialogues": dialogues, "tutor_order": tutor_order,
-            "memory_order": list(cfg.CONDITIONS), "tutor_labels": TUTOR_LABELS}
+            "memory_order": list(cfg.CONDITIONS), "tutor_labels": TUTOR_LABELS,
+            "memories": memory_data()}
     blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     OUT.write_text(TEMPLATE.read_text().replace("/*__DATA__*/null", blob))
     print(f"{len(dialogues)} dialogues from {len(runs)} runs -> {OUT.relative_to(ROOT)}")

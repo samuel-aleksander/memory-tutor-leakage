@@ -9,7 +9,7 @@
 <style>
 :root {
   --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eef0f4; --ink: #14171c; --muted: #5a6170;
-  --rule: #dde1e7; --link: #2f45b5; --warn: #8a5a00; --warn-bg: #fdf2dc; --bad: #b3261e;
+  --rule: #dde1e7; --link: #2f45b5; --warn: #8a5a00; --warn-bg: #fdf2dc; --bad: #b3261e; --ok: #1d7a46;
   /* memory conditions */
   --m-a: #7a4fd0; --m-b: #7d8492; --m-c: #13996a;
   /* leakage levels: ordinal blue ramp, 0 = neutral */
@@ -23,7 +23,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #111317; --surface: #191c21; --surface-2: #23272e; --ink: #e8eaee; --muted: #a2a9b6;
-    --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90;
+    --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90; --ok: #5ccf8f;
     --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893;
     --l0: #23272e; --l1: #1c5cab; --l2: #3987e5; --l3: #9ec5f4;
     --l0-ink: #a2a9b6; --l1-ink: #ffffff; --l2-ink: #ffffff; --l3-ink: #0d1726;
@@ -33,7 +33,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #111317; --surface: #191c21; --surface-2: #23272e; --ink: #e8eaee; --muted: #a2a9b6;
-  --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90;
+  --rule: #2e333b; --link: #a5b4ff; --warn: #f2c46b; --warn-bg: #2b2314; --bad: #ff9a90; --ok: #5ccf8f;
   --m-a: #a585ec; --m-b: #9aa1ad; --m-c: #3cc893;
   --l0: #23272e; --l1: #1c5cab; --l2: #3987e5; --l3: #9ec5f4;
   --l0-ink: #a2a9b6; --l1-ink: #ffffff; --l2-ink: #ffffff; --l3-ink: #0d1726;
@@ -166,12 +166,41 @@ details.reason pre { white-space: pre-wrap; font-family: var(--sans); }
 .empty-note { color: var(--muted); padding: 40px 0; text-align: center; }
 [hidden] { display: none !important; }
 
+/* ---------- memory ---------- */
+#memview { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+.mgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; }
+.mgrid .span { grid-column: 1 / -1; }
+.mgrid .colhead { position: sticky; top: 50px; z-index: 1; background: var(--surface); padding: 6px 0; font-size: 13px; font-weight: 600; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid var(--rule); }
+.mgrid h3 { font: 600 13px var(--mono); margin: 18px 0 0; }
+.mgrid h3 small { font-family: var(--sans); font-weight: 400; color: var(--muted); }
+.mreq { border-radius: 10px; padding: 8px 12px; background: var(--student-bg); min-width: 0; }
+.mreq .md p { margin: 0; }
+.mreq.shared { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.paste { min-width: 0; }
+.paste .md pre { margin: 0; }
+.plabel { font-size: 11.5px; color: var(--muted); margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 6px; }
+.chipx { font-size: 11.5px; border: 1px solid var(--rule); border-radius: 10px; padding: 0 7px; color: var(--muted); background: var(--surface); }
+.chipx.ok { color: var(--ok); border-color: currentColor; }
+.chipx.bad { color: var(--bad); border-color: currentColor; font-weight: 600; }
+.chipx.stale { color: var(--warn); background: var(--warn-bg); border-color: transparent; }
+.mhead .md h4 { margin-top: 0; }
+table.mcheck { border-collapse: collapse; font-size: 13px; min-width: 360px; }
+table.mcheck th, table.mcheck td { padding: 5px 12px 5px 0; border-bottom: 1px solid var(--rule); text-align: left; }
+table.mcheck td.num { font-variant-numeric: tabular-nums; }
+table.mcheck th { color: var(--muted); font-weight: 500; }
+.rawcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.rawcols pre { white-space: pre-wrap; background: var(--code-bg); padding: 10px; border-radius: 6px; margin: 0; font-size: 12px; }
+
 @media (max-width: 800px) {
   #convs { grid-template-columns: 1fr; height: auto; }
   #side { border-right: 0; border-bottom: 1px solid var(--rule); }
   #list { max-height: 40vh; }
   #reader { overflow: visible; }
   #readerInner { padding: 14px 16px 48px; }
+  .mgrid, .rawcols { grid-template-columns: 1fr; }
+  .mgrid .colhead { display: none; }
+  .mreq[data-v]::before { content: attr(data-v); display: block; font-size: 11.5px; color: var(--muted); }
   .filters { margin-left: 0; }
   .sbs { overflow-x: auto; }
 }
@@ -183,6 +212,7 @@ details.reason pre { white-space: pre-wrap; font-family: var(--sans); }
   <div class="tabs" role="tablist">
     <button data-view="overview">Overview</button>
     <button data-view="convs">Conversations</button>
+    <button data-view="memory">Memory</button>
   </div>
   <div class="filters">
     <label>Student style <select id="fStyle"></select></label>
@@ -217,6 +247,8 @@ details.reason pre { white-space: pre-wrap; font-family: var(--sans); }
     <div class="scroll-x"><table class="runs" id="runs"></table></div>
   </section>
 </main>
+
+<main id="memview" hidden></main>
 
 <main id="convs" hidden>
   <aside id="side">
@@ -258,7 +290,7 @@ const lvlStyle = i => `background:var(--l${i});color:var(--l${i}-ink)`;
 const S = {
   view: "overview", style: "", task: "all", tutor: "all", mems: new Set(DATA.memory_order),
   minLevel: 0, checkOnly: false, blind: false, current: null, sbs: false, thresh: 1,
-  excluded: new Set(),
+  excluded: new Set(), memFmt: "",
 };
 function saveHash() {
   const p = new URLSearchParams();
@@ -274,6 +306,7 @@ function saveHash() {
   if (S.sbs) p.set("sbs", 1);
   if (S.thresh !== 1) p.set("th", S.thresh);
   if (S.excluded.size) p.set("x", [...S.excluded].join(","));
+  if (S.memFmt) p.set("mf", S.memFmt);
   history.replaceState(null, "", "#" + p.toString());
 }
 function loadHash() {
@@ -290,6 +323,7 @@ function loadHash() {
   S.sbs = p.has("sbs");
   if (p.get("th")) S.thresh = +p.get("th");
   if (p.get("x")) S.excluded = new Set(p.get("x").split(","));
+  if (p.get("mf")) S.memFmt = p.get("mf");
 }
 
 // ---------- helpers ----------
@@ -593,15 +627,93 @@ function sideBySide(d) {
   return h + `</div>`;
 }
 
+// ---------- memory ----------
+const MF = { log: "Message log", summary: "Summary notes" };
+const MF_HELP = {
+  log: "the student's own past messages, verbatim (LOG_SESSIONS)",
+  summary: "third-person notes, one line per past request (SESSIONS)",
+};
+const VERS = [["instr", "A_instrumental"], ["exec", "C_executive"]];
+const CHECK_ROWS = [["confidence", "Confidence"], ["programming_ability", "Programming ability"],
+  ["frustration", "Frustration"], ["politeness", "Politeness"], ["time_pressure", "Time pressure"]];
+function vhead(v) { const mi = memInfo(v[1]); return `<i class="mdot" style="background:${mi.color}"></i>${esc(mi.name)} (${mi.short})`; }
+function labelChip(lb) {
+  if (!lb) return "";
+  const ok = (lb.counts[lb.expected] || 0) === lb.n;
+  const txt = Object.entries(lb.counts).map(([k, v]) => `${k.replace(/_/g, " ")} ${v}/${lb.n}`).join(", ");
+  if (!lb.fresh) return `<span class="chipx stale" title="This label is for an older wording of the message; rerun check_log_messages.py">out of date: ${esc(txt)}</span>`;
+  return `<span class="chipx ${ok ? "ok" : "bad"}" title="Rubric label from check_log_messages.py (expected: ${esc(lb.expected.replace(/_/g, " "))})">${esc(txt)}</span>`;
+}
+function wholeCheck(c) {
+  if (!c) return `<p class="sub">No whole-history check yet. Run <code>python3 -I stage2/toy/check_histories.py --memory ${esc(S.memFmt)}</code>.</p>`;
+  const V = c.versions;
+  const cell = (k, f) => V[k] && V[k][f] != null ? V[k][f].toFixed(1) : "–";
+  return `<div class="scroll-x"><table class="mcheck"><tr><th></th>${VERS.map(v => `<th>${vhead(v)}</th>`).join("")}</tr>
+    <tr><td>Read as intended</td>${VERS.map(([k]) => `<td class="num">${V[k] ? `${V[k].intended}/${V[k].n}` : "–"}</td>`).join("")}</tr>
+    ${CHECK_ROWS.map(([f, name]) => `<tr><td>${name}</td>${VERS.map(([k]) => `<td class="num">${cell(k, f)}</td>`).join("")}</tr>`).join("")}
+    </table></div>
+    <p class="sub" style="margin:8px 0 0">Means of 1–5 ratings by a rater model that reads each history unlabeled (<code>check_histories.py</code>). Only the first row should differ.
+    <code>${esc(c.file)}</code>${c.fresh ? "" : ` <span class="pill">out of date: rated an older version of these histories</span>`}</p>`;
+}
+function renderMemory() {
+  const fmts = Object.keys(MF).filter(f => DATA.memories && DATA.memories[f]);
+  const box = $("#memview");
+  if (!fmts.length) { box.innerHTML = `<p class="empty-note">No memory data in this build.</p>`; return; }
+  if (!fmts.includes(S.memFmt)) S.memFmt = fmts[0];  // the log first, whatever runs default to
+  const M = DATA.memories[S.memFmt], isLog = S.memFmt === "log";
+  let rows = VERS.map(v => `<div class="colhead">${vhead(v)}</div>`).join("");
+  M.sessions.forEach((s, i) => {
+    rows += `<h3 class="span">Session ${i + 1} <small>· week ${s.week} · <code>${esc(s.exercise)}</code></small></h3>`;
+    for (const m of s.messages) {
+      for (const p of m.pastes || [])
+        rows += `<div class="span paste"><div class="plabel">pasted ${esc(p.kind)} (same in both)</div><div class="md">${md(p.text)}</div></div>`;
+      if (m.both != null) {
+        rows += `<div class="span mreq shared"><div class="md">${md(m.both)}</div><span class="chipx">same in both</span>${labelChip(m.label)}</div>`;
+        continue;
+      }
+      rows += VERS.map(([k, cond]) => `<div class="mreq" data-v="${esc(memInfo(cond).name)}">${isLog ? "" : "- "}${inline(m[k])}
+        ${isLog ? `<div class="chips"><span class="chipx">${esc(m.form)}</span>${labelChip(m.labels && m.labels[k])}</div>` : ""}</div>`).join("");
+    }
+  });
+  const mc = M.message_check;
+  box.innerHTML = `
+  <section>
+    <h2>Memory: the paired histories</h2>
+    <p class="sub">What the tutor sees in the instrumental and executive conditions, built from one template in <code>toy_config.py</code>. Pasted material and shared messages appear once, across both columns: only the student's own words differ.
+      Runs use <b>${esc(MF[DATA.memories.default] || DATA.memories.default)}</b> by default (<code>MEMORY_FORMAT</code>, or <code>--memory</code>). This view shows the current config, not what a past run used: open a dialogue in Conversations for that.</p>
+    <div class="seg" id="mfSeg">${fmts.map(f => `<button data-f="${f}" class="${f === S.memFmt ? "on" : ""}">${MF[f]}</button>`).join("")}</div>
+    <p class="sub" style="margin-top:-6px">${esc(MF_HELP[S.memFmt])}</p>
+  </section>
+  <section>
+    <h2>Manipulation check</h2>
+    ${wholeCheck(M.check)}
+    ${isLog ? `<p class="sub" style="margin:8px 0 0">Under each request: its sentence form, and the rubric labels it got when rated on its own (<code>check_log_messages.py</code>${mc ? `, <code>${esc(mc.file)}</code>, ${mc.repeats} ratings each` : ", not run yet"}). Green: every rating as intended; red: at least one wasn't.</p>` : ""}
+  </section>
+  <section>
+    <div class="mhead"><div class="md">${md(M.header)}</div></div>
+    <div class="mgrid">${rows}</div>
+  </section>
+  <section>
+    <details><summary style="cursor:pointer">Full text as the tutor sees it (appended to the tutor prompt)</summary>
+      <div class="rawcols" style="margin-top:10px">${VERS.map(([k, c]) => `<div><div class="plabel">${vhead([k, c])}</div><pre>${esc(M.text[k].trim())}</pre></div>`).join("")}</div>
+    </details>
+  </section>`;
+  box.querySelectorAll("#mfSeg button").forEach(b => b.onclick = () => { S.memFmt = b.dataset.f; render(); });
+}
+
 // ---------- wiring ----------
 function setView(v) { S.view = v; render(); window.scrollTo(0, 0); }
 function render() {
   document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.view === S.view));
   $("#overview").hidden = S.view !== "overview";
   $("#convs").hidden = S.view !== "convs";
+  $("#memview").hidden = S.view !== "memory";
+  document.querySelector(".filters").hidden = S.view === "memory";
   $("#fStyle").innerHTML = styles.map(s => `<option ${s === S.style ? "selected" : ""}>${esc(s)}</option>`).join("");
   $("#fTask").innerHTML = `<option value="all">All tasks</option>` + tasks.map(t => `<option ${t === S.task ? "selected" : ""}>${esc(t)}</option>`).join("");
-  if (S.view === "overview") renderOverview(); else { renderList(); renderReader(); }
+  if (S.view === "overview") renderOverview();
+  else if (S.view === "memory") renderMemory();
+  else { renderList(); renderReader(); }
   saveHash();
 }
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => setView(b.dataset.view));
