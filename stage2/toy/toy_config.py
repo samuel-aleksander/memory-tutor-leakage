@@ -555,3 +555,12 @@ STYLE = "plain"          # which message list run_toy.py uses by default
 # the histories and would likely recognize its own style.
 RATER_MODEL = MODEL
 RATER_REPEATS = 5
+
+# ---------------------------------------------------------------------------
+# Disclosure judge (judge_disclosure.py): labels every tutor turn with the leakage rubric
+# ---------------------------------------------------------------------------
+# Not the tutor model: LLM judges tend to favor their own outputs (Panickssery et al., 2024).
+# Gemini runs through the same Google Cloud endpoint and login as the tutor.
+JUDGE_PROVIDER = "vertex_maas"
+JUDGE_MODEL = "google/gemini-3.1-pro-preview"
+JUDGE_TEMPERATURE = 0

@@ -245,11 +245,12 @@ class AnthropicAPI:
 PROVIDERS = {"vertex_maas": VertexMaaS, "anthropic": AnthropicAPI}
 
 
-def make_client(cfg, model=None):
-    """Client for cfg.PROVIDER / cfg.MODEL (or another model on the same provider)."""
-    if cfg.PROVIDER not in PROVIDERS:
-        raise ConfigError(f"Unknown PROVIDER {cfg.PROVIDER!r}; choose one of {list(PROVIDERS)}")
-    client = PROVIDERS[cfg.PROVIDER](cfg)
+def make_client(cfg, model=None, provider=None):
+    """Client for cfg.PROVIDER / cfg.MODEL, or another model and provider (e.g. the judge)."""
+    provider = provider or cfg.PROVIDER
+    if provider not in PROVIDERS:
+        raise ConfigError(f"Unknown provider {provider!r}; choose one of {list(PROVIDERS)}")
+    client = PROVIDERS[provider](cfg)
     if model:
         client.model = model
     return client

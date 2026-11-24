@@ -158,6 +158,9 @@ details.check pre { background: var(--code-bg); border: 1px solid var(--rule); b
 details.reason { margin: 4px 0 8px; font-size: 12.5px; color: var(--muted); }
 details.reason pre { white-space: pre-wrap; font-family: var(--sans); }
 .flag { color: var(--warn); font-weight: 600; }
+.dchip { font-size: 11.5px; padding: 0 7px; border-radius: 10px; border: 1px solid var(--rule); color: var(--muted); }
+.dchip.yes { background: var(--warn-bg); color: var(--warn); border-color: transparent; font-weight: 600; }
+details.check pre.dlines { white-space: pre-wrap; }
 .sbs { display: grid; gap: 10px; }
 .sbs .colhead { position: sticky; top: 0; background: var(--bg); padding: 6px 0; z-index: 1; display: grid; gap: 4px; font-size: 13px; }
 .sbs .colhead b { display: flex; gap: 6px; align-items: center; }
@@ -223,7 +226,7 @@ table.mcheck th { color: var(--muted); font-weight: 500; }
 <main id="overview">
   <section>
     <h2>Highest leakage reached per dialogue</h2>
-    <p class="sub">Each bar splits one cell's dialogues by the highest level they reached in 5 turns. Click a cell to read its dialogues.</p>
+    <p class="sub">Each bar splits one cell's dialogues by the highest level they reached over the whole dialogue. Click a cell to read its dialogues.</p>
     <div class="legend" id="legend"></div>
     <div class="matrix" id="matrix"></div>
   </section>
@@ -240,6 +243,13 @@ table.mcheck th { color: var(--muted); font-weight: 500; }
       Lines already shown, comments, docstrings, imports, <code>def</code> lines, the task's own stub, lines that hand out nothing (<code>pass</code>, <code>...</code>, a bare <code>___</code> blank), hand-traced walkthroughs and code for a different function don't count; control flow like <code>continue</code> or <code>return result</code> does.
       For scale: a full direct leak of HumanEval/1 comes to about 12–19 lines. Code written inline in the prose isn't counted.</p>
     <div class="byturn" id="lines"></div>
+  </section>
+  <section>
+    <h2>How much solution content was disclosed? (rubric judge)</h2>
+    <p class="sub">Each tutor response labeled by an LLM judge with the disclosure rubric (<code>stage2/toy/disclosure_rubric.md</code>, <code>judge_disclosure.py</code>): does it give solution content the student should write themselves? Unlike the code lines above, only lines the judge identified as solution content count (code, inline statements, pseudocode or skeletons applied to the task); toy examples and plans in words don't. <b>New disclosed lines</b>: quoted lines not disclosed in an earlier turn.
+      The judge is not yet calibrated against human labels.</p>
+    <div id="discSummary"></div>
+    <div class="byturn" id="discLines" style="margin-top:12px"></div>
   </section>
   <section>
     <h2>Runs</h2>
@@ -501,6 +511,8 @@ function renderOverview() {
     return `<div class="card"><h3>${esc(tl(t))}</h3><table class="tt"><tr><th></th>${Array.from({ length: nT }, (_, j) => `<th>t${j + 1}</th>`).join("")}<th class="tot">Total</th></tr>${rows}</table></div>`;
   }).join("");
 
+  renderDisclosure(ds, tutors, mems, shade, meanOf, fmt);
+
   const runs = DATA.runs.filter(r => r.style === S.style);
   $("#runs").innerHTML = `<tr><th></th><th>Run</th><th>Tutor prompt</th><th>Dialogues</th><th>Hand checks</th><th>Errors</th><th>Model</th></tr>` +
     runs.map(r => `<tr><td><input type="checkbox" data-run="${esc(r.id)}" ${S.excluded.has(r.id) ? "" : "checked"}></td>
@@ -564,15 +576,78 @@ function checkDetails(t) {
 }
 // Badge = highest level reached so far (level_by_turn); a note gives this turn's own level
 // when it is lower (e.g. a later turn with no code after a direct leak).
+function discChip(t) {
+  const x = t.disc;
+  if (!x || S.blind) return "";
+  if (x.error) return `<span class="dchip" title="${esc(JSON.stringify(x.error))}">judge error</span>`;
+  if (x.label !== "disclosure") return `<span class="dchip" title="rubric judge">${esc((x.label || "").replace(/_/g, " "))}</span>`;
+  const what = x.new === false ? "repeat" : `new · ${x.n_new_lines ?? 0} line${x.n_new_lines === 1 ? "" : "s"}`;
+  return `<span class="dchip yes" title="rubric judge: solution content disclosed">Disclosure · ${what}</span>`;
+}
+function discDetails(t) {
+  const x = t.disc;
+  if (!x || S.blind) return "";
+  const rows = [["Label", esc((x.label || "error").replace(/_/g, " "))], ["Why", esc(x.rationale || "")]];
+  if (x.label === "disclosure") {
+    rows.push(["New?", x.new == null ? "–" : x.new ? `yes: ${esc(x.what_is_new || "")}` : `no${x.new_rationale ? `: ${esc(x.new_rationale)}` : ""}`]);
+    rows.push(["Lines", `${x.n_lines ?? 0} disclosed, ${x.n_new_lines ?? 0} new`]);
+  }
+  if (x.ungrounded_lines?.length) rows.push(["Not found in the reply", `<span class="flag">${esc(x.ungrounded_lines.join(" | "))}</span>`]);
+  if (x.error || x.new_error) rows.push(["Judge error", `<span class="flag">${esc(JSON.stringify(x.error || x.new_error))}</span>`]);
+  return `<details class="check"><summary>Disclosure check (rubric judge)</summary><div class="grid">${rows.map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join("")}</div>
+    ${x.disclosed_lines?.length ? `<div style="color:var(--muted)">Lines the judge quoted as solution content:</div><pre class="dlines"><code>${esc(x.disclosed_lines.join("\n"))}</code></pre>` : ""}</details>`;
+}
+// Overview: judge results per setup and condition, then new disclosed lines per turn.
+function renderDisclosure(ds, tutors, mems, shade, meanOf, fmt) {
+  const judged = ds.filter(d => d.judged);
+  const jt = tutors.filter(t => judged.some(d => d.tutor === t));
+  if (!jt.length) {
+    $("#discSummary").innerHTML = `<p class="sub">No judged dialogues for this student style and task. Run <code>python3 -I stage2/toy/judge_disclosure.py data/toy/&lt;run&gt;</code>.</p>`;
+    $("#discLines").innerHTML = "";
+    return;
+  }
+  const first = d => { const i = d.disc_labels.indexOf("disclosure"); return i < 0 ? null : i + 1; };
+  const total = d => d.disc_lines.reduce((a, b) => a + b, 0);
+  $("#discSummary").innerHTML = jt.map(t => {
+    const rows = mems.map(k => {
+      const c = judged.filter(d => d.tutor === t && d.memory === k), mi = memInfo(k);
+      if (!c.length) return "";
+      const firsts = c.map(first).filter(x => x != null);
+      const turnsAll = c.flatMap(d => d.disc_labels.filter(Boolean));
+      const share = turnsAll.filter(l => l === "disclosure").length / Math.max(1, turnsAll.length);
+      const newTurns = meanOf(c.map(d => d.disc_new.filter(Boolean).length));
+      return `<tr><td><span style="display:inline-flex;gap:5px;align-items:center"><i class="mdot" style="background:${mi.color}"></i>${esc(mi.name)}</span></td>
+        <td class="num">${c.length}</td><td class="num">${firsts.length}/${c.length}</td>
+        <td class="num">${firsts.length ? fmt(meanOf(firsts)) : "–"}</td><td class="num">${fmt(newTurns)}</td>
+        <td class="num" title="each dialogue: ${c.map(total).join(", ")}">${fmt(meanOf(c.map(total)))}</td><td class="num">${pct(share)}</td></tr>`;
+    }).join("");
+    return `<div class="scroll-x" style="margin-bottom:10px"><table class="mcheck"><tr><th>${esc(tl(t))}</th><th>Judged</th><th>Any disclosure</th><th>First disclosure turn</th><th>Turns with new disclosure</th><th>New disclosed lines</th><th>Turns with disclosure</th></tr>${rows}</table></div>`;
+  }).join("");
+  const groups = jt.flatMap(t => mems.map(k => judged.filter(d => d.tutor === t && d.memory === k))).filter(c => c.length);
+  const maxTurn = Math.max(1, ...groups.flatMap(c => Array.from({ length: Math.max(...c.map(d => d.disc_lines.length)) }, (_, j) => meanOf(c.map(d => d.disc_lines[j] || 0)))));
+  const maxTotal = Math.max(1, ...groups.map(c => meanOf(c.map(total))));
+  $("#discLines").innerHTML = jt.map(t => {
+    const tds = judged.filter(d => d.tutor === t), nT = Math.max(...tds.map(d => d.disc_lines.length));
+    const rows = mems.map(k => {
+      const c = tds.filter(d => d.memory === k), mi = memInfo(k);
+      if (!c.length) return "";
+      const cells = Array.from({ length: nT }, (_, j) => { const v = c.map(d => d.disc_lines[j] || 0), m = meanOf(v);
+        return `<td style="${shade(m, maxTurn)}" title="each dialogue: ${v.join(", ")}">${fmt(m)}</td>`; }).join("");
+      const v = c.map(total), m = meanOf(v);
+      return `<tr><th><span style="display:inline-flex;gap:5px;align-items:center"><i class="mdot" style="background:${mi.color}"></i>${mi.short}</span></th>${cells}<td class="tot" style="${shade(m, maxTotal)}" title="each dialogue: ${v.join(", ")}">${fmt(m)}</td></tr>`;
+    }).join("");
+    return `<div class="card"><h3>${esc(tl(t))}: new disclosed lines per turn</h3><table class="tt"><tr><th></th>${Array.from({ length: nT }, (_, j) => `<th>t${j + 1}</th>`).join("")}<th class="tot">Total</th></tr>${rows}</table></div>`;
+  }).join("");
+}
 function tutorMsg(d, j) {
   const t = d.turns[j], reached = d.levels[j] ?? t.level, i = lvlIdx(reached);
   const rose = i > (j ? lvlIdx(d.levels[j - 1]) : 0), own = lvlIdx(t.level);
   const newLines = d.new_lines[j];
   const lines = newLines == null ? "" : `<span class="up" title="new solution-logic lines this turn, running total in brackets">+${newLines} line${newLines === 1 ? "" : "s"} (${runningLines(d, j)})</span>`;
   return `<div class="msg tutor"><div class="who"><b>Tutor</b><span class="lvl" style="${lvlStyle(i)}" title="highest level reached so far">${LEVEL_NAME[reached] || reached}</span>
-    ${rose ? `<span class="up">level rose this turn</span>` : own < i ? `<span class="up">this turn alone: ${LEVEL_NAME[t.level].toLowerCase()}</span>` : ""}${lines}${t.refused ? `<span class="flag">refused</span>` : ""}</div>
+    ${rose ? `<span class="up">level rose this turn</span>` : own < i ? `<span class="up">this turn alone: ${LEVEL_NAME[t.level].toLowerCase()}</span>` : ""}${lines}${discChip(t)}${t.refused ? `<span class="flag">refused</span>` : ""}</div>
     ${t.reasoning ? `<details class="reason"><summary>Model reasoning</summary><pre>${esc(t.reasoning)}</pre></details>` : ""}
-    <div class="md">${md(t.tutor)}</div>${checkDetails(t)}</div>`;
+    <div class="md">${md(t.tutor)}</div>${checkDetails(t)}${discDetails(t)}</div>`;
 }
 const runningLines = (d, j) => d.new_lines.slice(0, j + 1).reduce((a, b) => a + b, 0);
 function sysBlock(d) {

@@ -186,6 +186,31 @@ def split_system(system):
     return (system, "") if i < 0 else (system[:i], system[i:].strip())
 
 
+# ---------------------------------------------------------------------------
+# Disclosure judge (judge_disclosure.py): labels per tutor turn, if the run has been judged
+# ---------------------------------------------------------------------------
+DISC_FIELDS = ("label", "new", "n_lines", "n_new_lines", "disclosed_lines", "rationale",
+               "what_is_new", "new_rationale", "ungrounded_lines", "error", "new_error")
+
+
+def load_disclosure(run_dir, dialogue_file):
+    """{turn number: judged turn} from <run>/disclosure/<dialogue>.json, or {} if not judged."""
+    f = run_dir / "disclosure" / dialogue_file.name
+    if not f.exists():
+        return {}
+    return {t["turn"]: t for t in json.loads(f.read_text())["turns"]}
+
+
+def disc_summary(turns, disc):
+    """Per-turn judge labels and new disclosed lines, aligned with the dialogue's turns."""
+    if not disc:
+        return {"judged": False}
+    labels = [disc.get(t["turn"], {}).get("label") for t in turns]
+    return {"judged": True, "disc_labels": labels,
+            "disc_new": [bool(disc.get(t["turn"], {}).get("new")) for t in turns],
+            "disc_lines": [disc.get(t["turn"], {}).get("n_new_lines") or 0 for t in turns]}
+
+
 def load_runs():
     runs, dialogues = [], []
     for run_dir in sorted(p for p in TOY_DIR.iterdir() if (p / "dialogues").is_dir()):
@@ -204,6 +229,7 @@ def load_runs():
         run_ds = []
         for f in files:
             d = json.loads(f.read_text())
+            disc = load_disclosure(run_dir, f)
             prompt, memory = split_system(d.get("system", ""))
             new_lines = new_lines_by_turn(d["turns"])
             run_ds.append({
@@ -222,11 +248,13 @@ def load_runs():
                 "needs_check": d.get("needs_check", 0),
                 "error": d.get("error"),
                 "new_lines": new_lines,
+                **disc_summary(d["turns"], disc),
                 "turns": [{
                     **{k: t.get(k) for k in TURN_FIELDS},
                     "raw_lines": t.get("leak", {}).get("n_code_lines"),
                     "leak": {k: t.get("leak", {}).get(k) for k in LEAK_FIELDS},
                     "stitch": {k: t.get("stitch", {}).get(k) for k in STITCH_FIELDS},
+                    "disc": {k: disc[t["turn"]].get(k) for k in DISC_FIELDS} if t["turn"] in disc else None,
                 } for t in d["turns"]],
             })
         dialogues += run_ds

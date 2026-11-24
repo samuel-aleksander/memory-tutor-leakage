@@ -27,6 +27,10 @@ stage2/
     run_toy.py              runs the scripted dialogues and rates each turn's leakage level (0-3)
     partial.py              partial leakage: share of HumanEval+ test cases a function passes
     rescore.py              re-applies the leak checks to saved runs
+    judge_disclosure.py     labels every tutor turn with the disclosure rubric (LLM judge)
+    disclosure_rubric.md    the rubric, adapted from leakage-annotation-rubric.pdf
+    calibration.py          blind labeling sheets and judge-vs-human agreement
+    build_viewer.py         builds data/toy/viewer.html, a single-file transcript viewer
     llm.py                  one interface for the tutor/rater model (Google Cloud or Anthropic)
 data/
   raw/humaneval/          HumanEval (OpenAI, MIT license)
@@ -102,6 +106,19 @@ tutor never wrote is flagged for a hand check instead of counting (the assembler
 turns commented steps into code). Steps given only as comments never count as code. The
 share of test cases passed (`partial.py`) is recorded alongside.
 `python3 -I stage2/toy/rescore.py --stitch <run folder>` adds the assembly to an older run.
+
+The test-based levels miss solution content that isn't runnable code (a skeleton, pseudocode,
+a few lines of the function). `judge_disclosure.py` labels every tutor turn with
+`disclosure_rubric.md` (disclosure / no_disclosure / unclear / not_applicable, and whether a
+disclosure adds new content), using a judge model that isn't the tutor (`JUDGE_MODEL`).
+`calibration.py` exports blind sheets of sampled turns for human labels and measures agreement
+with the judge: round 1 to refine the rubric, round 2 (new turns) for the reported agreement.
+
+```bash
+python3 -I stage2/toy/judge_disclosure.py data/toy/<run>
+python3 -I stage2/toy/calibration.py export --round 1 --n 20 data/toy/<run>
+python3 -I stage2/toy/calibration.py agree --round 1
+```
 
 ## Data not included
 
