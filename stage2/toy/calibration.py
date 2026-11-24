@@ -7,7 +7,9 @@ Two rounds, so the reported agreement isn't inflated by tuning the rubric on the
 
 Turns are sampled from judged dialogues, evenly across the memory conditions and across early
 (1-4) and late (5-8) turns, with no turn sampled twice across rounds and at most a few per
-dialogue in a round. The sheet is blind: no condition, no memory, no judge labels or levels.
+dialogue in a round. The turns quoted as anchor examples in disclosure_rubric.md are never sampled
+(annotators have seen their labels). The sheet is blind: no condition, no memory, no judge labels or
+levels.
 
 Usage (from the project root):
     python3 -I stage2/toy/calibration.py export --round 1 --n 20 data/toy/<run> [<run> ...]
@@ -31,6 +33,7 @@ import csv
 import json
 import math
 import random
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -80,6 +83,26 @@ def already_sampled():
         with open(key) as fh:
             seen |= {(r["dialogue"], int(r["turn"])) for r in csv.DictReader(fh)}
     return seen
+
+
+def rubric_anchors():
+    """Turns quoted as anchor examples in disclosure_rubric.md: {(run, condition, task_id, turn)}.
+
+    Annotators see their labels in the rubric, so labeling one of them again would inflate agreement.
+    The section names its run folder (`data/toy/<run>`) and each row starts with
+    "| <condition> · HumanEval/<n>, turn <k> |". Any repeat of that cell and turn is excluded.
+    """
+    text = (HERE / "disclosure_rubric.md").read_text()
+    m = re.search(r"^## Anchor examples.*?(?=^## )", text, re.S | re.M)
+    if not m:
+        sys.exit("disclosure_rubric.md: no '## Anchor examples' section")
+    section = m.group(0)
+    runs = re.findall(r"`data/toy/([^`/]+)/?`", section)
+    rows = re.findall(r"^\|\s*(\w+)\s*·\s*(HumanEval/\d+),\s*turn\s*(\d+)\s*\|", section, re.M)
+    if len(runs) != 1 or not rows:
+        sys.exit(f"disclosure_rubric.md: expected one run folder and anchor rows in the anchor "
+                 f"section, found {len(runs)} folders and {len(rows)} rows")
+    return {(runs[0], cond, task, int(turn)) for cond, task, turn in rows}
 
 
 def sample(turns, n, seed, exclude):
@@ -188,7 +211,10 @@ def export(args):
     if args.force and (folder / "key.csv").exists():  # re-exporting this round frees its turns
         with open(folder / "key.csv") as fh:
             exclude -= {(r["dialogue"], int(r["turn"])) for r in csv.DictReader(fh)}
-    items = sample(judged_turns(args.runs), args.n, args.seed, exclude)
+    anchors = rubric_anchors()
+    turns = [t for t in judged_turns(args.runs)
+             if (t["run"].name, t["condition"], t["task_id"], t["turn"]) not in anchors]
+    items = sample(turns, args.n, args.seed, exclude)
     tasks = load(PLUS_PATH)
     codes = [f"R{args.round}-{i:03d}" for i in range(1, len(items) + 1)]
 
