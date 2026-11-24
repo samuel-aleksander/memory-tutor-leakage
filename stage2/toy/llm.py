@@ -16,13 +16,43 @@ Usage:
     reply = client.complete(prompt, schema)   # one-off call (rater), JSON in reply.text
 """
 
+import random
 import re
+import sys
 import threading
 import time
 from dataclasses import dataclass, field
 
 THINK_RE = re.compile(r"<think>.*?</think>", re.S)
 EMPTY_REPLY_RETRIES = 3
+
+# Retries for transient failures (network, rate limits, server errors), on top of the SDKs'
+# own 2 quick retries. In the 2026-11-22 batch, 5 of 40 dialogues lost their first call to a
+# connection error that outlasted those. Waits (seconds, +-20% jitter) before each retry;
+# about 4 minutes in all before a call is given up as a TransientError.
+RETRY_WAITS = (5, 15, 30, 60, 120)
+RETRY_STATUSES = (408, 409, 429)  # plus any 5xx
+
+
+def _is_transient(e, sdk):
+    """A connection problem, rate limit or server error from the given SDK module."""
+    if isinstance(e, sdk.APIConnectionError):  # includes timeouts
+        return True
+    return isinstance(e, sdk.APIStatusError) and (e.status_code in RETRY_STATUSES or e.status_code >= 500)
+
+
+def _with_retries(call, transient):
+    """call() -> (result, retries used). Waits and tries again while transient(error) holds."""
+    for attempt, wait in enumerate((*RETRY_WAITS, None)):
+        try:
+            return call(), attempt
+        except Exception as e:
+            if wait is None or not transient(e):
+                raise
+            wait *= random.uniform(0.8, 1.2)
+            print(f"    retry {attempt + 1}/{len(RETRY_WAITS)} after {type(e).__name__}, "
+                  f"waiting {wait:.0f}s", file=sys.stderr, flush=True)
+            time.sleep(wait)
 
 
 class TransientError(Exception):
@@ -41,6 +71,7 @@ class Reply:
     refused: bool = False          # the provider blocked or declined the reply
     input_tokens: int = 0
     output_tokens: int = 0
+    retries: int = 0               # transient failures retried before this reply came back
     raw: dict = field(default_factory=dict)
 
 
@@ -99,9 +130,19 @@ class VertexMaaS:
             kwargs["extra_body"] = self.extra_body
         if response_format:
             kwargs["response_format"] = response_format
+        import google.auth.exceptions
+
+        def transient(e):  # a token refresh can also fail on the network
+            return _is_transient(e, openai) or isinstance(e, google.auth.exceptions.TransportError)
+
+        retries = 0
         for attempt in range(1, EMPTY_REPLY_RETRIES + 1):
             try:
-                resp = self._openai_client().chat.completions.create(**kwargs)
+                resp, used = _with_retries(
+                    lambda: self._openai_client().chat.completions.create(**kwargs), transient)
+                retries += used
+            except google.auth.exceptions.TransportError as e:
+                raise TransientError(repr(e)) from e
             except (openai.BadRequestError, openai.NotFoundError, openai.PermissionDeniedError,
                     openai.AuthenticationError) as e:
                 # Google puts the useful explanation in the body (e.g. "API not enabled").
@@ -132,6 +173,7 @@ class VertexMaaS:
             refused=choice.finish_reason == "content_filter",
             input_tokens=getattr(resp.usage, "prompt_tokens", 0) or 0,
             output_tokens=getattr(resp.usage, "completion_tokens", 0) or 0,
+            retries=retries,
         )
 
     def chat(self, system, history):
@@ -169,7 +211,8 @@ class AnthropicAPI:
         if system:
             kwargs["system"] = system
         try:
-            resp = self.client.messages.create(**kwargs)
+            resp, retries = _with_retries(lambda: self.client.messages.create(**kwargs),
+                                          lambda e: _is_transient(e, anthropic))
         except (anthropic.BadRequestError, anthropic.NotFoundError, anthropic.PermissionDeniedError,
                 anthropic.AuthenticationError) as e:
             raise ConfigError(repr(e)) from e
@@ -182,6 +225,7 @@ class AnthropicAPI:
             refused=resp.stop_reason == "refusal",
             input_tokens=resp.usage.input_tokens,
             output_tokens=resp.usage.output_tokens,
+            retries=retries,
         )
         return reply, resp
 

@@ -391,6 +391,7 @@ def run_dialogue(client, job, tasks, assembler=None):
             refused=reply.refused,
             input_tokens=reply.input_tokens,
             output_tokens=reply.output_tokens,
+            retries=reply.retries,
             leak=leak_check(reply.text, task),
         )
         turns.append(turn)
