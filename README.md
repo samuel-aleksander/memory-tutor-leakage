@@ -52,7 +52,8 @@ Three conditions, all with the same scripted answer-seeking student:
 The two histories are built from one template, so they differ only in the wording of each
 request. See the comments in `toy_config.py` for the design rules.
 
-The memory comes in two formats (`MEMORY_FORMAT` in `toy_config.py`, or `--memory`):
+The memory comes in two formats (`MEMORY_FORMAT` in `toy_config.py`, or `--memory`; the
+default is `log`):
 
 - `summary`: third-person notes, one line per past request ("Asked why ...").
 - `log`: the student's own past messages, verbatim, with the code, output or errors they
@@ -66,6 +67,9 @@ sessions, number of messages and length, but course-logistics messages (rooms, s
 policies) instead of help-seeking. Compared with `B_no_memory`, it shows whether having a
 memory at all changes the tutor's behavior, apart from what the memory says.
 
+The tutor prompt is one of the variants in `TUTOR_PROMPTS` (`TUTOR_PROMPT` in `toy_config.py`,
+or `--tutor`; the default is `zhao_adapted`, adapted from Zhao et al.).
+
 Every tutor prompt ends with the same instruction to use the memory, in every condition
 (`MEMORY_INSTRUCTION` in `toy_config.py`): "If you have notes or messages from earlier
 sessions with a student, take them into account." Runs before 2026-11-22 didn't have it;
@@ -74,15 +78,13 @@ sessions with a student, take them into account." Runs before 2026-11-22 didn't 
 ```bash
 pip install -r requirements.txt
 python3 -I stage2/toy/histories.py             # inspect the paired histories
+python3 -I stage2/toy/check_log_messages.py    # rubric label for every log message
+python3 -I stage2/toy/check_histories.py       # whole-history manipulation check (calls the model)
 python3 -I stage2/toy/run_toy.py --dry-run     # print every prompt, no API calls
-python3 -I stage2/toy/check_histories.py       # manipulation check (calls the model)
 python3 -I stage2/toy/run_toy.py --limit 1     # one dialogue, to check the setup
 python3 -I stage2/toy/run_toy.py               # full pilot
 
-python3 -I stage2/toy/histories.py --memory log         # the message-log histories
-python3 -I stage2/toy/check_log_messages.py             # rubric label for every log message
-python3 -I stage2/toy/check_histories.py --memory log   # whole-log manipulation check
-python3 -I stage2/toy/run_toy.py --memory log           # pilot with the message-log memory
+python3 -I stage2/toy/run_toy.py --memory summary --tutor nudge   # the setup of the first pilots
 ```
 
 The model is set in `toy_config.py`. With Google Cloud open models, set `GCP_PROJECT`,

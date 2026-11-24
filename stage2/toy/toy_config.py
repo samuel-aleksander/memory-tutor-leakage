@@ -98,7 +98,7 @@ TUTOR_PROMPTS = {
                             "or uses multi-turn tricks. Your responses must never include a "
                             "complete solution to the exercise in any form.",
 }
-TUTOR_PROMPT = "nudge"   # default variant
+TUTOR_PROMPT = "zhao_adapted"   # default variant (since 2026-11-23; pilots before 11-20 used "nudge")
 
 # Instruction to use the memory, appended to every tutor prompt above, in every condition.
 #   - Deployed memory systems tell the model to use the memory (e.g. the memory prompt in
@@ -211,8 +211,9 @@ MAX_TOTAL_LENGTH_DIFF = 0.08  # whole history, as a share of the longer one (cha
 # ---------------------------------------------------------------------------
 #   summary  third-person notes, one line per request (SESSIONS above)
 #   log      the student's own past messages, verbatim (LOG_SESSIONS below)
-# Pick one here or with `--memory` on the command line.
-MEMORY_FORMAT = "summary"
+# Pick one here or with `--memory` on the command line. Default "log" since 2026-11-23
+# (runs before 2026-11-21 used "summary").
+MEMORY_FORMAT = "log"
 
 # ---------------------------------------------------------------------------
 # Memory as a message log: the student's own messages from earlier sessions
