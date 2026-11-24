@@ -407,6 +407,7 @@ def run_dialogue(client, job, tasks, assembler=None):
         "model": cfg.MODEL,
         "stitch_model": getattr(assembler, "model", None),
         "temperature": cfg.TEMPERATURE,
+        "stitch_temperature": getattr(cfg, "STITCH_TEMPERATURE", None),
         "extra_body": cfg.EXTRA_BODY,
         "effort": cfg.EFFORT if cfg.PROVIDER == "anthropic" else None,
         "system": system,
@@ -641,7 +642,9 @@ def main():
 
 def make_assembler():
     """LLM client for assembling pieces: STITCH_MODEL in toy_config.py, else the tutor model."""
-    return llm.make_client(cfg, model=getattr(cfg, "STITCH_MODEL", None) or None)
+    client = llm.make_client(cfg, model=getattr(cfg, "STITCH_MODEL", None) or None)
+    client.temperature = getattr(cfg, "STITCH_TEMPERATURE", None)
+    return client
 
 
 if __name__ == "__main__":

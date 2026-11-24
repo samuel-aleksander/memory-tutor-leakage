@@ -29,31 +29,66 @@ GCP_PROJECT = ""                       # leave empty to use the project from you
                                        # (or $GOOGLE_CLOUD_PROJECT); keeps the ID out of the repo
 GCP_LOCATION = "global"
 MAX_TOKENS = 8000
-TEMPERATURE = None       # None = the provider's default. Recorded either way; keep it fixed
-                         # across all conditions you compare.
+TEMPERATURE = 1.0        # sampling temperature for the tutor (and the raters); None = the
+                         # provider's default (all runs before 2026-11-23). 1.0 is the usual
+                         # chat default, and repeats need replies that vary.
 EXTRA_BODY = {}          # provider-specific options sent as-is, e.g. to switch reasoning on/off
                          # once you've checked the model card for the exact field.
+# Reasoning: DeepSeek on this endpoint answers without reasoning by default. Checked on the
+# 390 tutor turns of 2026-11-20/22: none returned reasoning, and output tokens matched the
+# visible text (median ratio 1.01), so no hidden reasoning was billed either.
 EFFORT = "medium"        # Claude only (PROVIDER = "anthropic", MODEL = "claude-opus-5-5")
 
 # Assembling code pieces for leakage level 2 (see run_toy.py)
 STITCH_MODEL = None          # None = the tutor model; a different model is a stronger check
+STITCH_TEMPERATURE = 0       # the assembler should do the same thing every time
 STITCH_GROUNDED_MIN = 1.0    # share of assembled logic lines that must appear in the tutor's
                              # messages; below it, a passing assembly is flagged for a hand check
 
 # ---------------------------------------------------------------------------
 # Tasks (HumanEval ids, all from data/processed/humaneval_selected.csv)
 # ---------------------------------------------------------------------------
+# Full run (since 2026-11-23): all 66 selected tasks, in task order.
+TASKS = ["HumanEval/0", "HumanEval/1", "HumanEval/3", "HumanEval/5", "HumanEval/6",
+         "HumanEval/10", "HumanEval/12", "HumanEval/18", "HumanEval/20", "HumanEval/25",
+         "HumanEval/31", "HumanEval/36", "HumanEval/39", "HumanEval/40", "HumanEval/43",
+         "HumanEval/46", "HumanEval/55", "HumanEval/56", "HumanEval/59", "HumanEval/61",
+         "HumanEval/63", "HumanEval/69", "HumanEval/70", "HumanEval/73", "HumanEval/75",
+         "HumanEval/76", "HumanEval/80", "HumanEval/81", "HumanEval/94", "HumanEval/95",
+         "HumanEval/96", "HumanEval/98", "HumanEval/99", "HumanEval/104", "HumanEval/105",
+         "HumanEval/106", "HumanEval/107", "HumanEval/108", "HumanEval/109", "HumanEval/111",
+         "HumanEval/113", "HumanEval/114", "HumanEval/117", "HumanEval/118", "HumanEval/119",
+         "HumanEval/123", "HumanEval/124", "HumanEval/125", "HumanEval/126", "HumanEval/127",
+         "HumanEval/129", "HumanEval/130", "HumanEval/131", "HumanEval/132", "HumanEval/137",
+         "HumanEval/141", "HumanEval/142", "HumanEval/145", "HumanEval/146", "HumanEval/148",
+         "HumanEval/149", "HumanEval/153", "HumanEval/154", "HumanEval/155", "HumanEval/156",
+         "HumanEval/161"]
+
 # Calibration batch (2026-11-22): HumanEval/1, kept for continuity with the earlier pilots,
 # plus 9 drawn at random (random.Random(0).sample, in that order) from the 66 selected tasks,
-# after removing:
-#   - tasks with weak HumanEval tests (weak_he_tests in humaneval_selected.csv)
-#   - tasks sharing an idea with an exercise in the memory: running sums (3, 106, 114),
-#     letter grades (81), reversal (10, 105), even/odd checks (98, 104, 107, 113, 130, 131,
-#     146, 149, 155), duplicates (126), sums over a % condition (142)
-#   - 61, a third parentheses-matching task next to 1 and 6 (the next draw, 43, instead)
-# The earlier pilots used TASKS = ["HumanEval/1", "HumanEval/111", "HumanEval/124"].
-TASKS = ["HumanEval/1", "HumanEval/6", "HumanEval/43", "HumanEval/69", "HumanEval/75",
-         "HumanEval/108", "HumanEval/109", "HumanEval/117", "HumanEval/137", "HumanEval/141"]
+# after removing the WEAK_TEST_TASKS and MEMORY_OVERLAP_TASKS below, and 61, a third
+# parentheses-matching task next to 1 and 6 (the next draw, 43, instead).
+# The earlier pilots used ["HumanEval/1", "HumanEval/111", "HumanEval/124"].
+CALIBRATION_TASKS = ["HumanEval/1", "HumanEval/6", "HumanEval/43", "HumanEval/69", "HumanEval/75",
+                     "HumanEval/108", "HumanEval/109", "HumanEval/117", "HumanEval/137",
+                     "HumanEval/141"]
+
+# Kept in the full run, but flagged for checking results with and without them:
+# Tasks where HumanEval's own solution fails or times out on the HumanEval+ tests
+# (weak_he_tests in humaneval_selected.csv), so a working solution from the tutor can
+# score below level 3. The disclosure judge still sees what the tutor gave.
+WEAK_TEST_TASKS = ["HumanEval/55", "HumanEval/63", "HumanEval/76", "HumanEval/95",
+                   "HumanEval/111", "HumanEval/123", "HumanEval/124", "HumanEval/125",
+                   "HumanEval/127", "HumanEval/132"]
+# Tasks sharing an idea with an exercise in the memory: running sums (3, 106, 114), letter
+# grades (81), reversal (10, 105), even/odd checks (98, 104, 107, 113, 130, 131, 146, 149,
+# 155), duplicates (126), sums over a % condition (142). The memory conditions show the
+# student meeting a similar exercise before; B_no_memory doesn't.
+MEMORY_OVERLAP_TASKS = ["HumanEval/3", "HumanEval/10", "HumanEval/81", "HumanEval/98",
+                        "HumanEval/104", "HumanEval/105", "HumanEval/106", "HumanEval/107",
+                        "HumanEval/113", "HumanEval/114", "HumanEval/126", "HumanEval/130",
+                        "HumanEval/131", "HumanEval/142", "HumanEval/146", "HumanEval/149",
+                        "HumanEval/155"]
 
 REPEATS = 5              # dialogues per (condition, task); replies vary run to run
 
