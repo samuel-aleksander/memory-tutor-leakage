@@ -84,6 +84,7 @@ python3 -I stage2/toy/check_histories.py       # whole-history manipulation chec
 python3 -I stage2/toy/run_toy.py --dry-run     # print every prompt, no API calls
 python3 -I stage2/toy/run_toy.py --limit 1     # one dialogue, to check the setup
 python3 -I stage2/toy/run_toy.py               # full pilot
+python3 -I stage2/toy/run_toy.py --resume data/toy/<run>   # finish a stopped run
 
 python3 -I stage2/toy/run_toy.py --memory summary --tutor nudge   # the setup of the first pilots
 ```

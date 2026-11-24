@@ -32,6 +32,13 @@ Usage (from the project root):
     python3 -I stage2/toy/run_toy.py --memory log       # memory as the student's past messages
                                                         # (adds the D_neutral control)
     python3 -I stage2/toy/run_toy.py --no-memory-instruction  # leave out MEMORY_INSTRUCTION
+    python3 -I stage2/toy/run_toy.py --resume data/toy/<run>  # finish a stopped run
+
+Each dialogue is saved as soon as it finishes, so a stopped run loses only the dialogues in
+progress. --resume runs what is missing in that folder, and again any dialogue that ended in
+an API error, with the settings the run started with (run_args.json); it refuses if
+toy_config.py has changed since. For a long run, keep the Mac awake:
+    caffeinate -i python3 -I stage2/toy/run_toy.py --workers 12
 
 The model and provider are set in toy_config.py; llm.py lists what each provider needs
 (for Google Cloud: pip install openai google-auth, then gcloud auth application-default login).
@@ -40,6 +47,7 @@ The model and provider are set in toy_config.py; llm.py lists what each provider
 Writes data/toy/<timestamp>_<style>_<tutor>/ (with _log appended for --memory log, and
 _noinstr for --no-memory-instruction):
     toy_config.py        copy of the config that produced this run
+    run_args.json        the command-line settings, for --resume
     dialogues/*.json     one file per dialogue (system prompt, turns, checks per turn)
     summary.csv          one row per dialogue
     transcripts.md       all dialogues, grouped by condition, for reading
@@ -57,12 +65,13 @@ import re
 import shutil
 import sys
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
+
 sys.path[:0] = [str(HERE), str(HERE.parent)]  # -I drops the script dir from sys.path
 
 import histories  # noqa: E402
@@ -70,6 +79,15 @@ import llm  # noqa: E402
 import partial  # noqa: E402
 import toy_config as cfg  # noqa: E402
 from humaneval_stats import PLUS_PATH, load, passes  # noqa: E402
+
+
+def rel(path):
+    """A path relative to the project if it is inside it, else the full path."""
+    try:
+        return path.relative_to(ROOT)
+    except ValueError:
+        return path
+
 
 CODE_RE = re.compile(r"```[^\n]*\n(.*?)```", re.S)
 HANDLING_LABELS = "followed_memory | followed_messages | named_conflict | asked_student | other"
@@ -460,11 +478,22 @@ def dialogue_md(d, heading, show_condition=True):
     return "\n".join(lines + ["---", ""])
 
 
+def dialogue_path(run_dir, d):
+    return run_dir / "dialogues" / f"{d['condition']}__{d['task_id'].replace('/', '-')}__r{d['repeat']}.json"
+
+
+def save_dialogue(run_dir, d):
+    """Write one dialogue's JSON; via a temporary file, so a stopped run never leaves half a file."""
+    path = dialogue_path(run_dir, d)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(d, indent=2))
+    tmp.replace(path)
+
+
 def write_outputs(run_dir, dialogues):
-    (run_dir / "dialogues").mkdir(parents=True, exist_ok=True)
     for d in dialogues:
-        name = f"{d['condition']}__{d['task_id'].replace('/', '-')}__r{d['repeat']}.json"
-        (run_dir / "dialogues" / name).write_text(json.dumps(d, indent=2))
+        save_dialogue(run_dir, d)
 
     rows = [{
         "condition": d["condition"], "task_id": d["task_id"], "repeat": d["repeat"],
@@ -577,7 +606,20 @@ def main():
     p.add_argument("--workers", type=int, default=6)
     p.add_argument("--no-stitch", action="store_true", help="skip assembling pieces (no level 2)")
     p.add_argument("--dry-run", action="store_true", help="print prompts for the first task, no API calls")
+    p.add_argument("--resume", type=Path, metavar="RUN_DIR",
+                   help="finish a stopped run: its missing and failed dialogues, with its settings")
     args = p.parse_args()
+
+    if args.resume:
+        run_dir = args.resume.resolve()
+        if not (run_dir / "run_args.json").exists():
+            sys.exit(f"{args.resume}: no run_args.json (only runs started since 2026-11-23 can resume)")
+        if (run_dir / "toy_config.py").read_bytes() != (HERE / "toy_config.py").read_bytes():
+            sys.exit(f"toy_config.py has changed since {run_dir.name} started; resuming would mix "
+                     f"settings. Restore it (cp {rel(run_dir / 'toy_config.py')} stage2/toy/) or start a new run.")
+        workers = args.workers
+        args = argparse.Namespace(**json.loads((run_dir / "run_args.json").read_text()))
+        args.workers, args.resume, args.dry_run = workers, run_dir, False
 
     histories.check()
     usable = [c for c in cfg.CONDITIONS
@@ -619,25 +661,63 @@ def main():
     if args.limit:
         jobs = jobs[: args.limit]
 
-    suffix = "" if args.memory == "summary" else f"_{args.memory}"  # older runs are all summary
-    suffix += "" if args.memory_instruction else "_noinstr"
-    run_dir = ROOT / "data/toy" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.style}_{args.tutor}{suffix}"
-    run_dir.mkdir(parents=True)
-    shutil.copy(HERE / "toy_config.py", run_dir / "toy_config.py")
-    print(f"Running {len(jobs)} dialogues -> {run_dir.relative_to(ROOT)}")
+    if args.resume:
+        done = []
+        for j in jobs:
+            path = dialogue_path(run_dir, j)
+            if path.exists():
+                d = json.loads(path.read_text())
+                if not d["error"]:
+                    done.append(d)
+        finished = {dialogue_path(run_dir, d) for d in done}
+        todo = [j for j in jobs if dialogue_path(run_dir, j) not in finished]
+        print(f"Resuming {rel(run_dir)}: {len(done)} of {len(jobs)} dialogues done, running {len(todo)}")
+    else:
+        suffix = "" if args.memory == "summary" else f"_{args.memory}"  # older runs are all summary
+        suffix += "" if args.memory_instruction else "_noinstr"
+        run_dir = ROOT / "data/toy" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.style}_{args.tutor}{suffix}"
+        run_dir.mkdir(parents=True)
+        shutil.copy(HERE / "toy_config.py", run_dir / "toy_config.py")
+        saved = {k: v for k, v in vars(args).items() if k not in ("workers", "resume", "dry_run")}
+        (run_dir / "run_args.json").write_text(json.dumps(saved, indent=2))
+        done, todo = [], jobs
+        print(f"Running {len(jobs)} dialogues -> {rel(run_dir)}")
 
-    done = []
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        for d in pool.map(lambda j: run_dialogue(client, j, tasks, assembler), jobs):
-            done.append(d)
-            print(f"  [{len(done):>3}/{len(jobs)}] {d['condition']:<14} {d['task_id']:<14} "
-                  f"r{d['repeat']}  max level={d['max_level']}  by turn: {' '.join(d['level_by_turn'])}"
-                  + ("  HAND-CHECK" if d["needs_check"] else "")
-                  + ("  REFUSAL" if d["refusal"] else "") + (f"  ERROR {d['error'][:60]}" if d["error"] else ""))
+        futures = [pool.submit(run_dialogue, client, j, tasks, assembler) for j in todo]
+        try:
+            for fut in as_completed(futures):
+                d = fut.result()
+                save_dialogue(run_dir, d)
+                done.append(d)
+                print(f"  [{len(done):>4}/{len(jobs)}] {d['condition']:<14} {d['task_id']:<14} "
+                      f"r{d['repeat']}  max level={d['max_level']}  by turn: {' '.join(d['level_by_turn'])}"
+                      + ("  HAND-CHECK" if d["needs_check"] else "")
+                      + ("  REFUSAL" if d["refusal"] else "")
+                      + (f"  ERROR {d['error'][:60]}" if d["error"] else ""), flush=True)
+        except BaseException:  # Ctrl-C or a config error: drop the queued dialogues, keep the rest
+            for f in futures:
+                f.cancel()
+            print("\nStopping: finishing the dialogues in progress (Ctrl-C again to drop them)",
+                  file=sys.stderr, flush=True)
+            for f in futures:
+                if not f.cancelled():
+                    try:
+                        d = f.result()
+                    except Exception:
+                        continue
+                    if dialogue_path(run_dir, d) not in {dialogue_path(run_dir, x) for x in done}:
+                        save_dialogue(run_dir, d)
+                        done.append(d)
+            print(f"Stopped. {len(done)} dialogues are saved; finish with --resume {rel(run_dir)}",
+                  file=sys.stderr)
+            raise
 
+    order = {dialogue_path(run_dir, j): i for i, j in enumerate(jobs)}
+    done.sort(key=lambda d: order[dialogue_path(run_dir, d)])
     write_outputs(run_dir, done)
     print_summary(done)
-    print(f"\nRead: {run_dir.relative_to(ROOT)}/transcripts.md")
+    print(f"\nRead: {rel(run_dir)}/transcripts.md")
 
 
 def make_assembler():
