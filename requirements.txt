@@ -2,3 +2,7 @@
 openai           # Google Cloud open models (OpenAI-compatible endpoint)
 google-auth      # Google Cloud credentials
 anthropic        # Claude through the Anthropic API
+
+# Power simulation (stage2/power_sim.py)
+numpy
+scipy

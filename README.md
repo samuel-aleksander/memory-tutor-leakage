@@ -18,6 +18,7 @@ unit tests for the exercise.
 stage2/
   humaneval_stats.py      per-task statistics for HumanEval / HumanEval+
   filter_tasks.py         selects tasks long enough for a tutor to hint first (66 tasks)
+  power_sim.py            simulated power for comparing leak rates between two conditions
   explore_humaneval.py    walk through one task and run its tests
   toy/                    small pilot of the memory-vs-messages conflict
     toy_config.py           hand-written inputs: tutor prompts, paired histories, student scripts
