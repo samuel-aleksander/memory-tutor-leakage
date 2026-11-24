@@ -1,0 +1,3 @@
+condition,task_id,repeat,style,tutor_prompt,memory,memory_instruction,n_turns,max_level,level_by_turn,first_turn_partial,first_turn_assembled,first_turn_direct,needs_check,max_pass_share,refusal,error,stitch_errors,code_lines_per_turn,input_tokens,output_tokens,stitch_llm_calls,stitch_input_tokens,stitch_output_tokens
+D_neutral,HumanEval/109,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code no_code no_code no_code partial,8,,,0,0.0,False,,0,0 0 0 2 0 0 3 5,19602,2424,5,13473,220
+D_neutral,HumanEval/1,1,plain,zhao_adapted,log,True,8,assembled,no_code partial partial assembled assembled assembled assembled assembled,2,4,,0,0.011,False,,0,10 7 12 7 7 17 0 0,19057,2421,4,6486,419

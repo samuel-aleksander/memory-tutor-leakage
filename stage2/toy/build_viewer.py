@@ -76,6 +76,16 @@ SKIP_DIALOGUES = {
     "20261120_124722_plain_zhao_adapted/C_executive__HumanEval-1__r2":
         "model glitch: garbled tutor reply at turn 3 stayed in the history (turn 4 apologizes "
         "for it); replaced by a rerun of the same cell",
+    "20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-75__r1":
+        "connection error before turn 1; rerun in 20261122_150005",
+    "20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-137__r1":
+        "connection error before turn 1; rerun in 20261122_150005",
+    "20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-137__r1":
+        "connection error before turn 1; rerun in 20261122_145911",
+    "20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-1__r1":
+        "connection error before turn 1; rerun in 20261122_150224",
+    "20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-109__r1":
+        "connection error before turn 1; rerun in 20261122_150224",
 }
 
 TURN_FIELDS = ("student", "tutor", "reasoning", "level", "refused")

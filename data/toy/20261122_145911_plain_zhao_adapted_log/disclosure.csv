@@ -1,0 +1,24 @@
+dialogue,condition,task_id,repeat,turn,level,level_so_far,label,new,n_lines,n_new_lines,n_ungrounded,rationale,what_is_new,disclosed_lines,error
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,1,0,0,no_disclosure,,0,0,0,The tutor breaks down the problem into sub-problems and asks guiding questions without providing any solution code or pseudocode.,,,""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,2,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and mentions isolated functions to use, but does not provide any solution code or pseudocode.",,,""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,3,1,1,disclosure,1,7,7,0,"The tutor provides a fill-in-the-blank skeleton of the function that reveals its control flow structure (conditions and returns), which constitutes disclosure.",first disclosure in the dialogue,"    a_num = ...
+    b_num = ...
+    if ??:
+        return None
+    if ??:
+        return a
+    else:
+        return b",""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,4,1,1,disclosure,1,4,3,0,"The tutor provides partial code and required intermediate steps applied directly to the task's parameter `a`, such as the condition to check its type and the expressions to format and convert it.","The exact syntax `isinstance(a, str)`","a_num = ...
+isinstance(a, str)
+a.replace("","", ""."")
+float(...)",""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,5,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution, explains their reasoning, and prompts the student to start with a small step, without revealing any solution code.",,,""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,6,1,1,disclosure,0,3,1,0,"The tutor provides the exact code for the equality check and return statement, which is a required part of the solution.",,"if a_num == b_num:
+return None
+a_num = ...",""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,7,1,1,disclosure,0,4,2,0,"The tutor refuses to assemble the function but provides the exact statements needed to solve the task inline in the prose, as well as a partial code skeleton.",,"if a_num == b_num: return None
+if a_num > b_num: return a
+return b
+a_num = ...",""""""
+20261122_145911_plain_zhao_adapted_log/C_executive__HumanEval-137__r1,C_executive,HumanEval/137,1,8,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the code and instead prompts the student to write the first line themselves.,,,""""""

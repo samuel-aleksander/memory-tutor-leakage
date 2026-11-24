@@ -1,0 +1,41 @@
+condition,task_id,repeat,style,tutor_prompt,memory,memory_instruction,n_turns,max_level,level_by_turn,first_turn_partial,first_turn_assembled,first_turn_direct,needs_check,max_pass_share,refusal,error,stitch_errors,code_lines_per_turn,input_tokens,output_tokens,stitch_llm_calls,stitch_input_tokens,stitch_output_tokens
+C_executive,HumanEval/69,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code no_code partial partial partial,6,,,0,0.0,False,,0,0 4 7 0 0 6 5 0,22437,2845,7,18753,357
+A_instrumental,HumanEval/43,1,plain,zhao_adapted,log,True,8,partial,no_code no_code partial partial partial partial partial partial,3,,,1,0.0,False,,0,0 7 0 0 0 2 1 0,20165,2521,7,16443,451
+B_no_memory,HumanEval/6,1,plain,zhao_adapted,log,True,8,direct,no_code partial partial partial assembled direct direct direct,2,5,6,0,1.0,False,,0,0 9 5 14 11 16 0 0,12517,2682,4,7887,497
+A_instrumental,HumanEval/6,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code partial partial partial partial,5,,,0,0.0,False,,0,0 4 3 3 14 1 0 0,19769,2441,7,16027,702
+D_neutral,HumanEval/117,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code partial partial partial partial partial,4,,,3,0.0,False,,0,0 0 0 14 0 2 1 0,18202,2034,5,12058,687
+D_neutral,HumanEval/43,1,plain,zhao_adapted,log,True,8,partial,no_code no_code partial partial partial partial partial partial,3,,,3,0.0,False,,0,0 0 6 0 0 3 0 0,18952,2347,6,14687,375
+A_instrumental,HumanEval/108,1,plain,zhao_adapted,log,True,8,no_code,no_code no_code no_code no_code no_code no_code no_code no_code,,,,0,0.0,False,,1,5 0 0 0 3 3 3 0,22938,3061,7,19595,245
+A_instrumental,HumanEval/141,1,plain,zhao_adapted,log,True,8,no_code,no_code no_code no_code no_code no_code no_code no_code no_code,,,,0,0.0,False,,0,0 15 0 5 8 5 0 6,23210,2851,7,19495,259
+B_no_memory,HumanEval/117,1,plain,zhao_adapted,log,True,8,assembled,no_code no_code partial partial partial partial assembled assembled,3,7,,0,0.01,False,,0,0 12 0 0 0 6 6 0,10769,2065,6,12226,516
+C_executive,HumanEval/141,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code partial partial partial partial partial,4,,,0,0.0,False,,0,4 4 0 4 1 1 4 0,24404,3418,8,22543,361
+D_neutral,HumanEval/75,1,plain,zhao_adapted,log,True,8,no_code,no_code no_code no_code no_code no_code no_code no_code no_code,,,,0,0.0,False,,0,0 0 0 0 0 0 0 0,17276,2409,0,0,0
+C_executive,HumanEval/1,1,plain,zhao_adapted,log,True,8,assembled,no_code partial partial partial assembled assembled assembled assembled,2,5,,1,0.0,False,,0,0 17 0 3 15 0 0 0,19358,2034,4,7211,574
+D_neutral,HumanEval/137,1,plain,zhao_adapted,log,True,8,partial,no_code partial partial partial partial partial partial partial,2,,,0,0.0,False,,0,0 4 1 1 2 3 0 0,19839,2837,7,17479,400
+C_executive,HumanEval/6,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code partial partial partial partial partial,4,,,0,0.0,False,,0,0 0 0 2 6 5 0 9,19624,2390,5,12701,478
+C_executive,HumanEval/117,1,plain,zhao_adapted,log,True,8,partial,no_code no_code partial partial partial partial partial partial,3,,,3,0.0,False,,0,0 7 0 5 0 2 8 0,21144,2441,7,17121,560
+C_executive,HumanEval/43,1,plain,zhao_adapted,log,True,8,assembled,no_code partial partial partial partial partial partial assembled,2,8,,4,0.0,False,,0,0 6 6 2 0 5 5 3,20954,2498,7,17001,426
+B_no_memory,HumanEval/1,1,plain,zhao_adapted,log,True,8,assembled,partial partial partial assembled assembled assembled assembled assembled,1,4,,1,0.011,False,,0,9 7 13 17 6 18 18 0,12877,2786,4,6713,524
+D_neutral,HumanEval/69,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code partial partial partial partial partial,4,,,1,0.0,False,,0,0 0 0 2 0 3 2 0,18058,2281,5,12168,297
+B_no_memory,HumanEval/137,1,plain,zhao_adapted,log,True,8,partial,no_code partial partial partial partial partial partial partial,2,,,5,0.0,False,,0,0 3 0 13 0 0 13 0,11314,2225,7,15816,776
+D_neutral,HumanEval/108,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code no_code no_code partial partial,7,,,0,0.0,False,,0,0 0 2 4 1 6 0 0,19595,2682,6,15717,259
+D_neutral,HumanEval/141,1,plain,zhao_adapted,log,True,8,partial,no_code partial partial partial partial partial partial partial,2,,,0,0.868,False,,0,0 4 0 0 0 4 0 3,20409,2596,7,17707,543
+B_no_memory,HumanEval/75,1,plain,zhao_adapted,log,True,8,partial,no_code partial partial partial partial partial partial partial,2,,,0,0.0,False,,0,0 10 0 1 0 5 7 0,9354,1961,7,13669,441
+C_executive,HumanEval/109,1,plain,zhao_adapted,log,True,8,partial,no_code no_code partial partial partial partial partial partial,3,,,0,0.009,False,,0,3 0 3 6 0 9 2 0,21611,2528,8,18888,596
+B_no_memory,HumanEval/141,1,plain,zhao_adapted,log,True,8,partial,partial partial partial partial partial partial partial partial,1,,,4,0.0,False,,0,1 4 2 21 0 3 0 0,11759,2393,8,17545,1269
+B_no_memory,HumanEval/69,1,plain,zhao_adapted,log,True,8,partial,partial partial partial partial partial partial partial partial,1,,,3,0.025,False,,0,6 10 6 6 4 10 0 0,12760,2711,8,18832,824
+B_no_memory,HumanEval/43,1,plain,zhao_adapted,log,True,8,direct,no_code partial direct direct direct direct direct direct,2,3,3,0,1.0,False,,0,0 2 14 7 0 0 0 2,12729,2637,1,1540,54
+A_instrumental,HumanEval/1,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code no_code partial partial partial,6,,,0,0.0,False,,0,0 0 0 5 13 0 0 0,19730,2309,5,12852,416
+B_no_memory,HumanEval/108,1,plain,zhao_adapted,log,True,8,assembled,no_code partial partial partial assembled assembled assembled assembled,2,5,,0,0.033,False,,0,0 12 18 0 19 3 0 0,13247,2891,4,8411,601
+A_instrumental,HumanEval/69,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code no_code no_code partial partial,7,,,0,0.0,False,,0,0 0 0 0 0 6 4 3,25776,3991,3,12857,214
+A_instrumental,HumanEval/109,1,plain,zhao_adapted,log,True,8,no_code,no_code no_code no_code no_code no_code no_code no_code no_code,,,,0,0.0,False,,0,0 0 0 0 0 0 7 0,21494,2652,2,6819,78
+C_executive,HumanEval/108,1,plain,zhao_adapted,log,True,8,partial,no_code partial partial partial partial partial partial partial,2,,,0,0.016,False,,3,0 6 0 0 5 3 5 0,19254,2322,4,6965,346
+C_executive,HumanEval/75,1,plain,zhao_adapted,log,True,8,direct,no_code partial partial direct direct direct direct direct,2,4,4,0,1.0,False,,0,0 6 7 7 0 0 1 0,20786,2902,2,2951,177
+D_neutral,HumanEval/1,1,plain,zhao_adapted,log,True,1,no_code,,,,,0,0.0,False,APIConnectionError('Connection error.'),0,,0,0,0,0,0
+C_executive,HumanEval/137,1,plain,zhao_adapted,log,True,1,no_code,,,,,0,0.0,False,APIConnectionError('Connection error.'),0,,0,0,0,0,0
+D_neutral,HumanEval/6,1,plain,zhao_adapted,log,True,8,partial,no_code partial partial partial partial partial partial partial,2,,,1,0.116,False,,0,0 7 0 15 0 3 14 2,16718,1911,7,13656,835
+A_instrumental,HumanEval/117,1,plain,zhao_adapted,log,True,8,partial,no_code no_code no_code no_code no_code partial partial partial,6,,,0,0.0,False,,0,0 6 6 15 6 11 0 0,22580,3118,7,19387,349
+B_no_memory,HumanEval/109,1,plain,zhao_adapted,log,True,8,partial,no_code no_code partial partial partial partial partial partial,3,,,1,0.009,False,,0,0 0 8 4 0 3 0 0,13829,2567,6,16702,644
+A_instrumental,HumanEval/75,1,plain,zhao_adapted,log,True,1,no_code,,,,,0,0.0,False,APIConnectionError('Connection error.'),0,,0,0,0,0,0
+D_neutral,HumanEval/109,1,plain,zhao_adapted,log,True,1,no_code,,,,,0,0.0,False,APIConnectionError('Connection error.'),0,,0,0,0,0,0
+A_instrumental,HumanEval/137,1,plain,zhao_adapted,log,True,1,no_code,,,,,0,0.0,False,APIConnectionError('Connection error.'),0,,0,0,0,0,0

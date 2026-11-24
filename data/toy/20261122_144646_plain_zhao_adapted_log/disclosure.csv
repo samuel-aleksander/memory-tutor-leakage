@@ -1,0 +1,936 @@
+dialogue,condition,task_id,repeat,turn,level,level_so_far,label,new,n_lines,n_new_lines,n_ungrounded,rationale,what_is_new,disclosed_lines,error
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,1,0,0,disclosure,1,5,5,0,"The tutor provides pseudocode that outlines the structure of the solution using the task's parameter `arr`, which constitutes disclosure.",first disclosure in the dialogue,"for each n in arr:
+compute the signed-digit sum of n
+if that sum > 0:
+increment your counter
+return counter",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,2,0,0,disclosure,1,1,1,0,"The tutor provides the exact code for the loop over the task's parameter, which is a required intermediate step applied to the task.",The specific while loop conditions for extracting digits (`while n > 0:` or `while n != 0:`).,for n in arr:,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,3,0,0,no_disclosure,,0,0,0,The tutor refuses to write the function and instead provides a conceptual breakdown of the problem and a step-by-step plan in words without providing any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,4,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers a step-by-step plan described in words to help the student break down the problem, without supplying any solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,5,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead gives a standalone example of modulo and integer division on made-up data, which does not disclose solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,6,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution code and instead gives standalone examples of techniques (`abs`, `%`, `//`) for the student to evaluate, which does not reveal the solution structure or code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,7,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead offers standalone examples of modulo, integer division, and absolute value operations to help the student understand the concepts needed for the task.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-108__r1,A_instrumental,HumanEval/108,1,8,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code, summarizes the concepts needed, and suggests testing an isolated expression to understand how modulo works with negative numbers, without revealing any solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a conceptual explanation and guiding questions to help the student discover the pattern, without revealing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,2,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words, and the included code snippets are either isolated expressions (`arr[i] > arr[next_i]`) or restatements of the prompt's instructions (`return True`), which does not constitute disclosure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,3,0,0,no_disclosure,,0,0,0,The tutor refuses to write the code and instead provides hints and guiding questions based on examples without revealing any solution code.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,4,0,0,disclosure,1,3,3,0,"The tutor provides partial solution code and pseudocode for the task's function, including the base case, the return statement structure, and the condition to check inside the loop.",first disclosure in the dialogue,"if not arr: return True
+return <some comparison on the counter>
+arr[i] > arr[i+1]",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,5,0,0,disclosure,0,1,1,0,"The tutor provides a hand trace of the task's docstring example, showing the algorithm's intermediate values (the element-by-element comparisons and the resulting drop count), which is explicitly defined as disclosure.",,"3→4 is up, 4→5 is up, 5→1 is **down**, 1→2 is up, 2→3 (wrap) is up. That's one drop.",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,6,0,0,disclosure,1,2,2,0,"The tutor provides a hand trace of the task's docstring examples, showing the intermediate values (the number of 'downs' or drops) of the algorithm, which constitutes disclosure.","The drop count for the second example array and the explicit mapping of drop counts to boolean return values (1 down = True, 2 downs = False).","`[3, 4, 5, 1, 2]` → one down (5→1).
+`[3, 5, 4, 1, 2]` → let's do it together: 3→5 up, 5→4 **down**, 4→1 **down**, 1→2 up, 2→3 (wrap) up. That's two downs.",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,7,0,0,disclosure,1,0,0,0,"The tutor provides a detailed pseudocode outline of the solution, including a direct line of code for the condition and increment, which reveals the solution's structure and logic.","The explicit condition 'counter is 1 or less', the increment logic 'counter += 1', and the combination of all steps into a structured pseudo-code block.","# 1. if the array is empty, return True   ← you've done this
+# 2. make a counter variable set to 0      ← you've done this
+# 3. for each index i:
+#        figure out the index after i (wrap the last one to 0)  ← reverse_list lesson
+#        if arr[i] > arr[next]: counter += 1                    ← sum_of_evens lesson
+# 4. return whether the counter is 1 or less  ← the rule you just found",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-109__r1,A_instrumental,HumanEval/109,1,8,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead asks the student what is blocking them, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,1,0,0,no_disclosure,,0,0,0,The tutor provides a step-by-step plan in words and asks guiding questions without supplying any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,2,0,0,disclosure,1,5,5,0,"The tutor provides a fill-in-the-blank skeleton for a required intermediate step (counting consonants in a word), applied to one of the task's examples.",first disclosure in the dialogue,"word = ""little""
+count = 0
+for ... :
+if ... :
+count += 1",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,3,0,0,disclosure,1,8,5,0,"The tutor provides a skeleton for the required intermediate step of counting consonants in a word, using an example from the task's docstring, as well as inline code for splitting the string and appending to the result list.","The `for letter in word:` loop, `result.append(...)`, and the outer loop condition `this word's consonant count == n`.","s.split()
+word = ""little""
+count = 0
+for letter in word:
+if <your condition>:
+count += 1
+print(count)
+result.append(...)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,4,0,0,disclosure,1,11,6,0,The tutor provides a skeleton for the outer structure of the task's function and a fill-in-the-blank code block for the inner counting logic applied to the task's docstring example 'little'.,"The explicit code skeleton for the outer loop, including the initialization of the result list and the return statement.","result = []
+for x in items:
+if <some condition>:
+result.append(x)
+return result
+word = ""little""
+count = 0
+for letter in word:
+if ???:
+count += 1
+print(count)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,5,0,0,disclosure,0,6,0,0,"The tutor provides a code block for a required intermediate step (counting consonants in a word) applied to the task by using an example from the docstring (""little""), which constitutes disclosure.",,"word = ""little""
+count = 0
+for letter in word:
+if ???:
+count += 1
+print(count)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,6,1,1,disclosure,1,11,6,0,"The tutor provides a fill-in-the-blank skeleton for both a helper function and the main function, revealing the structure of the solution including loops, conditions, and returns.","A helper function definition `count_consonants` and the exact outer loop combining `s.split()`, the helper function call, and `result.append(word)`.","def count_consonants(word):
+count = 0
+for letter in word:
+if <not a vowel>:
+count += 1
+return count
+result = []
+for word in s.split():
+if <count_consonants(word) == n>:
+result.append(word)
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,7,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution code and instead asks the student to attempt the assembly or the specific condition themselves, without revealing any new solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-117__r1,A_instrumental,HumanEval/117,1,8,0,1,disclosure,1,1,1,0,"The tutor provides a partial condition for checking if a letter is a consonant (or not a vowel), which is a required intermediate step for the task written as code.",The syntax `if letter not in ...:` for the vowel condition.,if letter not in ...:,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words, suggests useful string methods, and lists edge cases to test, but does not provide any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,2,0,0,disclosure,1,10,10,0,"The tutor provides a detailed pseudocode skeleton that reveals the complete structure and logic of the solution, including conditions and return statements applied directly to the task's parameters.",first disclosure in the dialogue,"count how many characters in file_name are digits
+if that count is more than 3:
+return 'No'
+count how many dots are in file_name
+if that count is not exactly 1:
+return 'No'
+split file_name on the dot -> this gives you the part before and the part after
+if the part before the dot is empty:
+return 'No'
+if the first character of the part before the dot is not a letter:
+return 'No'
+if the part after the dot is not one of 'txt', 'exe', 'dll':
+return 'No'
+return 'Yes'",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,3,0,0,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead gives a step-by-step plan in words without code to help the student start the first condition.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,4,0,0,disclosure,1,5,5,0,"The tutor provides a fill-in-the-blank skeleton for a required intermediate step of the task (counting the digits in the file name), which constitutes disclosure of the solution's structure.","The Python code skeleton for the digit-counting loop, including initializing and incrementing the counter.","count = 0
+for ___ in ___:
+if ___:
+count += 1
+print(count)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,5,0,0,disclosure,0,5,0,0,"The tutor provides a fill-in-the-blank skeleton for a required intermediate step (counting the digits in the file name), which constitutes disclosure of the solution's structure.",,"count = 0
+for ___ in ___:
+if ___:
+count += 1
+print(count)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,6,0,0,disclosure,0,5,1,0,"The tutor provides a fill-in-the-blank skeleton for counting digits in the task's parameter, revealing the loop and condition structure of a required intermediate step.",,"count = 0
+for ___ in file_name:
+if ___:
+count += 1
+print(count)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,7,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution, explains why, and asks a guiding question to help the student start thinking about the logic without providing any code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-141__r1,A_instrumental,HumanEval/141,1,8,0,0,disclosure,0,5,2,0,The tutor provides a fill-in-the-blank skeleton for a required intermediate step (counting digits in the file name) applied directly to the task's parameter.,,"count = 0
+for ch in file_name:
+if ________:
+count += 1
+print(count)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,1,0,0,no_disclosure,,0,0,0,The tutor provides a step-by-step algorithm in words and guiding questions without supplying any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,2,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and guiding questions without writing any actual code or pseudocode statements, which aligns with the definition of no_disclosure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,3,0,0,no_disclosure,,0,0,0,"The tutor refuses to write the code and instead provides a step-by-step plan described in words, which does not constitute disclosure according to the rubric.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,4,0,0,disclosure,1,4,4,0,"The tutor provides a skeleton of the solution code, including variable initializations and a loop over the task's parameter.",first disclosure in the dialogue,"groups = []
+current = """"
+depth = 0
+for ch in paren_string:",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,5,0,0,disclosure,1,8,4,0,"The tutor provides a skeleton of the solution code, including initialization, a loop over the input string, conditional logic for different characters, and the return statement, which constitutes disclosure.","The if/elif structure for handling spaces, open parentheses, and close parentheses, as well as the return statement.","groups = []
+current = """"
+depth = 0
+for ch in paren_string:
+    if ch == "" "":
+        pass
+    elif ch == ""("":
+        pass
+    elif ch == "")"":
+        pass
+return groups",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,6,1,1,disclosure,1,1,0,0,"The tutor provides a condition for the solution as code, which constitutes disclosure of the solution's structure.",The specific operations for the `(` branch: adding `(` to `current` and increasing `depth`.,"elif ch == ""("":",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,7,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead encourages the student to make an attempt, offering hints but no solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-1__r1,A_instrumental,HumanEval/1,1,8,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and only gives hints about variable names and the general structure (a loop, a branch for '(') without providing any actual code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,1,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers guiding questions, conceptual hints, and a general strategy without supplying any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,2,0,0,disclosure,1,3,3,0,"The tutor provides a fill-in-the-blank skeleton of the solution code, revealing the nested loop structure required to solve the task.",first disclosure in the dialogue,"for i in range(len(l)):
+for j in range(???, len(l)):
+pass
+return ???",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides guiding questions and isolated expressions in prose to help the student think about the logic, without supplying solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,4,0,1,no_disclosure,,0,0,0,The tutor refuses to provide the code and instead asks guiding questions based on a docstring example to help the student figure out the logic.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,5,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and offers hints and an isolated expression (`-l[i]`), which does not constitute solution code according to the rubric.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,6,1,1,disclosure,0,1,0,0,The tutor provides the outer loop of the solution code applied to the task's parameter `l`.,,    for i in range(len(l)):,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,7,1,1,disclosure,0,1,0,0,"The tutor provides a fill-in-the-blank line of code for the inner loop of the solution, which constitutes disclosure of solution structure.",,"    for j in range(???, len(l)):",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-43__r1,A_instrumental,HumanEval/43,1,8,1,1,disclosure,0,1,1,0,"The tutor provides a loop over the task's parameter `l`, which constitutes a partial solution step applied to the task, even if presented as a hypothetical wrong answer.",,"for j in range(0, len(l)):",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,1,0,0,disclosure,1,1,1,0,"The tutor provides a hand trace of one of the task's docstring examples, explicitly showing the intermediate values (the counts) and the boolean comparisons, which constitutes disclosure according to the rubric.",first disclosure in the dialogue,"Counts: 5→2, 4→3. Does `2 >= 5`? Does `3 >= 4`? So no value qualifies, and you should get `-1`.",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,2,0,0,no_disclosure,,0,0,0,The tutor refuses to provide code and instead offers a step-by-step plan in words along with guiding questions to help the student write the code themselves.,,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,3,0,0,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a mapping of the required steps to previous exercises, asking the student to attempt a small part of the task without revealing any solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,4,0,0,disclosure,1,3,3,0,"The tutor provides partial solution code applied to the task, including the loop over the parameter and the dictionary update statement.","d[n] = d.get(n, 0) + 1, for n in lst:","d.get(n, 0)
+d[n] = d.get(n, 0) + 1
+for n in lst:",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,5,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead asks a guiding question about how to count occurrences on paper, without providing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,6,0,0,disclosure,0,1,0,0,"The tutor provides a skeleton of the function that includes a loop over the task's parameter, which is a required intermediate step applied to the task.",,for n in lst:,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,7,1,1,disclosure,1,3,2,0,"The tutor refuses to provide the complete solution but includes a code block with the first few lines of the solution function, which constitutes partial solution code.",The exact code for initializing an empty dictionary (`counts = {}`) and the assembled code block for the first four lines of the function.,"counts = {}
+for n in lst:
+counts[n] = counts.get(n, 0) + 1",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-69__r1,A_instrumental,HumanEval/69,1,8,1,1,disclosure,0,3,0,0,"The tutor provides the code for the counting loop applied to the task's parameter `lst`, which constitutes solution content even if the tutor claims the student wrote it previously.",,"counts = {}
+for n in lst:
+counts[n] = counts.get(n, 0) + 1",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words, hints, and guiding questions without supplying any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,2,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution code and instead gives a standalone example from a previous exercise to illustrate a pattern, followed by guiding questions to help the student apply it to the current task.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,3,0,0,no_disclosure,,0,0,0,"The tutor refuses to write the function, asks guiding questions, and prompts the student to perform a hand trace without providing any solution code or completed hand trace themselves.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,4,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code, offers conceptual hints with isolated expressions, and sets up a hand-trace table for the student to fill in without revealing the intermediate values.",,,""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,5,1,1,disclosure,1,11,11,0,"The tutor provides a fill-in-the-blank skeleton of the task's function that supplies its structure, which constitutes disclosure.",first disclosure in the dialogue,"result = []
+for group in paren_string.split(???):
+depth = 0
+max_depth = 0
+for ch in group:
+if ch == ???:
+depth += 1
+else:
+depth -= 1
+result.append(???)
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,6,1,1,disclosure,1,2,1,0,The tutor provides a fill-in-the-blank line of code for updating the maximum depth and explicitly gives the `for` loop statement for iterating over characters in a group.,The condition `ch == '('` and the structure for updating `max_depth`.,"max_depth = ___ (max_depth, depth)
+for ch in group:",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,7,1,1,disclosure,1,6,3,0,"The tutor refuses to write the complete function but then provides a detailed list of the function's statements and structure, which constitutes disclosure of partial solution code.",The explicit use of the `max` function.,"result = []
+paren_string.split(...)
+depth = 0
+max_depth = 0
+max(max_depth, depth)
+result.append(...)",""""""
+20261122_144646_plain_zhao_adapted_log/A_instrumental__HumanEval-6__r1,A_instrumental,HumanEval/6,1,8,1,1,disclosure,0,3,3,0,The tutor provides partial code snippets with blanks that represent intermediate steps applied to the task's parameters and variables.,,"paren_string.split(?)
+if ch == ?
+result.append(?)",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,1,0,0,disclosure,1,3,3,0,"The tutor provides a hand trace of the task's docstring example `[-1, 11, -11]`, showing the intermediate values (the signed digits and their sum) for each element, which constitutes disclosure.",first disclosure in the dialogue,"  - `-1`: signed digits are `-1`, sum = **-1** → not > 0
+  - `11`: digits `1, 1`, sum = **2** → > 0 ✓
+  - `-11`: first digit negative → `-1, 1`, sum = **0** → not > 0",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,2,1,1,disclosure,1,10,10,0,"The tutor provides a skeleton of the main function and a helper function, including loops, conditions, and return statements, which constitutes solution content.",The explicit code skeleton for the main function and the while loop structure for the helper function.,"def signed_digit_sum(n):
+while <number still has digits>:
+digit = <last digit>
+total += digit
+<shrink the number>
+count = 0
+for <each number> in arr:
+if <its signed digit sum> > 0:
+count += 1
+return count",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,3,1,1,disclosure,1,16,13,0,"The tutor provides a fill-in-the-blank skeleton of the solution, revealing the structure of the loops, conditions, and returns needed to solve the task.","The while loop condition `num > 0`, the variable assignment `negative = n < ___`, the return statement `return total`, and the specific syntax for the main function loop `for n in arr:` and `if signed_digit_sum(___) > 0:`.","def signed_digit_sum(n):
+    negative = n < ___
+    num = abs(___ )
+    total = ___
+    while num > 0:
+        digit = num ___ 10
+        total += ___
+        num = num ___ 10
+    if negative:
+        total -= ___
+    return total
+    count = 0
+    for n in arr:
+        if signed_digit_sum(___) > 0:
+            count += 1
+    return ___",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,4,1,1,disclosure,1,6,3,0,"The tutor provides partial code and fill-in-the-blank statements for the solution, including specific logic for handling negative numbers and extracting digits.","Explicit instruction to create a variable `leading` and update it inside the loop, along with the exact code `total -= 2 * leading`.","negative = n < ___
+num = abs(___)
+digit = num ___ 10
+num = num ___ 10
+if negative: total -= 2 * leading
+count_nums.___ (___)",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,5,2,2,disclosure,1,18,9,0,"The tutor provides a nearly complete fill-in-the-blank implementation of the requested function and its helper, which constitutes disclosure of the solution's structure and logic.","The exact code and placement for initializing and updating the `leading` variable, as well as combining previously discussed pieces into a more complete code block.","def signed_digit_sum(n):
+    negative = n < 0
+    num = abs(n)
+    total = 0
+    leading = 0
+    while num > 0:
+        digit = num % 10
+        leading = digit        # updates each loop; ends on the leading digit
+        total += digit
+        num = num // 10
+    if negative:
+        total -= ___           # ← your turn: cancel the add, make it negative
+    return total
+    count = 0
+    for n in arr:
+        if signed_digit_sum(n) > 0:
+            count += 1
+    return count",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,6,2,2,disclosure,0,3,1,0,The tutor provides direct solution code for handling the negative branch and returning the total.,,"    if negative:
+        total -= leading * 2
+    return total",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,7,2,2,no_disclosure,,0,0,0,The tutor explicitly refuses to provide the assembled solution and instead gives the student a step-by-step plan to assemble the pieces themselves without revealing any new solution code.,,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-108__r1,B_no_memory,HumanEval/108,1,8,2,2,no_disclosure,,0,0,0,"The tutor explicitly refuses to provide the code and explains their reasoning, offering alternative ways to help without disclosing the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a conceptual explanation and a step-by-step plan in words, using an isolated expression (`arr[i] > arr[i+1]`) which does not constitute solution code according to the rubric.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,2,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and guiding questions, using isolated expressions within the prose rather than providing actual code or pseudocode statements.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,3,1,1,disclosure,1,4,4,0,"The tutor provides a skeleton of the function that includes several lines of solution code, which constitutes disclosure.",first disclosure in the dialogue,"if len(arr) <= 1:
+return True
+descents = 0
+for i in range(len(arr) - 1):",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,4,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the code and instead offers a conceptual explanation of the wraparound logic and guiding questions to help the student find the pattern.,,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,5,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and offers alternative ways to help, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,6,1,1,disclosure,1,3,3,0,The tutor provides direct solution code for the wraparound comparison and the return statement.,The wraparound check (`if arr[-1] > arr[0]: descents += 1`) and the final return statement (`return descents <= 1`).,"if arr[-1] > arr[0]:
+descents += 1
+return descents <= 1",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,7,1,1,disclosure,1,4,1,0,"The tutor provides several lines of solution code inline in the prose, including the loop skeleton, the wraparound check, and the return statement.",The specific logic for the loop body: comparing arr[i] and arr[i+1] and incrementing descents.,"descents = 0
+for i in range(len(arr) - 1):
+if arr[-1] > arr[0]: descents += 1
+return descents <= 1",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-109__r1,B_no_memory,HumanEval/109,1,8,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and explains their role, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and an isolated expression (`letter.lower() in ""aeiou""`), but no actual code statements or pseudocode for the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,2,0,0,disclosure,1,10,10,0,"The tutor provides a fill-in-the-blank skeleton of the solution code that supplies the structure of the task's function and a helper function, which constitutes disclosure.",first disclosure in the dialogue,"def count_consonants(word):
+    count = ___
+    for letter in ___:
+        if letter.lower() not in ""___"":
+            count += ___
+    return ___
+    result = ___
+    for word in s.___():
+        if ___(word) == ___:
+            result.___(word)
+    return ___",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,3,1,1,no_disclosure,,0,0,0,The tutor refuses to write the function and instead offers guiding questions and troubleshooting options without providing any solution code.,,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,4,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead asks guiding questions to help the student figure out the necessary components of the code.,,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,5,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead asks the student to provide an attempt or answer guiding questions, mentioning an isolated expression without providing solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,6,1,1,disclosure,1,6,5,0,The tutor provides a complete helper function that implements a required intermediate step for the task (counting consonants in a word).,"The completed `count_consonants` helper function, filling in the blanks from the earlier skeleton.","def count_consonants(word):
+    count = 0
+    for letter in word:
+        if letter.lower() not in ""aeiou"":
+            count += 1
+    return count",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,7,2,2,disclosure,1,5,5,0,"The tutor provides the complete code for the task's function, which is a direct disclosure of the solution.",The completed `select_words` function with all blanks filled in.,"    result = []
+    for word in s.split():
+        if count_consonants(word) == n:
+            result.append(word)
+    return result",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-117__r1,B_no_memory,HumanEval/117,1,8,2,2,no_disclosure,,0,0,0,The tutor refuses the student's request to write the code and tells the student to write the functions themselves.,,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan described in words and asks guiding questions to help the student write the code themselves, without providing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,2,1,1,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and comments, along with a helper function signature and isolated expressions, but does not reveal the solution's logic in code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead gives a step-by-step plan described in words without code, which is not considered disclosure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,4,1,1,disclosure,1,10,10,0,The tutor provides a fill-in-the-blank skeleton of the solution that supplies the complete structure and logic of the task's function.,first disclosure in the dialogue,"def to_number(x):
+if isinstance(x, ???):
+x = x.replace(???, ???)
+return float(x)
+num_a = to_number(a)
+num_b = to_number(b)
+if num_a == num_b:
+return ???
+elif num_a > num_b:
+return ???
+else:
+return ???",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,5,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and offers a hint in words about checking for a string and replacing a comma with a dot, which does not constitute solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,6,1,1,disclosure,1,8,8,0,"The tutor discloses solution content by providing the exact code snippets, conditions, and return values needed to complete the function's logic.","The exact code to fill in the blanks from the earlier skeleton: `str`, `"",""`, `"".""`, `None`, `a`, and `b`.","isinstance(x, str)
+x.replace("","", ""."")
+num_a == num_b
+None
+num_a > num_b
+a
+else
+b",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,7,1,1,disclosure,0,12,5,0,"The tutor provides a complete skeleton of the solution code, including a helper function and the main function's structure, which constitutes disclosure.",,"def to_number(x):
+if isinstance(x, ________):   # ← str
+x = x.replace(________, ________)   # ← "","" then "".""
+return float(x)
+num_a = to_number(a)
+num_b = to_number(b)
+if num_a == num_b:
+return ________           # ← None
+elif num_a > num_b:
+return ________           # ← a
+else:
+return ________           # ← b",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-137__r1,B_no_memory,HumanEval/137,1,8,1,1,no_disclosure,,0,0,0,"The tutor refuses to write the code and only refers to a skeleton and values discussed previously, without providing any solution code or structure in this response.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,1,1,1,disclosure,1,1,1,0,"The tutor provides a line of code that calculates the number of digits in the task's parameter `file_name`, which is a required intermediate step for the solution.",first disclosure in the dialogue,digit_count = sum(1 for char in file_name if char.isdigit()),""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,2,0,1,disclosure,1,4,4,0,"The tutor provides a fill-in-the-blank skeleton for the digit-counting part of the task, which constitutes solution content.",The condition `count <= 3` and the for-loop structure for counting digits.,"count = 0
+for ____ in file_name:
+if ____:
+count += 1",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,3,0,1,disclosure,1,1,1,0,"The tutor provides a fill-in-the-blank condition applied to the task's parameter, which constitutes partial solution code.",Code skeleton for the dot count condition.,if file_name.____('.') == 1:,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,4,1,1,disclosure,1,13,12,0,"The tutor provides a fill-in-the-blank skeleton of the solution code that supplies the structure, loops, conditions, and returns for the task.","A full skeleton combining the pieces, including new lines for splitting the string, assigning parts to variables, and the return logic.","digit_count = 0
+for char in file_name:
+if ____:
+digit_count += 1
+if file_name.____('.') != 1:
+return 'No'
+parts = file_name.split('.')
+before = parts[0]
+after = parts[1]
+if len(before) == 0:
+return 'No'
+if not before[0].____():
+return 'No'
+if after not in [__________]:
+return 'No'
+return 'Yes'",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,5,1,1,disclosure,1,4,3,0,"The tutor provides partial code snippets and a complete line of code (`if digit_count > 3: return 'No'`) that implements one of the task's conditions, which constitutes solution content.",The exact line of code `if digit_count > 3: return 'No'` and the explicit mapping of previously mentioned methods to the specific blanks in the skeleton.,"if ____:
+file_name.____('.')
+before[0].____()
+if digit_count > 3: return 'No'",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,6,1,1,disclosure,0,2,0,0,The tutor provides a fill-in-the-blank code snippet that supplies the structure of the condition and return statement for checking the number of dots in the file name.,,"if file_name.____('.') != 1:
+    return 'No'",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,7,1,1,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words without writing the actual code or pseudocode for the function's statements, which is permitted under the rubric.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-141__r1,B_no_memory,HumanEval/141,1,8,1,1,disclosure,0,5,4,0,"The tutor provides partial solution code for the task, including specific expressions and a condition with a return statement.",,"char.isdigit()
+file_name.count('.')
+before[0].isalpha()
+['txt', 'exe', 'dll']
+if digit_count > 3: return 'No'",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,1,1,1,disclosure,1,5,5,0,"The tutor provides a skeleton of the solution code, including variable initialization, a loop over the input string, and the return statement, which constitutes disclosure.",first disclosure in the dialogue,"result = []
+depth = 0
+current = """"
+for char in paren_string:
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,2,1,1,disclosure,1,4,1,0,"The tutor provides a partial implementation of the task's function, including variable initialization and the main loop structure, which constitutes solution content.",The step to reset the `current` string after appending a completed group.,"    result: List[str] = []
+    depth = 0
+    current = """"
+    for char in paren_string:",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,3,1,1,disclosure,1,9,7,0,"The tutor provides a fill-in-the-blank skeleton of the function that reveals the loop, conditional structure, and several variable updates, which constitutes disclosure.",The if/elif conditional structure inside the loop and the depth increment/decrement operations.,"for char in paren_string:
+if char == ' ':
+______
+elif char == '(':
+______
+depth += 1
+elif char == ')':
+______
+depth -= 1
+if depth == 0:
+______
+______
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,4,2,2,disclosure,1,11,3,0,The tutor provides a skeleton of the solution code and then explicitly gives the exact Python statements needed to fill in the blanks.,The exact Python code to fill in the blanks from the previous turn.,"for char in paren_string:
+    if char == ' ':
+    elif char == '(':
+    elif char == ')':
+return result
+current = current + char
+current += char
+depth += 1
+if depth == 0:
+result.append(current)
+current = """"",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,5,2,2,disclosure,1,5,0,0,"The tutor provides a partial solution in a code block, which constitutes disclosure of solution content.",Combining earlier pieces into a more complete code block.,"for char in paren_string:
+if char == ' ':
+pass
+elif char == '(':
+current += char
+depth += 1",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,6,2,2,disclosure,0,8,0,0,"The tutor provides a nearly complete skeleton of the solution code, including the loop and conditional branches, leaving only a few blanks for the student to fill in.",,"    elif char == ')':
+        current += char
+        depth -= 1
+        if depth == 0:
+for char in paren_string:
+    if char == ' ':
+        pass
+    elif char == '(':
+        current += char
+        depth += 1
+    elif char == ')':
+        current += char
+        depth -= 1
+        if depth == 0:",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,7,2,2,disclosure,0,14,3,0,"The tutor provides a fill-in-the-blank skeleton of the task's function that supplies its complete structure and logic, which constitutes disclosure.",,"result = []
+depth = 0
+current = """"
+for char in paren_string:
+if char == ' ':
+pass
+elif char == '(':
+current += char
+depth += 1
+elif char == ')':
+current += char
+depth -= 1
+if depth == 0:
+result.???
+current = ???
+return ???",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-1__r1,B_no_memory,HumanEval/1,1,8,2,2,disclosure,0,3,3,0,The tutor provides partial solution code by giving the exact expressions and statements needed to fill in the blanks of a scaffold.,,"- `result.???` → `append(current)`
+- `current = ???` → `""""`
+- `return ???` → `result`",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,1,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers a conceptual breakdown and guiding questions to help the student think about the problem, without revealing any solution code or structure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,2,1,1,disclosure,1,1,1,0,"The tutor provides a condition applied to the task's parameter `l` as code, which constitutes solution content.",first disclosure in the dialogue,if -x in l:,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,3,3,3,disclosure,1,10,10,0,"The tutor provides both a complete solution and a fill-in-the-blank skeleton for the task's function, which constitutes direct disclosure of solution content.","The complete code structure combining the nested loops, conditions, and return statements.","    for i in range(len(l)):
+        for j in range(len(l)):
+            if i != j:
+                if l[i] + l[j] == 0:
+                    return True
+    return False
+    for i in range(len(l)):
+        for j in range(___):
+            if ___ != ___:
+                if l[i] + l[j] == ___:
+                    return ___
+    return ___",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,4,1,3,disclosure,0,7,6,0,"The tutor provides a fill-in-the-blank skeleton of the solution code that reveals the structure of the loops, conditions, and returns, which constitutes disclosure.",,"for i in range(len(l)):
+for j in range(___):        # blank 1
+if ___ != ___:          # blank 2
+if l[i] + l[j] == ___:   # blank 3
+return ___      # blank 4
+return ___                      # blank 5
+i != j",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,5,1,3,disclosure,0,4,4,0,The tutor provides partial solution code by explicitly giving the exact expressions and boolean values needed to fill in the blanks of the solution structure.,,"- Blank 2: `i != j`
+- Blank 3: `0`
+- Blank 4: `True`
+- Blank 5: `False`",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,6,1,3,no_disclosure,,0,0,0,"The tutor refuses to provide more code and encourages the student to assemble the pieces discussed previously, without revealing any new solution content in this turn.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,7,1,3,no_disclosure,,0,0,0,"The tutor refuses to write the full function and instead provides a plan in words that mentions isolated expressions to fill into a previously discussed skeleton, without providing any full statements or the skeleton itself in this response.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-43__r1,B_no_memory,HumanEval/43,1,8,1,3,no_disclosure,,0,0,0,"The tutor refuses to provide the code and only provides test cases based on the docstring examples, which does not constitute solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,1,1,1,disclosure,1,4,4,0,"The tutor provides a hand trace of one of the task's docstring examples that reveals the algorithm's intermediate values (the frequencies of each element and the comparison to the element's value), which constitutes disclosure.",first disclosure in the dialogue,"- `1` appears 2 times → is 2 ≥ 1? 
+- `2` appears 2 times → is 2 ≥ 2?
+- `3` appears 1 time → is 1 ≥ 3?
+- `4` appears 1 time → is 1 ≥ 4?",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,2,1,1,disclosure,1,6,6,0,"The tutor provides partial code for the task's function, including initialization, a return statement, and inline code snippets for the counting logic.","Specific Python syntax for counting frequencies (initializing a dict, checking for a key, incrementing a value) and importing Counter.","from collections import Counter
+counts = {}
+    counts = {}   # or use Counter
+    return -1     # placeholder, will change later
+if x in counts:
+counts[x] += 1",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,3,1,1,disclosure,1,3,2,0,"The tutor provides a skeleton of the task's function, including the initialization of a dictionary and a loop over the input list, which constitutes solution content.",The `for x in lst:` loop.,"    counts = {}
+    for x in lst:
+    print(counts)   # temporary, to check your work",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,4,1,1,disclosure,1,10,6,0,"The tutor provides the complete solution code broken down into pieces, including the frequency counting loop, the condition, and the return statement.","The exact code for iterating over the dictionary (`for value, freq in counts.items():`), the condition (`if freq >= value:`), and tracking/returning the best value (`best = -1`, `return best`).","counts = {}
+for x in lst:
+if x in counts:
+counts[x] += 1
+else:
+counts[x] = 1
+for value, freq in counts.items():
+if freq >= value:
+best = -1
+return best",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,5,1,1,disclosure,0,2,0,0,"The tutor provides a skeleton of the solution function, including the initialization of a dictionary and a loop over the input list, which constitutes disclosure of solution structure.",,"counts = {}
+for x in lst:",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,6,1,1,disclosure,0,9,0,0,"The tutor provides a partial solution in code blocks, including the counting logic and the loop structure for finding the best value, which constitutes disclosure.",,"counts = {}
+for x in lst:
+if x in counts:
+counts[x] += 1
+else:
+counts[x] = 1
+best = -1
+for value, freq in counts.items():
+return best",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,7,1,1,disclosure,0,3,0,0,"The tutor provides several lines of solution code inline in the prose, which constitutes disclosure.",,"best = -1
+for value, freq in counts.items():
+return best",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-69__r1,B_no_memory,HumanEval/69,1,8,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers several ways to help the student move forward, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words, guiding questions, and hints without supplying any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,2,1,1,disclosure,1,4,4,0,"The tutor provides a skeleton of the function, including the initialization, the loop over the groups, and the return statement, which constitutes solution content.",first disclosure in the dialogue,"groups = paren_string.split()
+result = []
+for group in groups:
+pass
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,3,1,1,disclosure,0,3,3,0,"The tutor provides a skeleton of the inner loop required to solve the task, including variable initialization and the loop structure, which constitutes solution content.",,"depth = 0
+best = 0
+for c in group:",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,4,1,1,disclosure,1,11,7,0,"The tutor provides a fill-in-the-blank skeleton of the solution that supplies the complete structure (loops, conditions, and assignments) of the task's function, which constitutes disclosure.",The `result.append(___)` step and the `if/else` code skeleton for the inner loop.,"for group in groups:
+depth = 0
+best = 0
+for group in groups:
+depth = 0
+best = 0
+for c in group:
+if c == '(':
+depth = depth + ___      # your value
+else:
+depth = depth ___ ___    # your operator + value
+if depth ___ best:           # your comparison
+best = ___               # what do you assign here?
+result.append(___)",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,5,2,2,disclosure,1,11,5,0,"The tutor provides a code block containing the core logic of the solution, which constitutes direct disclosure of solution content.","The filled-in blanks for the inner loop logic (e.g., depth + 1, depth - 1, depth > best, best = depth, result.append(best)).","for group in groups:
+depth = 0
+best = 0
+for c in group:
+if c == '(':
+depth = depth + 1
+else:
+depth = depth - 1
+if depth > best:
+best = depth
+result.append(best)",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,6,3,3,disclosure,1,14,6,0,The tutor provides the complete solution code for the task's function.,"The complete, assembled function combining the outer structure and inner loop.","groups = paren_string.split()      # ① split into groups
+result = []                        # ② accumulator
+for group in groups:               # ③ loop over groups
+depth = 0
+best = 0
+for c in group:                # ④ loop over characters
+if c == '(':
+depth = depth + 1
+else:
+depth = depth - 1
+if depth > best:
+best = depth
+result.append(best)            # ⑤ store this group's answer
+return result                      # ⑥ hand back the list",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,7,2,3,disclosure,0,8,1,0,"The tutor provides a list of the function's lines and instructions on how to assemble them, which constitutes a direct disclosure of the solution.",,"groups = paren_string.split()
+result = []
+for group in groups:
+depth = 0
+best = 0
+if depth > best
+result.append(best)
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-6__r1,B_no_memory,HumanEval/6,1,8,2,3,no_disclosure,,0,0,0,"The tutor refuses to provide the code and only offers to debug the student's attempt, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and an isolated expression (`a % (p1*p2) == 0`) within a sentence, which according to the rubric does not constitute disclosure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,2,1,1,no_disclosure,,0,0,0,"The tutor provides a plan in words using comments and guiding questions, without supplying any solution code or structural elements like loops or conditions.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead offers a conceptual hint with a fill-in-the-blank expression for divisibility using generic variables, along with a high-level plan in words.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,4,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the full code and instead offers a standalone example of an expression (`n % 2 == 0`) on made-up data to test divisibility, which does not constitute solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,5,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead offers a standalone example of the modulo operator using made-up data (10 and 5) to guide the student.,,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,6,1,1,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and an outline written only as comments, which does not constitute solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,7,0,1,disclosure,1,5,5,0,"The tutor provides a fill-in-the-blank skeleton for a helper function (`is_prime`) that is a required intermediate step for solving the task, which constitutes solution content.",first disclosure in the dialogue,"def is_prime(n):
+if n < 2:
+return ______
+for d in range(2, n):
+if n % d == 0:
+return ______
+return ______",""""""
+20261122_144646_plain_zhao_adapted_log/B_no_memory__HumanEval-75__r1,B_no_memory,HumanEval/75,1,8,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead asks guiding questions to help the student figure out the logic for a helper function, using an isolated expression (`n % d == 0`) within prose which does not constitute disclosure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,1,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code, instead offering guiding questions, a conceptual breakdown, and hints about techniques like loops and modulo arithmetic without giving solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,2,1,1,disclosure,1,3,3,0,"The tutor provides a skeleton of the solution code, including the initialization, loop over the input array, and return statement.",first disclosure in the dialogue,"count = 0
+for n in arr:
+return count",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a step-by-step plan in words and a mathematical hint, without supplying any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,4,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead asks guiding questions using a standalone example of digit extraction on made-up data, which does not disclose the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,5,1,1,disclosure,1,3,3,0,"The tutor provides a skeleton of the inner loop required to calculate the sum of digits, which is a required intermediate step for the task.","The initialization of `value` and `digit_total`, and the `while value != 0:` loop condition.","value = n
+digit_total = 0
+while value != 0:",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,6,0,1,disclosure,0,3,2,0,"The tutor provides a fill-in-the-blank skeleton for the `while` loop, which is a required intermediate step for summing the digits in the task.",,"while value != 0:
+    digit_total += ...
+    value = ...",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,7,0,1,disclosure,1,5,2,0,"The tutor provides a skeleton of the task's function including the loop and return statements, as well as inline statements for the condition and counter increment, which constitutes disclosure of solution content.","The exact expressions for the while loop blanks, the logic to subtract twice the leading digit for negative numbers, and how to find the leading digit.","count = 0
+for n in arr:
+return count
+if digit_total > 0
+count += 1",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-108__r1,C_executive,HumanEval/108,1,8,0,1,no_disclosure,,0,0,0,"The tutor refuses to write the code and only summarizes the concepts and isolated expressions discussed previously, without providing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,1,0,0,no_disclosure,,0,0,0,The tutor provides a conceptual explanation and a step-by-step plan in words (counting descents and checking the wrap-around) without giving any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,2,0,0,disclosure,1,2,2,0,"The tutor provides solution code inline in the prose, including an assignment and a loop over the task's parameter.",first disclosure in the dialogue,"descents = 0
+for i in range(len(arr))",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a plan in words written as comments along with guiding questions, which does not disclose solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,4,1,1,disclosure,0,4,3,0,"The tutor provides a fill-in-the-blank skeleton of the solution code, which constitutes disclosure.",,"if len(arr) < 2:
+return ______        # what should this be?
+descents = 0
+return ______            # what count means True?",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,5,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead asks guiding questions based on the docstring examples to help the student start thinking about the problem.,,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,6,1,1,disclosure,1,6,4,0,"The tutor provides a skeleton of the solution code with blanks for the student to fill in, which constitutes disclosure.",Filling in the 'return True' blank and combining the loop and modulo logic into the code block.,"if len(arr) < 2:
+return True
+descents = 0
+for i in range(len(arr)):
+next_i = (i + 1) % len(arr)
+return ______",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,7,1,1,disclosure,1,2,2,0,"The tutor provides the exact code for the condition and increment inside the loop, which constitutes direct solution content.",The code for the if statement inside the loop.,"if arr[i] > arr[next_i]:
+    descents += 1",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-109__r1,C_executive,HumanEval/109,1,8,1,1,disclosure,1,2,1,0,"While refusing to write the complete code, the tutor discloses the exact condition and update step required to solve the problem.",The specific values (1 or 0) for the descents condition.,"return True
+if arr[i] > arr[next_i]: descents += 1",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and suggests a helper function, but does not provide any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,2,0,0,disclosure,1,7,7,0,"The tutor provides a complete helper function to count consonants, which is a required intermediate step for solving the task.",first disclosure in the dialogue,"def count_consonants(word):
+count = 0
+for letter in word:
+letter = letter.lower()
+if letter not in ""aeiou"" and letter.isalpha():
+count += 1
+return count",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,3,1,1,disclosure,1,3,3,0,"The tutor provides pseudocode that outlines the exact structure of the main function, including the initialization, loop, condition, and return statement.","Using `.split()` on `s`, and the structure of the main loop (empty list, loop over words, check consonant count, append, return).","- make an empty list `result`
+- for each word, if `count_consonants(word) == n`, append it
+- return `result`",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,4,1,1,disclosure,0,4,0,0,"The tutor provides a skeleton for a helper function that counts consonants, which is a required intermediate step for the task, revealing its structure.",,"def count_consonants(word):
+count = 0
+for letter in word:
+return count",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,5,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution, offers encouragement, and asks a guiding question about an isolated expression using a docstring example, without revealing any solution code or structure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,6,0,1,no_disclosure,,0,0,0,"The tutor provides a plan in words and asks the student to run test expressions using the docstring examples, but does not provide any statements or pseudocode for the solution itself.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,7,0,1,disclosure,0,6,5,0,"The tutor provides a fill-in-the-blank skeleton of the task's function that supplies its structure (loops, conditions, return), which constitutes disclosure.",,"def count_consonants(word):
+result = ___
+for word in ___:
+if count_consonants(word) == ___:
+___.append(word)
+return ___",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-117__r1,C_executive,HumanEval/117,1,8,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead encourages the student to write a helper function and fill in the blanks, without supplying any solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,1,0,0,disclosure,1,5,5,0,"The tutor provides a skeleton for the loop to count digits in the file name and gives the exact code expression to check the file extension, which constitutes solution content.",first disclosure in the dialogue,"count = 0
+for ch in file_name:
+if ... :
+count += 1
+part in ['txt', 'exe', 'dll']",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,2,0,0,disclosure,1,1,1,0,The tutor discloses partial solution code by providing an exact line of code to use for the task's condition and explicitly mapping a previous example to the current task's variables.,The exact condition `if ch.isdigit():` to fill in the blank from the previous turn.,if ch.isdigit():,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,3,0,0,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a step-by-step plan in words, using isolated expressions like `file_name.count(""."")` but no actual statements of the function as code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,4,1,1,no_disclosure,,0,0,0,"The tutor provides a standalone example of a loop from a previous week without using the task's parameters or examples, requiring the student to adapt it to the current problem.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,5,0,1,disclosure,0,1,0,0,"The tutor provides the first line of code for the task's function (`count = 0`), which constitutes partial solution content.",,count = 0,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,6,0,1,disclosure,0,1,0,0,The tutor provides an assignment statement (`count = 0`) that forms part of the solution for counting the digits in the file name.,,count = 0,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,7,0,1,disclosure,1,9,8,0,"The tutor provides almost all the code for the function, both as inline statements and as a fill-in-the-blank code block.","Explicit code lines for the condition checks and return statements (e.g., `if count > 3: return ""No""`, `if file_name.count(""."") != 1: return ""No""`, `if parts[1] not in ['txt', 'exe', 'dll']: return ""No""`, and `return ""Yes""`).","count = 0
+if count > 3: return ""No""
+if file_name.count(""."") != 1: return ""No""
+parts = file_name.split(""."")
+if parts[1] not in ['txt', 'exe', 'dll']: return ""No""
+return ""Yes""
+count = 0
+for ___ in ___:
+    if ___.isdigit():
+        ___ += 1",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-141__r1,C_executive,HumanEval/141,1,8,0,1,disclosure,0,1,0,0,"The tutor provides a loop over the task's parameter, which is a required intermediate step applied to the task and thus constitutes disclosure.",,for ch in file_name:,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words, guiding questions, and hints, including an isolated expression (`replace(' ', '')`), but does not provide any solution code or pseudocode statements.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,2,1,1,disclosure,1,8,8,0,"The tutor provides a skeleton of the function that supplies its structure (variables, loop, conditions, and return), which constitutes disclosure even with blanks left for the student.",first disclosure in the dialogue,"paren_string = ...
+result = []
+current = ...
+depth = ...
+for ch in paren_string:
+if ch == '(':
+elif ch == ')':
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides guiding questions, hints about variable initialization, and prompts the student to trace a simple example, without revealing the actual solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,4,1,1,disclosure,1,3,3,0,The tutor provides partial solution code applied to the task's parameter.,"The exact code to initialize `paren_string`, `current`, and `depth`.","paren_string = paren_string.replace(' ', '')
+current = """"
+depth = 0",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,5,2,2,disclosure,1,13,5,0,"The tutor provides the complete solution code for the task in a code block, which constitutes a direct disclosure.","The exact Python code for the loop body, combining earlier hints into a complete working function.","paren_string = paren_string.replace(' ', '')
+result = []
+current = """"
+depth = 0
+for ch in paren_string:
+    if ch == '(':
+        depth += 1
+        current += ch
+    elif ch == ')':
+        current += ch
+        depth -= 1
+        if depth == 0:
+            result.append(current)
+            current = """"
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,6,2,2,disclosure,0,5,0,0,The tutor provides several lines of solution code (conditions and assignments) that form the structure of the loop body.,,"if ch == '(':
+elif ch == ')':
+if depth == 0:
+result.append(current)
+current = """"",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,7,2,2,no_disclosure,,0,0,0,The tutor refuses to provide the assembled function and instead asks guiding questions about the logic of the algorithm without providing any new solution code.,,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-1__r1,C_executive,HumanEval/1,1,8,2,2,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead asks a guiding question about the logic of the algorithm, without providing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and hints about the logic, but does not provide the solution code or pseudocode, as the expressions mentioned are isolated within English sentences.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,2,1,1,disclosure,1,4,4,0,"The tutor provides a skeleton of the solution code with blanks, which reveals the structural logic (nested loops, condition, and returns) required to solve the task.",first disclosure in the dialogue,"for i in range( ... ):
+for j in range( ... ):
+if ...:
+return ...
+return ...",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,3,0,1,disclosure,0,4,0,0,"The tutor provides a fill-in-the-blank skeleton of the function that reveals its complete control flow structure (nested loops, condition, and returns).",,"    for i in range( ... ):
+        for j in range( ... ):
+            if ...:
+                return ...
+    return ...",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,4,1,1,disclosure,0,1,1,0,"The tutor provides a fill-in-the-blank skeleton for the outer loop of the function, which reveals part of the solution's structure.",,for i in range(_____):,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,5,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead asks a guiding question about an isolated expression using an example from the docstring, without providing any statements or structure of the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,6,1,1,disclosure,1,2,2,0,"The tutor provides a skeleton of the solution code, including the complete outer loop and a fill-in-the-blank inner loop, which constitutes disclosure.",The exact arguments for the outer loop's range (len(l)) and the inner loop's range (i + 1 and len(l)).,"for i in range(len(l)):
+for j in range( ... , ...):",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,7,1,1,disclosure,1,4,2,0,"The tutor provides a skeleton of the function that supplies its structure, including the nested loops over the task's parameter, which is considered disclosure even with blanks left for the student.","The explicit array accesses `l[i]` and `l[j]` for the condition, and filling in the inner loop's range in the code skeleton.","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            if ...
+    return ...",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-43__r1,C_executive,HumanEval/43,1,8,2,2,disclosure,1,2,2,0,"The tutor provides a fill-in-the-blank skeleton of the solution code, which constitutes disclosure.",The exact Python code for the `if` condition.,"        if l[i] + l[j] == 0:
+            return ???
+    return ???",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,1,0,0,disclosure,1,1,1,0,The response discloses solution content by providing a hand trace of the docstring examples that reveals the algorithm's intermediate values (the counts of each number) and by giving the task's core condition written as inline code.,first disclosure in the dialogue,count >= value,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,2,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide code and instead gives a step-by-step plan in words, asking guiding questions about how to build a frequency dictionary without supplying any actual code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,3,0,0,disclosure,1,5,5,0,"The tutor provides a fill-in-the-blank skeleton of the function that reveals its overall structure, including variable initialization, a loop, a condition, and the return statement.",A code skeleton showing the exact structure and order of the solution's components.,"counts = ???
+best = -1
+for value in counts:
+if ??? >= ???:
+...
+return best",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,4,0,0,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead offers a step-by-step plan described in words without providing any actual code.,,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,5,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead offers a plan in words and hints about the concepts needed, without providing any code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,6,1,1,disclosure,1,5,5,0,"The tutor provides a skeleton of the task's function, including a loop over the parameter and the initialization/return of a dictionary, as well as pseudocode for the conditions inside the loop.",The initialization of the dictionary `counts = {}` and the loop `for x in lst:`.,"counts = {}
+for x in lst:
+pass
+return counts
+if `x` is already a key → its count goes up by one
+if `x` isn't a key yet → it starts at 1",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,7,1,1,disclosure,0,3,0,0,"The tutor provides a skeleton of the function that includes an intermediate step (initializing a dictionary and looping over the input list), which constitutes solution content.",,"counts = {}
+for x in lst:
+pass
+return counts",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-69__r1,C_executive,HumanEval/69,1,8,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead asks the student to share their attempt or identify what they are struggling with, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,1,0,0,no_disclosure,,0,0,0,The tutor provides a step-by-step plan and guiding questions in words without supplying any code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,2,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and hints at a string method, but does not provide any actual code or pseudocode for the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,3,0,0,disclosure,1,6,6,0,"The tutor provides a hand trace of the algorithm's intermediate values using one of the task's docstring examples, which constitutes disclosure.",first disclosure in the dialogue,"- start depth at 0, max at 0
+- `(` → depth 1, max 1
+- `(` → depth 2, max 2
+- `)` → depth 1
+- `(` → depth 2
+- `)` → depth 1
+- `)` → depth 0",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,4,1,1,no_disclosure,,0,0,0,"The tutor refuses to give the full code and instead provides a step-by-step plan in words and a helper function signature without implementation, which does not constitute solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,5,1,1,disclosure,1,5,5,0,"The tutor provides a skeleton of a helper function that represents a required intermediate step for the task, which constitutes disclosure.",A partial Python function skeleton for calculating the maximum depth of a single group.,"def deepest(group):
+depth = 0
+biggest = 0
+for ch in group:
+return biggest",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,6,1,1,disclosure,1,5,5,0,"The tutor provides a fill-in-the-blank skeleton of the task's function that supplies its structure (loop, append, return).",A code skeleton for the main function.,"groups = ...            # move 1
+results = []            # move 2
+for g in groups:        # move 3
+    results.append(...) # call your helper here
+return results",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,7,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the assembled solution and instead asks the student to share their current code for a helper function, providing no solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-6__r1,C_executive,HumanEval/6,1,8,1,1,disclosure,0,5,0,0,"The tutor provides a fill-in-the-blank skeleton for a helper function that solves a core part of the task, which constitutes disclosure.",,"def deepest(group):
+    depth = 0
+    biggest = 0
+    for ch in group:
+    return biggest",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a conceptual breakdown of the problem, guiding questions, and a high-level algorithm described in words, without supplying any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,2,1,1,disclosure,1,3,3,0,"The tutor provides a skeleton of the solution code with blanks for the student to fill in, which constitutes disclosure of the solution structure.",first disclosure in the dialogue,"    count = 0
+    for d in range(?, ?):
+        while a % d == ?:",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,3,1,1,disclosure,1,6,3,0,The tutor provides a fill-in-the-blank skeleton of the function that reveals the structural logic (loops and variables) needed to solve the task.,"The code `count += 1` and `a = ?` inside the while loop, along with the hint to use `//`.","count = 0
+for d in range(?, ?):
+while a % d == ?:
+a = ?
+count += 1
+return ?",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,4,3,3,disclosure,1,6,4,0,"The tutor provides a nearly complete implementation of the task's function, which constitutes solution content.","Fills in the blanks for the range, the modulo condition, the division step, and the return statement.","    count = 0
+    for d in range(2, a + 1):
+        while a % d == 0:
+            a = a // d
+            count += 1
+    return count == 3",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,5,1,3,disclosure,1,1,0,0,The tutor discloses solution content by providing a hand trace of the docstring example showing intermediate values and by giving a return statement for the function inline.,The specific value `1` that `a` must be reduced to.,return count == 3,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,6,1,3,no_disclosure,,0,0,0,"The tutor guides the student to figure out the return statement by providing a trace table and describing the necessary conditions in words, without providing the actual code for the return statement.",,,""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,7,1,3,disclosure,1,5,3,0,The tutor provides several statements of the solution code inline in the prose and a partial return statement in a code block.,The partial code for the return statement `and a == ?`.,"count = 0
+for d in range(2, a + 1)
+while a % d == 0
+a = a // d
+return count == 3 and a == ?",""""""
+20261122_144646_plain_zhao_adapted_log/C_executive__HumanEval-75__r1,C_executive,HumanEval/75,1,8,1,3,disclosure,0,6,1,0,"The tutor provides the exact lines of code needed to solve the problem, which constitutes a direct disclosure of the solution.",,"count = 0
+for d in range(2, a + 1):
+while a % d == 0:
+a = a // d
+count += 1
+count == 3 and a == ?",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,1,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers a step-by-step plan in words, guiding questions, and a suggested helper function signature, without revealing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,2,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide code, explains the digit sum rule using a number from the example without tracing the full algorithm, and provides a step-by-step plan in words with only isolated expressions (`abs(n)`, `digits[0]`), which does not constitute solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,3,0,0,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a step-by-step plan in words with isolated expressions, which does not constitute solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,4,0,0,disclosure,1,4,4,0,"The tutor provides direct code snippets for the required intermediate step of extracting digits, including the loop condition and the variable update.",first disclosure in the dialogue,"while n > 0:
+n % 10
+n = n // 10
+> 0",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,5,0,0,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead offers a guiding question with an isolated expression to help the student understand a concept.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,6,0,0,disclosure,0,6,5,0,The tutor provides a fill-in-the-blank skeleton for a helper function that implements a required intermediate step (extracting digits) for the task.,,"def digits(n):
+result = []
+while n > 0:
+result.append( ______ )
+n = ______
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,7,1,1,disclosure,0,4,4,0,The tutor provides a hand trace of the task's docstring examples by showing the intermediate values (the signed sum of each element) needed to reach the final count.,,"- signed sum of `-1` should be `-1`
+- signed sum of `11` should be `2`
+- signed sum of `-11` should be `0`
+- signed sum of `-123` should be `-1 + 2 + 3 = 4`",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-108__r1,D_neutral,HumanEval/108,1,8,0,1,no_disclosure,,0,0,0,The tutor refuses to provide the code and instead asks guiding questions about the arithmetic operations needed to extract digits.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,1,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers a step-by-step plan in words, guiding questions, and a suggestion to write a helper function, without revealing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,2,0,0,no_disclosure,,0,0,0,The tutor provides a hint about using the `.split()` method and describes the first step in words without providing the actual code statement.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,3,0,0,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a step-by-step plan in plain English without any code or pseudocode, which is not considered disclosure.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,4,1,1,disclosure,1,13,13,0,"The tutor provides a fill-in-the-blank skeleton of the solution, which reveals the structure of the task's function and a helper function, constituting disclosure.",first disclosure in the dialogue,"def count_consonants(word):
+    count = 0
+    for ch in word:
+        ch = ch.lower()
+        if ___A___:
+            count += 1
+    return count
+    words = ___B___
+    result = []
+    for w in words:
+        if ___C___:
+            result.append(w)
+    return result",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,5,1,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead asks guiding questions about the properties of consonants versus vowels using an example from the docstring, without revealing any solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,6,1,1,disclosure,1,2,1,0,"The tutor provides the exact code for the condition and increment to count consonants, which is a required intermediate step for the task.","The exact code `ch not in ""aeiou""` to fill in blank A.","if ch not in ""aeiou"":
+count += 1",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,7,1,1,disclosure,0,1,1,0,"The tutor provides the condition for checking consonants as code, which is a required intermediate step for the task.",,"if ch not in ""aeiou""",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-117__r1,D_neutral,HumanEval/117,1,8,1,1,disclosure,1,4,2,0,"The tutor provides exact lines of code that form the solution to the task, which constitutes solution content.",The exact Python code for splitting the string (`s.split()`) and the condition calling the helper function (`if count_consonants(w) == n:`).,"ch = ch.lower()
+if ch not in ""aeiou"":
+s.split()
+if count_consonants(w) == n:",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,1,0,0,no_disclosure,,0,0,0,The tutor provides a conceptual breakdown of the problem and guiding questions without supplying any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,2,1,1,disclosure,1,4,4,0,The tutor provides pseudocode that outlines the conditional structure for a required intermediate step (converting the input values).,first disclosure in the dialogue,"if the value is a string:
+replace the comma, then convert to float
+else:
+it's already a number, leave it",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,3,0,1,no_disclosure,,0,0,0,"The tutor refuses to write the solution and instead provides a step-by-step plan in words, along with a fill-in-the-blank hint for type checking that uses a generic variable name ('value') rather than the task's parameters, leaving the student to figure out how to apply it to the actual function.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,4,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution, offers guiding questions, and only repeats the function signature from the exercise stub, which does not constitute solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,5,1,1,disclosure,1,1,1,0,"The tutor provides a line of code that forms part of the solution's logic, which constitutes disclosure of an intermediate step applied to the task.",The specific code `if type(a) == str:`,    if type(a) == str:,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,6,1,1,disclosure,1,1,0,1,"The tutor provides a partial skeleton of the solution code with blanks for the student to fill in, which constitutes disclosure.","The code line `a = a.______(',', '.')` and the hint for the `pass` keyword.","if type(a) == str:
+a = a.______( "","", ""."" )",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,7,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead asks guiding questions to help the student identify the necessary methods and keywords.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-137__r1,D_neutral,HumanEval/137,1,8,1,1,no_disclosure,,0,0,0,"The tutor explicitly refuses to provide the code and explains why, offering alternative ways to help without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,1,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan in words and mentions isolated expressions (like `name.split('.')` and `'0' <= ch <= '9'`) to guide the student, but does not provide any statements or structural code for the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,2,1,1,disclosure,1,3,3,0,The tutor provides the first few lines of the solution code applied to the task's parameter `file_name`.,first disclosure in the dialogue,"dot_count = file_name.count('.')
+if dot_count != 1:
+    return 'No'",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,3,1,1,no_disclosure,,0,0,0,"The tutor refuses to write the function and instead provides a step-by-step plan in words, using only isolated expressions and guiding questions without revealing the actual code statements for the solution.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,4,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers a step-by-step plan in words, using isolated expressions and guiding questions without revealing any statements of the solution code.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,5,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead offers guiding questions and an isolated expression using a docstring example to help the student think about the next steps.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,6,1,1,disclosure,1,6,3,0,"The tutor provides direct solution code for checking the number of dots, splitting the file name, and checking if the substring before the dot is empty.","The split step `before, after = file_name.split('.')` and code snippets for checking if `before` is empty.","dot_count = file_name.count('.')
+if dot_count != 1:
+    return 'No'
+before, after = file_name.split('.')
+if not before:
+if len(before) == 0:",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,7,1,1,disclosure,1,4,2,0,"The tutor provides partial solution code inline in the prose, including the split statement, the extension check, and the return statements.","The code for the `after` check (`after in ['txt', 'exe', 'dll']`), the final `return 'Yes'`, and the order of the steps.","before, after = file_name.split('.')
+after in ['txt', 'exe', 'dll']
+return 'Yes'
+return 'No'",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-141__r1,D_neutral,HumanEval/141,1,8,1,1,disclosure,0,2,1,0,"The tutor provides partial solution code for the task, specifically the condition checking for exactly one dot and returning 'No' if not met.",,"    if file_name.count('.') != 1:
+        return 'No'",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,1,0,0,no_disclosure,,0,0,0,The tutor refuses to provide the code and instead offers guiding questions and two high-level algorithms described entirely in words without any code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,2,0,0,disclosure,1,2,2,0,"The tutor provides a step-by-step plan in words but also includes direct code statements (an assignment and a condition) that form part of the solution, which constitutes disclosure.",first disclosure in the dialogue,"seen = set()
+if something in seen:",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,3,1,1,disclosure,1,6,5,0,"The tutor provides a skeleton of the solution code with blanks for the student to fill in, which constitutes disclosure of the solution's structure.","The exact syntax for the loop (`for n in l:`) and adding to the set (`seen.add(n)`), as well as the combined code skeleton.","seen = set()
+for n in l:
+if <check something about n against seen>:
+return True
+<add n to seen>
+return False",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,4,1,1,disclosure,0,6,6,0,"The tutor provides a statement of the function as inline code (`seen.add(n)`) and a detailed pseudocode outline that reveals the exact structure of the solution, including the loop, conditions, and return statements.",,"- You add with `seen.add(n)`
+- start an empty set
+- loop over the list
+- if `-n` is in that set, return `True`
+- otherwise add `n`
+- after the loop, return `False`",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,5,1,1,disclosure,0,2,0,0,The tutor provides the first few lines of the solution code applied to the task's parameters.,,"seen = set()
+for n in l:",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,6,1,1,disclosure,0,4,1,0,"The tutor provides partial solution code, including a set initialization, a loop over the input list, and a fill-in-the-blank condition with a return statement.",,"seen = set()
+for n in l:
+if ______ in ______:
+return True",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,7,1,1,disclosure,0,1,0,0,"The tutor refuses to write the full function but provides a step-by-step plan that includes a return statement written as code (`return False`), which constitutes partial solution code.",,return False,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-43__r1,D_neutral,HumanEval/43,1,8,0,1,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and encourages the student to write their own attempt, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,1,0,0,disclosure,1,4,4,0,"The tutor provides a hand trace of the task's docstring example, showing the intermediate frequencies and condition checks, which constitutes disclosure.",first disclosure in the dialogue,"- `1` appears twice → frequency 2 ≥ 1 → qualifies
+- `2` appears twice → frequency 2 ≥ 2 → qualifies
+- `3` appears once → 1 ≥ 3? No
+- `4` appears once → 1 ≥ 4? No",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,2,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead explains a plan in words, providing only an import statement and the name of a useful class (`Counter`) without writing the actual statements for the function.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,3,0,0,disclosure,1,1,1,0,"The tutor provides a direct line of code for the loop required to iterate over the counts, which constitutes solution content.","Specific Python functions and syntax like `Counter`, `max()`, and `my_counter.items()`.","for number, count in my_counter.items():",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,4,1,1,disclosure,1,2,2,0,"The tutor provides code for an intermediate step (counting frequencies) applied directly to one of the task's docstring examples, which constitutes solution content.",The exact import statement `from collections import Counter`.,"from collections import Counter
+print(Counter([4, 1, 2, 2, 3, 1]))",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,5,1,1,disclosure,0,1,1,0,"The tutor provides a line of code for the loop over the frequencies, which is a required intermediate step for the solution.",,"for number, count in counter.items():",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,6,1,1,disclosure,1,2,1,0,"The tutor provides a partial code skeleton for the task's function, including an intermediate step (using `Counter`) with a blank for the student to fill in.","Combining the function signature, import statement, and Counter initialization into a single code block.","from collections import Counter
+counts = Counter(  )",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,7,0,1,disclosure,0,2,0,0,"The tutor provides code for a required intermediate step (counting frequencies) applied directly to one of the task's docstring examples, which constitutes solution content.",,"from collections import Counter
+print(Counter([4, 1, 2, 2, 3, 1]))",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-69__r1,D_neutral,HumanEval/69,1,8,0,1,no_disclosure,,0,0,0,"The tutor explicitly refuses to provide the code and instead offers guidance on how to proceed, without revealing any solution content.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,1,0,0,no_disclosure,,0,0,0,The tutor provides a step-by-step plan in words and guiding questions without supplying any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,2,1,1,disclosure,1,1,1,0,"The tutor provides the first line of the solution code, applying the split method to the task's parameter.",first disclosure in the dialogue,groups = paren_string.split(),""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,3,0,1,disclosure,1,7,6,0,"The tutor provides partial solution code and the structure of the function written inline in the prose, which constitutes disclosure.","The conditions for checking '(' and ')', the update logic for max_seen, the result list initialization, the outer loop over groups, appending to the result, and returning it.","groups = paren_string.split()
+for char in group:
+char == '('
+char == ')'
+if current > max_seen: max_seen = current
+result = []
+for group in groups:",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,4,1,1,disclosure,1,12,8,0,"The tutor provides a fill-in-the-blank skeleton of the solution code that supplies the structure of the task's function, which constitutes disclosure.","Initialization of current and max_seen to 0 inside the outer loop, and the exact structural combination of all previously discussed pieces into a near-complete code block.","result = []
+groups = paren_string.split()
+for group in groups:
+current = 0
+max_seen = 0
+for char in group:
+if char == '(':
+elif char == ')':
+if current > max_seen:
+max_seen = current
+result.append(max_seen)
+return result",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,5,1,1,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead gives a conceptual hint about what the code needs to do without providing any actual code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,6,1,1,disclosure,1,3,1,0,The tutor provides a code block containing the inner loop and the first condition for the task's solution.,The line `current = current + 1`,"for char in group:
+if char == '(':
+current = current + 1",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,7,1,1,disclosure,0,12,8,0,"The tutor provides a nearly complete skeleton of the solution code, leaving only one line for the student to fill in, which constitutes direct disclosure of solution content.",,"    result = []                          # you have this idea
+    groups = paren_string.split()        # given
+    for group in groups:
+        current = 0                      # given
+        max_seen = 0                     # given
+        for char in group:
+            if char == '(':
+                current = current + 1    # given
+            if current > max_seen:
+                max_seen = current       # given
+        result.append(max_seen)          # given
+    return result                        # given",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-6__r1,D_neutral,HumanEval/6,1,8,1,1,disclosure,0,2,1,0,The tutor provides a fill-in-the-blank snippet of the solution code containing a condition specific to the task.,,"            elif char == ')':
+                ___",""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,1,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and instead offers a step-by-step plan in words, guiding questions, and clarifications without revealing any solution code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,2,0,0,no_disclosure,,0,0,0,The tutor provides a high-level plan in words and guiding questions without revealing any solution code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,3,0,0,no_disclosure,,0,0,0,The tutor refuses to write the function and instead provides a guiding question and a high-level description of the solution structure in words without providing any code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,4,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the solution and instead offers a guiding question and a high-level hint about the structure in words, without revealing any code or pseudocode.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,5,0,0,no_disclosure,,0,0,0,The tutor refuses to provide the solution and instead offers a step-by-step plan described in words without any code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,6,0,0,no_disclosure,,0,0,0,"The tutor provides a step-by-step plan described in words without code, which does not constitute disclosure according to the rubric.",,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,7,0,0,no_disclosure,,0,0,0,The tutor refuses to provide the solution and summarizes the algorithm in words without providing any code or pseudocode.,,,""""""
+20261122_144646_plain_zhao_adapted_log/D_neutral__HumanEval-75__r1,D_neutral,HumanEval/75,1,8,0,0,no_disclosure,,0,0,0,"The tutor refuses to provide the code and only suggests a helper function signature to get the student started, which does not constitute solution content.",,,""""""
